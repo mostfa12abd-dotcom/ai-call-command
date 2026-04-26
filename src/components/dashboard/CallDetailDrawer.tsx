@@ -26,7 +26,7 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full overflow-y-auto p-0 sm:max-w-xl"
+        className="w-full overflow-y-auto p-0 sm:max-w-none sm:w-1/2"
       >
         {/* Header */}
         <div className="border-b border-border bg-gradient-to-br from-[hsl(var(--primary-soft))] to-card px-6 pb-5 pt-6">

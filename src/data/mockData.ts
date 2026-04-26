@@ -1,8 +1,14 @@
 // Mock data layer. Shaped to mirror the future Supabase schema:
-// `calls` table will hold core fields + a JSONB `custom_fields` column for
-// per-client customization (satisfaction, summary, transcript, etc.).
+// `leads` and `calls` tables with a JSONB `custom_fields` column for
+// per-client customization (status, next action, satisfaction, transcript).
 
-export type CallStatus = "Pickups" | "Missed";
+export type LeadStatus =
+  | "New"
+  | "Qualified"
+  | "Contacted"
+  | "Paid"
+  | "Not Interested";
+
 export type Satisfaction = "Happy" | "Neutral" | "Angry";
 
 export interface TranscriptLine {
@@ -11,23 +17,21 @@ export interface TranscriptLine {
   text: string;
 }
 
-export interface CallRecord {
+export interface LeadRecord {
   id: string;
-  caller: {
-    name: string;
-    initials: string;
-    avatarColor: string;
-  };
+  name: string;
+  initials: string;
+  avatarColor: string;
   company: string;
   phone: string;
   email: string;
-  duration: string; // mm:ss
-  durationSeconds: number;
-  status: CallStatus;
-  date: string;
-  customFields: {
+  status: LeadStatus;
+  nextAction: string;
+  lastCall: {
+    duration: string;
+    date: string;
     satisfaction: Satisfaction;
-    summary: string; // two-word badge text
+    summary: string;
     longSummary: string;
     transcript: TranscriptLine[];
   };
@@ -53,203 +57,54 @@ const initialsOf = (name: string) =>
     .toUpperCase();
 
 const makeTranscript = (topic: string): TranscriptLine[] => [
-  { speaker: "Agent", time: "00:00", text: `Thanks for calling Voxa support, this is Aria. How can I help you today?` },
-  { speaker: "Caller", time: "00:06", text: `Hi Aria, I'm calling about ${topic.toLowerCase()} on my account.` },
-  { speaker: "Agent", time: "00:12", text: `Got it — let me pull up your account. Can I confirm your email on file?` },
-  { speaker: "Caller", time: "00:19", text: `Yes, it's the same one I used to sign up.` },
-  { speaker: "Agent", time: "00:24", text: `Perfect, I see it here. Walk me through what's happening.` },
-  { speaker: "Caller", time: "00:31", text: `So when I try to access the feature, it just hangs and never loads.` },
-  { speaker: "Agent", time: "00:42", text: `Understood. I'm going to run a quick diagnostic — one moment please.` },
-  { speaker: "Caller", time: "01:05", text: `No problem, take your time.` },
-  { speaker: "Agent", time: "01:18", text: `Okay, I found the issue. We had a temporary regional outage that's now resolved.` },
-  { speaker: "Caller", time: "01:28", text: `Oh great. Should I do anything on my end?` },
-  { speaker: "Agent", time: "01:33", text: `Just refresh the page and you should be all set. Anything else I can help with?` },
-  { speaker: "Caller", time: "01:40", text: `No, that's it. Thanks so much for the quick fix!` },
-  { speaker: "Agent", time: "01:44", text: `My pleasure. Have a wonderful rest of your day.` },
+  { speaker: "Agent", time: "00:00", text: `Hi, this is Aria from Voxa. Is now a good time for a quick chat?` },
+  { speaker: "Caller", time: "00:05", text: `Sure, what's this regarding?` },
+  { speaker: "Agent", time: "00:09", text: `I'm following up on your interest in ${topic.toLowerCase()}.` },
+  { speaker: "Caller", time: "00:16", text: `Right, I remember signing up. Tell me more.` },
+  { speaker: "Agent", time: "00:22", text: `Happy to. We help teams automate outbound calls with AI agents.` },
+  { speaker: "Caller", time: "00:34", text: `That sounds useful. What does pricing look like?` },
+  { speaker: "Agent", time: "00:39", text: `Plans start at $99/mo. I can send a tailored quote after a quick demo.` },
+  { speaker: "Caller", time: "00:51", text: `Let's schedule a demo for next week then.` },
+  { speaker: "Agent", time: "00:56", text: `Perfect — I'll send a calendar invite within the hour.` },
+  { speaker: "Caller", time: "01:02", text: `Great, talk soon.` },
 ];
 
-export const calls: CallRecord[] = [
-  {
-    id: "c-001",
-    caller: { name: "Sarah Chen", initials: initialsOf("Sarah Chen"), avatarColor: palette[0] },
-    company: "Stripe",
-    phone: "+1 (415) 555-0142",
-    email: "sarah.chen@stripe.com",
-    duration: "04:32",
-    durationSeconds: 272,
-    status: "Pickups",
-    date: "Apr 26, 2026 · 09:14",
-    customFields: {
-      satisfaction: "Happy",
-      summary: "Pricing Inquiry",
-      longSummary:
-        "Sarah from Stripe inquired about enterprise pricing for the Pro plan. She was particularly interested in volume discounts for >500 seats and SOC 2 documentation. The agent walked her through tiered pricing, sent the security packet, and scheduled a follow-up demo for next Tuesday.",
-      transcript: makeTranscript("enterprise pricing"),
-    },
-  },
-  {
-    id: "c-002",
-    caller: { name: "Marcus Johnson", initials: initialsOf("Marcus Johnson"), avatarColor: palette[1] },
-    company: "Linear",
-    phone: "+1 (628) 555-0119",
-    email: "marcus@linear.app",
-    duration: "00:00",
-    durationSeconds: 0,
-    status: "Missed",
-    date: "Apr 26, 2026 · 08:47",
-    customFields: {
-      satisfaction: "Angry",
-      summary: "Billing Issue",
-      longSummary:
-        "Marcus called about an unexpected charge on his April invoice. The call was missed during peak hours. Voicemail indicated frustration about being unable to reach support and threatened to cancel his subscription if not contacted by EOD.",
-      transcript: makeTranscript("a billing discrepancy"),
-    },
-  },
-  {
-    id: "c-003",
-    caller: { name: "Priya Patel", initials: initialsOf("Priya Patel"), avatarColor: palette[2] },
-    company: "Notion",
-    phone: "+1 (212) 555-0188",
-    email: "priya.p@notion.so",
-    duration: "07:18",
-    durationSeconds: 438,
-    status: "Pickups",
-    date: "Apr 26, 2026 · 08:22",
-    customFields: {
-      satisfaction: "Happy",
-      summary: "Demo Request",
-      longSummary:
-        "Priya, a product manager at Notion, requested a personalized demo of the AI Voice analytics module. She's evaluating three vendors and Voxa is the frontrunner. Demo scheduled for Friday with her engineering lead joining.",
-      transcript: makeTranscript("a product demo"),
-    },
-  },
-  {
-    id: "c-004",
-    caller: { name: "David Kim", initials: initialsOf("David Kim"), avatarColor: palette[3] },
-    company: "Figma",
-    phone: "+1 (917) 555-0173",
-    email: "dkim@figma.com",
-    duration: "02:41",
-    durationSeconds: 161,
-    status: "Pickups",
-    date: "Apr 25, 2026 · 17:55",
-    customFields: {
-      satisfaction: "Neutral",
-      summary: "Feature Question",
-      longSummary:
-        "David asked whether the platform supports multi-language transcription, specifically Korean and Japanese. The agent confirmed support for 38 languages including both, and shared documentation links.",
-      transcript: makeTranscript("language support"),
-    },
-  },
-  {
-    id: "c-005",
-    caller: { name: "Elena Rodriguez", initials: initialsOf("Elena Rodriguez"), avatarColor: palette[4] },
-    company: "Vercel",
-    phone: "+1 (646) 555-0156",
-    email: "elena@vercel.com",
-    duration: "11:04",
-    durationSeconds: 664,
-    status: "Pickups",
-    date: "Apr 25, 2026 · 16:03",
-    customFields: {
-      satisfaction: "Happy",
-      summary: "Onboarding Help",
-      longSummary:
-        "Elena's team just signed up and needed help configuring inbound routing and IVR menus. The agent walked her through setup over screen-share, configured 4 menus, and tested call flows successfully.",
-      transcript: makeTranscript("onboarding configuration"),
-    },
-  },
-  {
-    id: "c-006",
-    caller: { name: "James O'Brien", initials: initialsOf("James OBrien"), avatarColor: palette[5] },
-    company: "Datadog",
-    phone: "+1 (303) 555-0192",
-    email: "jobrien@datadog.com",
-    duration: "00:00",
-    durationSeconds: 0,
-    status: "Missed",
-    date: "Apr 25, 2026 · 14:38",
-    customFields: {
-      satisfaction: "Neutral",
-      summary: "Quick Callback",
-      longSummary:
-        "James left a brief voicemail asking for a callback to discuss API rate limits. No urgency expressed; left direct extension.",
-      transcript: makeTranscript("API rate limits"),
-    },
-  },
-  {
-    id: "c-007",
-    caller: { name: "Aisha Thompson", initials: initialsOf("Aisha Thompson"), avatarColor: palette[6] },
-    company: "Shopify",
-    phone: "+1 (416) 555-0167",
-    email: "aisha.t@shopify.com",
-    duration: "05:47",
-    durationSeconds: 347,
-    status: "Pickups",
-    date: "Apr 25, 2026 · 13:12",
-    customFields: {
-      satisfaction: "Happy",
-      summary: "Renewal Discussion",
-      longSummary:
-        "Aisha confirmed early renewal of their annual contract and added two additional seats. She praised the new analytics dashboard and asked about beta access to the upcoming sentiment-trend feature.",
-      transcript: makeTranscript("contract renewal"),
-    },
-  },
-  {
-    id: "c-008",
-    caller: { name: "Lukas Schmidt", initials: initialsOf("Lukas Schmidt"), avatarColor: palette[7] },
-    company: "GitLab",
-    phone: "+49 30 555 0144",
-    email: "lschmidt@gitlab.com",
-    duration: "03:22",
-    durationSeconds: 202,
-    status: "Pickups",
-    date: "Apr 25, 2026 · 11:28",
-    customFields: {
-      satisfaction: "Angry",
-      summary: "Refund Issue",
-      longSummary:
-        "Lukas reported being double-charged for the March cycle. Agent verified the duplicate transaction, processed an immediate refund, and applied a 10% credit for the inconvenience. Lukas remained dissatisfied with the initial billing error.",
-      transcript: makeTranscript("a duplicate charge"),
-    },
-  },
-  {
-    id: "c-009",
-    caller: { name: "Mei Wong", initials: initialsOf("Mei Wong"), avatarColor: palette[0] },
-    company: "Airtable",
-    phone: "+1 (510) 555-0181",
-    email: "mei.wong@airtable.com",
-    duration: "06:15",
-    durationSeconds: 375,
-    status: "Pickups",
-    date: "Apr 24, 2026 · 18:47",
-    customFields: {
-      satisfaction: "Happy",
-      summary: "Integration Help",
-      longSummary:
-        "Mei needed help connecting Voxa call data to her team's Airtable base via Zapier. Agent shared the official template, validated the webhook, and confirmed data sync within 5 minutes.",
-      transcript: makeTranscript("Airtable integration"),
-    },
-  },
-  {
-    id: "c-010",
-    caller: { name: "Rafael Costa", initials: initialsOf("Rafael Costa"), avatarColor: palette[1] },
-    company: "Hubspot",
-    phone: "+1 (617) 555-0135",
-    email: "rcosta@hubspot.com",
-    duration: "08:53",
-    durationSeconds: 533,
-    status: "Pickups",
-    date: "Apr 24, 2026 · 16:09",
-    customFields: {
-      satisfaction: "Neutral",
-      summary: "Technical Review",
-      longSummary:
-        "Rafael, a solutions engineer, ran through a technical evaluation covering SSO, audit logs, data residency, and webhook reliability. Most boxes checked — flagged EU data residency as a follow-up item.",
-      transcript: makeTranscript("technical evaluation"),
-    },
-  },
+const seed: Array<[string, string, string, LeadStatus, string, string, Satisfaction, string]> = [
+  ["Niki Nalinto", "Business Solutions", "+1-555-0103", "Not Interested", "Initial contact", "01:42", "Angry", "Cold Lead"],
+  ["Marcus Johnson", "Innovate LLC", "+1-555-0118", "Qualified", "Send proposal", "06:14", "Happy", "Pricing Inquiry"],
+  ["Priya Patel", "Tech Corp", "+1-555-0142", "New", "Initial contact", "00:00", "Neutral", "First Touch"],
+  ["David Kim", "Digital Inc", "+1-555-0155", "Paid", "Schedule demo", "08:31", "Happy", "Renewal Confirmed"],
+  ["Elena Rodriguez", "Business Solutions", "+1-555-0167", "Contacted", "Archive", "03:05", "Neutral", "Follow Up"],
+  ["James O'Brien", "Innovate LLC", "+1-555-0173", "New", "Closing call", "04:48", "Happy", "Demo Scheduled"],
+  ["Aisha Thompson", "Business Solutions", "+1-555-0186", "Not Interested", "Follow-up call", "00:52", "Angry", "Hard Pass"],
+  ["Lukas Schmidt", "Tech Corp", "+1-555-0192", "Qualified", "Send proposal", "07:22", "Happy", "Strong Fit"],
+  ["Mei Wong", "Digital Inc", "+1-555-0204", "Paid", "Onboarding", "11:04", "Happy", "Onboarding Help"],
+  ["Rafael Costa", "Innovate LLC", "+1-555-0215", "Contacted", "Schedule demo", "02:41", "Neutral", "Technical Review"],
+  ["Hannah Müller", "Business Solutions", "+1-555-0226", "New", "Initial contact", "00:00", "Neutral", "Cold Outreach"],
+  ["Tomás Alvarez", "Tech Corp", "+1-555-0238", "Qualified", "Send proposal", "05:47", "Happy", "Budget Approved"],
 ];
+
+export const leads: LeadRecord[] = seed.map(
+  ([name, company, phone, status, nextAction, duration, satisfaction, summary], i) => ({
+    id: `ld-${(i + 1).toString().padStart(3, "0")}`,
+    name,
+    initials: initialsOf(name),
+    avatarColor: palette[i % palette.length],
+    company,
+    phone,
+    email: `${name.toLowerCase().replace(/[^a-z]/g, ".")}@${company.toLowerCase().replace(/[^a-z]/g, "")}.com`,
+    status,
+    nextAction,
+    lastCall: {
+      duration,
+      date: `Apr ${26 - (i % 4)}, 2026 · ${9 + (i % 8)}:${(i * 7) % 60 < 10 ? "0" : ""}${(i * 7) % 60}`,
+      satisfaction,
+      summary,
+      longSummary: `${name} from ${company} discussed ${summary.toLowerCase()} during the most recent call. The agent walked through key points, addressed objections, and agreed on the next step: "${nextAction}". Overall sentiment trended ${satisfaction.toLowerCase()}.`,
+      transcript: makeTranscript(summary),
+    },
+  }),
+);
 
 export interface CustomerRecord {
   id: string;
@@ -264,37 +119,22 @@ export interface CustomerRecord {
   status: "Active" | "Lead" | "Churned";
 }
 
-export const customers: CustomerRecord[] = [
-  ["Sarah Chen", "Stripe", "sarah.chen@stripe.com", "+1 (415) 555-0142", 14, "Apr 26, 2026", "Active"],
-  ["Marcus Johnson", "Linear", "marcus@linear.app", "+1 (628) 555-0119", 8, "Apr 26, 2026", "Active"],
-  ["Priya Patel", "Notion", "priya.p@notion.so", "+1 (212) 555-0188", 6, "Apr 26, 2026", "Lead"],
-  ["David Kim", "Figma", "dkim@figma.com", "+1 (917) 555-0173", 11, "Apr 25, 2026", "Active"],
-  ["Elena Rodriguez", "Vercel", "elena@vercel.com", "+1 (646) 555-0156", 22, "Apr 25, 2026", "Active"],
-  ["James O'Brien", "Datadog", "jobrien@datadog.com", "+1 (303) 555-0192", 3, "Apr 25, 2026", "Lead"],
-  ["Aisha Thompson", "Shopify", "aisha.t@shopify.com", "+1 (416) 555-0167", 18, "Apr 25, 2026", "Active"],
-  ["Lukas Schmidt", "GitLab", "lschmidt@gitlab.com", "+49 30 555 0144", 5, "Apr 25, 2026", "Churned"],
-  ["Mei Wong", "Airtable", "mei.wong@airtable.com", "+1 (510) 555-0181", 9, "Apr 24, 2026", "Active"],
-  ["Rafael Costa", "Hubspot", "rcosta@hubspot.com", "+1 (617) 555-0135", 4, "Apr 24, 2026", "Lead"],
-  ["Hannah Müller", "Spotify", "h.muller@spotify.com", "+46 8 555 0177", 7, "Apr 23, 2026", "Active"],
-  ["Tomás Alvarez", "MongoDB", "talvarez@mongodb.com", "+34 91 555 0162", 12, "Apr 23, 2026", "Active"],
-].map(([name, company, email, phone, totalCalls, lastContact, status], i) => ({
+export const customers: CustomerRecord[] = leads.map((l, i) => ({
   id: `cust-${(i + 1).toString().padStart(3, "0")}`,
-  name: name as string,
-  initials: initialsOf(name as string),
-  avatarColor: palette[i % palette.length],
-  company: company as string,
-  email: email as string,
-  phone: phone as string,
-  totalCalls: totalCalls as number,
-  lastContact: lastContact as string,
-  status: status as CustomerRecord["status"],
+  name: l.name,
+  initials: l.initials,
+  avatarColor: l.avatarColor,
+  company: l.company,
+  email: l.email,
+  phone: l.phone,
+  totalCalls: 3 + ((i * 5) % 22),
+  lastContact: l.lastCall.date.split(" · ")[0],
+  status: l.status === "Paid" ? "Active" : l.status === "Not Interested" ? "Churned" : "Lead",
 }));
 
 export const kpis = {
-  totalCalls: 1284,
-  avgDuration: "04:18",
-  missedCalls: 47,
-  recallAfm: 132,
-  appointments: 86,
-  totalCallTime: "92h 14m",
+  connected: 3,
+  missed: 0,
+  avgDuration: "0m 23s",
+  totalCalls: 742,
 };

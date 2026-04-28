@@ -99,6 +99,50 @@ const Dashboard = () => {
       c.company?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // تجميع المكالمات حسب التاريخ (يوم/شهر/سنة)
+  const formatDateLabel = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const sameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    if (sameDay(d, today)) return "اليوم";
+    if (sameDay(d, yesterday)) return "أمس";
+    return d.toLocaleDateString("ar-EG", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatTimeOfDay = (dateStr: string) => {
+    const d = new Date(dateStr);
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, "0");
+    const period = h >= 12 ? "مساءً" : "صباحًا";
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${h}:${m} ${period}`;
+  };
+
+  const grouped: { dateKey: string; label: string; items: CallRow[] }[] = [];
+  filtered.forEach((c) => {
+    const d = new Date(c.created_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    let group = grouped.find((g) => g.dateKey === key);
+    if (!group) {
+      group = { dateKey: key, label: formatDateLabel(c.created_at), items: [] };
+      grouped.push(group);
+    }
+    group.items.push(c);
+  });
+
   return (
     <DashboardLayout
       title="AI Voice Call Center"

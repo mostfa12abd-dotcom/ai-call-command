@@ -39,8 +39,9 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
 
-  const linkClass =
-    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
+  const linkClass = collapsed
+    ? "flex h-10 w-10 items-center justify-center rounded-xl text-sidebar-foreground/80 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mx-auto"
+    : "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/80 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
   const activeClass = "bg-sidebar-accent text-sidebar-accent-foreground font-semibold";
 
   return (
@@ -59,7 +60,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-3">
+      <SidebarContent className={collapsed ? "px-1.5 py-3" : "px-2 py-3"}>
         <SidebarGroup>
           {!collapsed && (
             <SidebarGroupLabel className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -70,7 +71,11 @@ export function AppSidebar() {
             <SidebarMenu>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-auto p-0 hover:bg-transparent">
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={collapsed ? item.title : undefined}
+                    className={collapsed ? "h-10 p-0 hover:bg-transparent" : "h-auto p-0 hover:bg-transparent"}
+                  >
                     <NavLink
                       to={item.url}
                       end={item.exact}

@@ -146,7 +146,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout
       title="AI Voice Call Center"
-      breadcrumb={["Dashboard", "AI Voice Call Center", "Overview"]}
+      breadcrumb={["Overview"]}
     >
       {/* KPI Grid */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">

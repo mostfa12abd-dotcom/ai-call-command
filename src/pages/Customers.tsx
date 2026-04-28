@@ -45,7 +45,7 @@ const Customers = () => {
   return (
     <DashboardLayout
       title="Customers"
-      breadcrumb={["Dashboard", "AI Voice Call Center", "Customers"]}
+      breadcrumb={["Customers"]}
     >
       <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-4">

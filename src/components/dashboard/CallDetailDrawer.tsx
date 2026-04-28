@@ -42,6 +42,23 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
   None: { emoji: "—", tone: "bg-secondary text-muted-foreground" },
 };
 
+function parseRawConversation(raw: string) {
+  if (!raw) return [];
+  // Split by labels like "AI:", "User:", "Caller:", "Assistant:"
+  const parts = raw.split(/(AI:|User:|Caller:|Assistant:)/g).filter(p => p.trim().length > 0);
+  const result: { speaker: string; text: string; time: string }[] = [];
+  
+  for (let i = 0; i < parts.length; i += 2) {
+    const label = parts[i]?.replace(":", "").trim() || "User";
+    const text = parts[i + 1]?.trim() || "";
+    if (text) {
+      result.push({ speaker: label, text, time: "" });
+    }
+  }
+  
+  return result.length > 0 ? result : [{ speaker: "User", text: raw, time: "" }];
+}
+
 export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerProps) {
   if (!call) return null;
 
@@ -130,48 +147,44 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
               Total Conversation
             </h3>
 
-            {hasStructuredTranscript ? (
-              // Structured transcript (bubble style)
+            {hasStructuredTranscript || rawConversation ? (
               <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
-                {call.customFields.transcript!.map((line, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "flex gap-2",
-                      line.speaker === "Agent" ? "flex-row-reverse" : "flex-row"
-                    )}
-                  >
+                {(hasStructuredTranscript 
+                  ? call.customFields.transcript! 
+                  : parseRawConversation(rawConversation)
+                ).map((line, i) => {
+                  const isAI = line.speaker === "Agent" || line.speaker === "AI" || line.speaker.includes("AI");
+                  return (
                     <div
+                      key={i}
                       className={cn(
-                        "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
-                        line.speaker === "Agent"
-                          ? "rounded-tr-sm bg-primary text-primary-foreground"
-                          : "rounded-tl-sm bg-card text-foreground"
+                        "flex gap-2",
+                        isAI ? "flex-row-reverse" : "flex-row"
                       )}
                     >
                       <div
                         className={cn(
-                          "mb-0.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider",
-                          line.speaker === "Agent"
-                            ? "flex-row-reverse text-primary-foreground/80"
-                            : "text-muted-foreground"
+                          "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
+                          isAI
+                            ? "rounded-tr-sm bg-primary text-primary-foreground"
+                            : "rounded-tl-sm bg-card text-foreground"
                         )}
                       >
-                        <span>{line.speaker === "Agent" ? "AI Assistant" : "Customer"}</span>
-                        <span>·</span>
-                        <span>{line.time}</span>
+                        <div
+                          className={cn(
+                            "mb-0.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider",
+                            isAI
+                              ? "flex-row-reverse text-primary-foreground/80"
+                              : "text-muted-foreground"
+                          )}
+                        >
+                          <span>{isAI ? "AI Assistant" : "Customer"}</span>
+                        </div>
+                        <p className="leading-snug">{line.text}</p>
                       </div>
-                      <p className="leading-snug">{line.text}</p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : rawConversation ? (
-              // Raw text conversation from Supabase
-              <div className="rounded-xl border border-border bg-secondary/40 p-4">
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
-                  {rawConversation}
-                </p>
+                  );
+                })}
               </div>
             ) : (
               <div className="rounded-xl border border-border bg-secondary/40 p-6 text-center text-sm text-muted-foreground">

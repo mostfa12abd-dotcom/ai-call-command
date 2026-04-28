@@ -54,7 +54,7 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
 };
 
 const Dashboard = () => {
-  const { calls, kpis, loading, error } = useDashboardData();
+  const { calls, kpis, loading, error, labels } = useDashboardData();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -88,6 +88,7 @@ const Dashboard = () => {
         totalConversation: call.total_conversation || "",
         transcript: [],
       },
+      uiLabels: labels
     };
     setSelected(mapped);
     setOpen(true);
@@ -227,8 +228,8 @@ const Dashboard = () => {
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
                   <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">Time</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Caller</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Company</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{labels.caller_label}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{labels.company_label}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Duration</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Status</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Satisfaction</TableHead>

@@ -65,7 +65,10 @@ export function useDashboardData() {
     totalCallTime: "0h 0m",
   });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [labels, setLabels] = useState<Record<string, string>>({
+    company_label: "Company",
+    caller_label: "Caller"
+  });
 
   useEffect(() => {
     if (!user) return;
@@ -74,12 +77,16 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      // أولاً: نجيب الـ vapi_assistant_id من tenant_settings
+      // أولاً: نجيب الـ vapi_assistant_id والمسميات من tenant_settings
       const { data: tenantData } = await supabase
         .from("tenant_settings")
-        .select("vapi_assistant_id")
+        .select("vapi_assistant_id, ui_labels")
         .eq("id", user.id)
         .single();
+
+      if (tenantData?.ui_labels) {
+        setLabels(tenantData.ui_labels);
+      }
 
       // نحدد الـ tenant_id اللي نبحث فيه
       const tenantId = tenantData?.vapi_assistant_id || user.id;
@@ -106,5 +113,5 @@ export function useDashboardData() {
     fetchData();
   }, [user]);
 
-  return { calls, kpis, loading, error };
+  return { calls, kpis, loading, error, labels };
 }

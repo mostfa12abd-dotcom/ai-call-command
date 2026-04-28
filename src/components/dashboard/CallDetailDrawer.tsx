@@ -24,6 +24,7 @@ export interface DrawerCall {
     transcript?: { speaker: "Agent" | "Caller"; time: string; text: string }[];
     totalConversation?: string;
   };
+  uiLabels?: { company_label: string; caller_label: string };
 }
 
 interface CallDetailDrawerProps {
@@ -119,7 +120,7 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
             <InfoTile icon={Clock} label="Duration" value={call.duration} />
             <InfoTile icon={Calendar} label="When" value={call.date} />
             <InfoTile icon={Phone} label="Phone" value={call.phone || "—"} />
-            <InfoTile icon={Phone} label="Company" value={call.company || "—"} />
+            <InfoTile icon={Phone} label={call.uiLabels?.company_label || "Company"} value={call.company || "—"} />
           </div>
         </div>
 

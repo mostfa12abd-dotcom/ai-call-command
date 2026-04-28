@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDashboardData, type CallRow } from "@/hooks/useDashboardData";
+import { useDashboardData, resolveDataPath, type CallRow } from "@/hooks/useDashboardData";
 import { cn } from "@/lib/utils";
 
 const palette = [
@@ -54,7 +54,7 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
 };
 
 const Dashboard = () => {
-  const { calls, kpis, loading, error, labels } = useDashboardData();
+  const { calls, kpis, loading, error, columns } = useDashboardData();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -88,7 +88,8 @@ const Dashboard = () => {
         totalConversation: call.total_conversation || "",
         transcript: [],
       },
-      uiLabels: labels
+      rawCall: call, // إرسال المكالمة الخام لكي يستخدمها الـ Drawer
+      uiColumns: columns
     };
     setSelected(mapped);
     setOpen(true);
@@ -228,12 +229,11 @@ const Dashboard = () => {
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
                   <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">Time</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{labels.caller_label}</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{labels.company_label}</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Duration</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Status</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Satisfaction</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Two-Word Summary</TableHead>
+                  {columns.map((col) => (
+                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider">
+                      {col.label}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -272,51 +272,79 @@ const Dashboard = () => {
                               {formatTimeOfDay(call.created_at)}
                             </span>
                           </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-9 w-9">
-                                <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
-                                  {initialsOf(call.caller_name || "Unknown")}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="min-w-0">
-                                <p className="truncate text-sm font-semibold text-foreground">
-                                  {call.caller_name || "Unknown"}
-                                </p>
-                              </div>
-                            </div>
-                          </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-foreground">{call.company || "—"}</span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="font-mono text-sm tabular-nums text-foreground">{durationStr}</span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={cn(
-                            "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                            isPickup
-                              ? "bg-success-soft text-success hover:bg-success-soft"
-                              : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]"
-                          )}
-                        >
-                          <span className={cn("mr-1.5 inline-block h-1.5 w-1.5 rounded-full", isPickup ? "bg-success" : "bg-destructive")} />
-                          {call.status || "—"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <span className={cn("inline-flex items-center gap-1.5 text-sm font-medium", sat.tone)}>
-                          <span className="text-base leading-none">{sat.emoji}</span>
-                          {call.satisfaction || "—"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="rounded-md border-border bg-secondary/60 font-medium text-foreground">
-                          {call.two_word_summary || "—"}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
+                          
+                          {columns.map((col) => {
+                            const value = resolveDataPath(call, col.data_path);
+                            
+                            if (col.column_key === "caller_name") {
+                              return (
+                                <TableCell key={col.column_key}>
+                                  <div className="flex items-center gap-3">
+                                    <Avatar className="h-9 w-9">
+                                      <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
+                                        {initialsOf(value)}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="min-w-0">
+                                      <p className="truncate text-sm font-semibold text-foreground">
+                                        {value}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </TableCell>
+                              );
+                            }
+
+                            if (col.column_key === "status") {
+                              const isPickup = value.toLowerCase() === "pickup" || value.toLowerCase() === "pickups";
+                              return (
+                                <TableCell key={col.column_key}>
+                                  <Badge
+                                    className={cn(
+                                      "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
+                                      isPickup
+                                        ? "bg-success-soft text-success hover:bg-success-soft"
+                                        : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]"
+                                    )}
+                                  >
+                                    <span className={cn("mr-1.5 inline-block h-1.5 w-1.5 rounded-full", isPickup ? "bg-success" : "bg-destructive")} />
+                                    {value}
+                                  </Badge>
+                                </TableCell>
+                              );
+                            }
+
+                            if (col.column_key === "satisfaction") {
+                              const satInfo = satisfactionMeta[value] || satisfactionMeta["None"];
+                              return (
+                                <TableCell key={col.column_key}>
+                                  <span className={cn("inline-flex items-center gap-1.5 text-sm font-medium", satInfo.tone)}>
+                                    <span className="text-base leading-none">{satInfo.emoji}</span>
+                                    {value}
+                                  </span>
+                                </TableCell>
+                              );
+                            }
+
+                            if (col.column_key === "two_word_summary") {
+                              return (
+                                <TableCell key={col.column_key}>
+                                  <Badge variant="outline" className="rounded-md border-border bg-secondary/60 font-medium text-foreground">
+                                    {value}
+                                  </Badge>
+                                </TableCell>
+                              );
+                            }
+
+                            return (
+                              <TableCell key={col.column_key}>
+                                <span className={col.column_key === "call_duration" ? "font-mono text-sm tabular-nums text-foreground" : "text-sm text-foreground"}>
+                                  {value}
+                                </span>
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
                       );
                     })}
                   </React.Fragment>

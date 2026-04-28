@@ -2,8 +2,9 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus } from "lucide-react";
+import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { resolveDataPath } from "@/hooks/useDashboardData";
 
 // Generic shape that works with both mock data and real Supabase data
 export interface DrawerCall {
@@ -24,7 +25,8 @@ export interface DrawerCall {
     transcript?: { speaker: "Agent" | "Caller"; time: string; text: string }[];
     totalConversation?: string;
   };
-  uiLabels?: { company_label: string; caller_label: string };
+  rawCall?: any;
+  uiColumns?: { column_key: string; label: string; data_path: string; position: number; visible: boolean }[];
 }
 
 interface CallDetailDrawerProps {
@@ -117,10 +119,15 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
           </div>
 
           <div className="mt-5 grid grid-cols-2 gap-3">
-            <InfoTile icon={Clock} label="Duration" value={call.duration} />
             <InfoTile icon={Calendar} label="When" value={call.date} />
-            <InfoTile icon={Phone} label="Phone" value={call.phone || "—"} />
-            <InfoTile icon={Phone} label={call.uiLabels?.company_label || "Company"} value={call.company || "—"} />
+            {call.uiColumns?.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").map((col) => (
+              <InfoTile 
+                key={col.column_key}
+                icon={col.column_key === "call_duration" ? Clock : FileText} 
+                label={col.label} 
+                value={call.rawCall ? resolveDataPath(call.rawCall, col.data_path) : "—"} 
+              />
+            ))}
           </div>
         </div>
 

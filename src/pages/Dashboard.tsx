@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Phone,
   Clock,
@@ -99,6 +99,50 @@ const Dashboard = () => {
       c.company?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // تجميع المكالمات حسب التاريخ (يوم/شهر/سنة)
+  const formatDateLabel = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const sameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    if (sameDay(d, today)) return "اليوم";
+    if (sameDay(d, yesterday)) return "أمس";
+    return d.toLocaleDateString("ar-EG", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatTimeOfDay = (dateStr: string) => {
+    const d = new Date(dateStr);
+    let h = d.getHours();
+    const m = d.getMinutes().toString().padStart(2, "0");
+    const period = h >= 12 ? "مساءً" : "صباحًا";
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${h}:${m} ${period}`;
+  };
+
+  const grouped: { dateKey: string; label: string; items: CallRow[] }[] = [];
+  filtered.forEach((c) => {
+    const d = new Date(c.created_at);
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    let group = grouped.find((g) => g.dateKey === key);
+    if (!group) {
+      group = { dateKey: key, label: formatDateLabel(c.created_at), items: [] };
+      grouped.push(group);
+    }
+    group.items.push(c);
+  });
+
   return (
     <DashboardLayout
       title="AI Voice Call Center"
@@ -182,6 +226,7 @@ const Dashboard = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
+                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">Time</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Caller</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Company</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Duration</TableHead>
@@ -191,36 +236,55 @@ const Dashboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((call, i) => {
-                  const sat = satisfactionMeta[call.satisfaction] || satisfactionMeta["None"];
-                  const isPickup = call.status?.toLowerCase() === "pickup";
-                  const durationStr = call.call_duration
-                    ? `${Math.floor(call.call_duration / 60).toString().padStart(2, "0")}:${(call.call_duration % 60).toString().padStart(2, "0")}`
-                    : "00:00";
-
-                  return (
-                    <TableRow
-                      key={call.id}
-                      onClick={() => handleRowClick(call)}
-                      className="cursor-pointer border-border/60 transition-colors hover:bg-[hsl(var(--primary-soft))]/40"
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
-                              {initialsOf(call.caller_name || "Unknown")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-foreground">
-                              {call.caller_name || "Unknown"}
-                            </p>
-                            <p className="truncate text-xs text-muted-foreground">
-                              {new Date(call.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
+                {grouped.map((group, gIdx) => (
+                  <React.Fragment key={group.dateKey}>
+                    <tr className="bg-background hover:bg-background">
+                      <td colSpan={7} className="border-0 p-0">
+                        <div
+                          className={cn(
+                            "flex items-center px-5",
+                            gIdx === 0 ? "pb-3 pt-4" : "pb-3 pt-6"
+                          )}
+                        >
+                          <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/60">
+                            {group.label}
+                          </span>
                         </div>
-                      </TableCell>
+                      </td>
+                    </tr>
+
+                    {group.items.map((call, i) => {
+                      const sat = satisfactionMeta[call.satisfaction] || satisfactionMeta["None"];
+                      const isPickup = call.status?.toLowerCase() === "pickup";
+                      const durationStr = call.call_duration
+                        ? `${Math.floor(call.call_duration / 60).toString().padStart(2, "0")}:${(call.call_duration % 60).toString().padStart(2, "0")}`
+                        : "00:00";
+
+                      return (
+                        <TableRow
+                          key={call.id}
+                          onClick={() => handleRowClick(call)}
+                          className="cursor-pointer border-border/60 bg-card transition-colors hover:bg-[hsl(var(--primary-soft))]/40"
+                        >
+                          <TableCell>
+                            <span className="font-mono text-xs font-medium tabular-nums text-muted-foreground">
+                              {formatTimeOfDay(call.created_at)}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-9 w-9">
+                                <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
+                                  {initialsOf(call.caller_name || "Unknown")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold text-foreground">
+                                  {call.caller_name || "Unknown"}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
                       <TableCell>
                         <span className="text-sm text-foreground">{call.company || "—"}</span>
                       </TableCell>
@@ -252,8 +316,10 @@ const Dashboard = () => {
                         </Badge>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
               </TableBody>
             </Table>
           </div>

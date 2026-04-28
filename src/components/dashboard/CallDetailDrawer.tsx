@@ -138,26 +138,26 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
                     key={i}
                     className={cn(
                       "flex gap-2",
-                      line.speaker === "Agent" ? "flex-row" : "flex-row-reverse"
+                      line.speaker === "Agent" ? "flex-row-reverse" : "flex-row"
                     )}
                   >
                     <div
                       className={cn(
                         "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
                         line.speaker === "Agent"
-                          ? "rounded-tl-sm bg-card text-foreground"
-                          : "rounded-tr-sm bg-primary text-primary-foreground"
+                          ? "rounded-tr-sm bg-primary text-primary-foreground"
+                          : "rounded-tl-sm bg-card text-foreground"
                       )}
                     >
                       <div
                         className={cn(
                           "mb-0.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider",
                           line.speaker === "Agent"
-                            ? "text-muted-foreground"
-                            : "text-primary-foreground/80"
+                            ? "flex-row-reverse text-primary-foreground/80"
+                            : "text-muted-foreground"
                         )}
                       >
-                        <span>{line.speaker}</span>
+                        <span>{line.speaker === "Agent" ? "AI Assistant" : "Customer"}</span>
                         <span>·</span>
                         <span>{line.time}</span>
                       </div>

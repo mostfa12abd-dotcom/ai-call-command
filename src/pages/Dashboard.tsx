@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDashboardData, resolveDataPath, type CallRow } from "@/hooks/useDashboardData";
+import { useDashboardData, resolveDataPath, type CallRow, type TenantCustomAction } from "@/hooks/useDashboardData";
 import { cn } from "@/lib/utils";
 
 const palette = [
@@ -54,7 +54,7 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
 };
 
 const Dashboard = () => {
-  const { calls, kpis, loading, error, columns } = useDashboardData();
+  const { calls, kpis, loading, error, columns, customActions, featureFlags } = useDashboardData();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -355,7 +355,7 @@ const Dashboard = () => {
         )}
       </section>
 
-      <CallDetailDrawer call={selected} open={open} onOpenChange={setOpen} />
+      <CallDetailDrawer call={selected} open={open} onOpenChange={setOpen} customActions={customActions} />
     </DashboardLayout>
   );
 };

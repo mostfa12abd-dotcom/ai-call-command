@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { resolveDataPath } from "@/hooks/useDashboardData";
+import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
+import { useState } from "react";
 
 // Generic shape that works with both mock data and real Supabase data
 export interface DrawerCall {
@@ -33,6 +34,7 @@ interface CallDetailDrawerProps {
   call: DrawerCall | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  customActions?: TenantCustomAction[];
 }
 
 const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
@@ -62,7 +64,9 @@ function parseRawConversation(raw: string) {
   return result.length > 0 ? result : [{ speaker: "User", text: raw, time: "" }];
 }
 
-export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerProps) {
+export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] }: CallDetailDrawerProps) {
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
+
   if (!call) return null;
 
   const sat = satisfactionMeta[call.customFields.satisfaction] ?? satisfactionMeta["None"];
@@ -75,6 +79,33 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
     call.customFields.transcript && call.customFields.transcript.length > 0;
   const rawConversation =
     call.customFields.totalConversation || "";
+
+  const handleCustomAction = async (action: TenantCustomAction) => {
+    try {
+      setLoadingAction(action.action_id);
+      const payload = {
+        tenant_id: call.rawCall?.tenant_id,
+        call_id: call.id,
+        phone: call.phone,
+        caller: call.caller.name,
+        company: call.company,
+        raw_call_data: call.rawCall
+      };
+
+      await fetch(action.webhook_url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      alert(`Action "${action.label}" triggered successfully!`);
+    } catch (err) {
+      alert("Failed to trigger action.");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const drawerActions = customActions.filter(a => a.page_location === 'call_drawer');
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -202,13 +233,23 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
           </section>
 
           {/* Footer actions */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-2">
             <Button variant="outline" className="flex-1">
               <CheckCircle2 className="h-4 w-4" /> Mark as Reviewed
             </Button>
             <Button className="flex-1 bg-gradient-primary text-primary-foreground hover:opacity-90">
               <CalendarPlus className="h-4 w-4" /> Schedule Follow-up
             </Button>
+            {drawerActions.map(action => (
+              <Button 
+                key={action.action_id}
+                onClick={() => handleCustomAction(action)}
+                disabled={loadingAction === action.action_id}
+                className={cn("flex-1", action.color_class || "bg-secondary text-foreground")}
+              >
+                {loadingAction === action.action_id ? "..." : action.label}
+              </Button>
+            ))}
           </div>
         </div>
       </SheetContent>

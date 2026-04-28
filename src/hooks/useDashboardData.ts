@@ -24,6 +24,15 @@ export interface TenantColumn {
   position: number;
 }
 
+export interface TenantCustomAction {
+  action_id: string;
+  label: string;
+  webhook_url: string;
+  page_location: string;
+  icon?: string;
+  color_class?: string;
+}
+
 export interface KpiData {
   totalCalls: number;
   avgDuration: string;
@@ -99,6 +108,8 @@ export function useDashboardData() {
     totalCallTime: "0h 0m",
   });
   const [columns, setColumns] = useState<TenantColumn[]>(DEFAULT_COLUMNS);
+  const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({});
+  const [customActions, setCustomActions] = useState<TenantCustomAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -109,12 +120,16 @@ export function useDashboardData() {
       setLoading(true);
       setError(null);
 
-      // 1) جيب إعدادات العميل (assistant_id + أعمدة مخصصة)
+      // 1) جيب إعدادات العميل (assistant_id + أعمدة مخصصة + ميزات)
       const { data: tenantData } = await supabase
         .from("tenant_settings")
-        .select("vapi_assistant_id")
+        .select("vapi_assistant_id, feature_flags")
         .eq("id", user.id)
         .single();
+        
+      if (tenantData?.feature_flags) {
+        setFeatureFlags(tenantData.feature_flags);
+      }
 
       const { data: colData } = await supabase
         .from("tenant_columns")
@@ -125,6 +140,15 @@ export function useDashboardData() {
 
       if (colData && colData.length > 0) {
         setColumns(colData as TenantColumn[]);
+      }
+
+      const { data: actionsData } = await supabase
+        .from("tenant_custom_actions")
+        .select("*")
+        .eq("tenant_id", user.id);
+
+      if (actionsData && actionsData.length > 0) {
+        setCustomActions(actionsData as TenantCustomAction[]);
       }
 
       // 2) جيب المكالمات
@@ -150,5 +174,5 @@ export function useDashboardData() {
     fetchData();
   }, [user]);
 
-  return { calls, kpis, columns, loading, error };
+  return { calls, kpis, columns, featureFlags, customActions, loading, error };
 }

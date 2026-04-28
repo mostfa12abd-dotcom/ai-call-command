@@ -236,36 +236,55 @@ const Dashboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((call, i) => {
-                  const sat = satisfactionMeta[call.satisfaction] || satisfactionMeta["None"];
-                  const isPickup = call.status?.toLowerCase() === "pickup";
-                  const durationStr = call.call_duration
-                    ? `${Math.floor(call.call_duration / 60).toString().padStart(2, "0")}:${(call.call_duration % 60).toString().padStart(2, "0")}`
-                    : "00:00";
-
-                  return (
-                    <TableRow
-                      key={call.id}
-                      onClick={() => handleRowClick(call)}
-                      className="cursor-pointer border-border/60 transition-colors hover:bg-[hsl(var(--primary-soft))]/40"
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
-                              {initialsOf(call.caller_name || "Unknown")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-foreground">
-                              {call.caller_name || "Unknown"}
-                            </p>
-                            <p className="truncate text-xs text-muted-foreground">
-                              {new Date(call.created_at).toLocaleDateString()}
-                            </p>
-                          </div>
+                {grouped.map((group, gIdx) => (
+                  <React.Fragment key={group.dateKey}>
+                    <tr className="bg-background hover:bg-background">
+                      <td colSpan={7} className="border-0 p-0">
+                        <div
+                          className={cn(
+                            "flex items-center px-5",
+                            gIdx === 0 ? "pb-3 pt-4" : "pb-3 pt-6"
+                          )}
+                        >
+                          <span className="rounded-full bg-card px-3 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border/60">
+                            {group.label}
+                          </span>
                         </div>
-                      </TableCell>
+                      </td>
+                    </tr>
+
+                    {group.items.map((call, i) => {
+                      const sat = satisfactionMeta[call.satisfaction] || satisfactionMeta["None"];
+                      const isPickup = call.status?.toLowerCase() === "pickup";
+                      const durationStr = call.call_duration
+                        ? `${Math.floor(call.call_duration / 60).toString().padStart(2, "0")}:${(call.call_duration % 60).toString().padStart(2, "0")}`
+                        : "00:00";
+
+                      return (
+                        <TableRow
+                          key={call.id}
+                          onClick={() => handleRowClick(call)}
+                          className="cursor-pointer border-border/60 bg-card transition-colors hover:bg-[hsl(var(--primary-soft))]/40"
+                        >
+                          <TableCell>
+                            <span className="font-mono text-xs font-medium tabular-nums text-muted-foreground">
+                              {formatTimeOfDay(call.created_at)}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <Avatar className="h-9 w-9">
+                                <AvatarFallback className={cn("text-xs font-semibold", palette[i % palette.length])}>
+                                  {initialsOf(call.caller_name || "Unknown")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-semibold text-foreground">
+                                  {call.caller_name || "Unknown"}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
                       <TableCell>
                         <span className="text-sm text-foreground">{call.company || "—"}</span>
                       </TableCell>

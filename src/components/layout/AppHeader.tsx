@@ -1,4 +1,4 @@
-import { Bell, Search, ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";

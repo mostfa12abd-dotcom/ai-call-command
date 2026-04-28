@@ -81,11 +81,6 @@ export function AppSidebar() {
                       {!collapsed && (
                         <>
                           <span className="flex-1 truncate">{item.title}</span>
-                          {item.highlight && (
-                            <span className="rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-primary-foreground">
-                              Live
-                            </span>
-                          )}
                         </>
                       )}
                     </NavLink>

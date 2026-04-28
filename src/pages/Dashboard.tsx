@@ -316,8 +316,10 @@ const Dashboard = () => {
                         </Badge>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
               </TableBody>
             </Table>
           </div>

@@ -6,7 +6,7 @@ export interface CallRow {
   id: string;
   caller_name: string;
   company: string;
-  call_duration: number; // seconds
+  call_duration: number;
   status: string;
   satisfaction: string;
   two_word_summary: string;
@@ -65,9 +65,10 @@ export function useDashboardData() {
     totalCallTime: "0h 0m",
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [labels, setLabels] = useState<Record<string, string>>({
     company_label: "Company",
-    caller_label: "Caller"
+    caller_label: "Caller",
   });
 
   useEffect(() => {
@@ -88,10 +89,8 @@ export function useDashboardData() {
         setLabels(tenantData.ui_labels);
       }
 
-      // نحدد الـ tenant_id اللي نبحث فيه
       const tenantId = tenantData?.vapi_assistant_id || user.id;
 
-      // نجيب المكالمات بناءً على الـ tenant_id
       const { data, error: fetchError } = await supabase
         .from("calls")
         .select("*")

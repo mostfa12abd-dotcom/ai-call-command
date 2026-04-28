@@ -1,4 +1,4 @@
-import { Bell, Search, ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
@@ -45,14 +45,6 @@ export function AppHeader({ title, breadcrumb }: AppHeaderProps) {
 
         <div className="ml-auto flex items-center gap-2 md:gap-3">
           <ModeToggle />
-          <button
-            type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            aria-label="Notifications"
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-background" />
-          </button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">

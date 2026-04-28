@@ -226,6 +226,7 @@ const Dashboard = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
+                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">Time</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Caller</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Company</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Duration</TableHead>

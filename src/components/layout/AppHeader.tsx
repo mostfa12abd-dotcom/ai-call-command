@@ -44,13 +44,6 @@ export function AppHeader({ title, breadcrumb }: AppHeaderProps) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:gap-3">
-          <div className="relative hidden md:block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search calls, customers…"
-              className="h-9 w-64 rounded-lg border-border bg-secondary/60 pl-9 text-sm shadow-none focus-visible:bg-background"
-            />
-          </div>
           <ModeToggle />
           <button
             type="button"

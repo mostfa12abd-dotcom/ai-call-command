@@ -2,12 +2,32 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CallRecord } from "@/data/mockData";
-import { Calendar, Clock, Mail, Phone, CheckCircle2, CalendarPlus } from "lucide-react";
+import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Generic shape that works with both mock data and real Supabase data
+export interface DrawerCall {
+  id: string;
+  caller: { name: string; initials: string; avatarColor: string };
+  company: string;
+  phone: string;
+  email?: string;
+  duration: string;
+  durationSeconds: number;
+  status: string;
+  date: string;
+  customFields: {
+    satisfaction: string;
+    summary: string;
+    longSummary: string;
+    // Can be either a pre-built transcript array OR a raw conversation string
+    transcript?: { speaker: "Agent" | "Caller"; time: string; text: string }[];
+    totalConversation?: string;
+  };
+}
+
 interface CallDetailDrawerProps {
-  call: CallRecord | null;
+  call: DrawerCall | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -16,11 +36,25 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
   Happy: { emoji: "😊", tone: "bg-success-soft text-success" },
   Neutral: { emoji: "😐", tone: "bg-warning-soft text-warning" },
   Angry: { emoji: "😠", tone: "bg-[hsl(var(--destructive-soft))] text-destructive" },
+  High: { emoji: "😊", tone: "bg-success-soft text-success" },
+  Medium: { emoji: "😐", tone: "bg-warning-soft text-warning" },
+  Low: { emoji: "😠", tone: "bg-[hsl(var(--destructive-soft))] text-destructive" },
+  None: { emoji: "—", tone: "bg-secondary text-muted-foreground" },
 };
 
 export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerProps) {
   if (!call) return null;
-  const sat = satisfactionMeta[call.customFields.satisfaction];
+
+  const sat = satisfactionMeta[call.customFields.satisfaction] ?? satisfactionMeta["None"];
+  const isPickup = call.status === "Pickups" || call.status === "Pickup";
+
+  // Build transcript display:
+  // 1) If there's a structured transcript array, use it
+  // 2) If there's a raw totalConversation string, display it as plain text
+  const hasStructuredTranscript =
+    call.customFields.transcript && call.customFields.transcript.length > 0;
+  const rawConversation =
+    call.customFields.totalConversation || "";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -31,7 +65,7 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
         {/* Header */}
         <div className="border-b border-border bg-gradient-to-br from-[hsl(var(--primary-soft))] to-card px-6 pb-5 pt-6">
           <div className="flex items-start gap-4">
-            <Avatar className={cn("h-14 w-14 ring-4 ring-background")}>
+            <Avatar className="h-14 w-14 ring-4 ring-background">
               <AvatarFallback className={cn("text-base font-semibold", call.caller.avatarColor)}>
                 {call.caller.initials}
               </AvatarFallback>
@@ -45,9 +79,9 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
                 <Badge
                   className={cn(
                     "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                    call.status === "Pickups"
+                    isPickup
                       ? "bg-success-soft text-success hover:bg-success-soft"
-                      : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]",
+                      : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]"
                   )}
                 >
                   {call.status}
@@ -55,7 +89,7 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
                 <Badge
                   className={cn(
                     "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                    sat.tone,
+                    sat.tone
                   )}
                 >
                   {sat.emoji} {call.customFields.satisfaction}
@@ -67,8 +101,8 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
           <div className="mt-5 grid grid-cols-2 gap-3">
             <InfoTile icon={Clock} label="Duration" value={call.duration} />
             <InfoTile icon={Calendar} label="When" value={call.date} />
-            <InfoTile icon={Phone} label="Phone" value={call.phone} />
-            <InfoTile icon={Mail} label="Email" value={call.email} />
+            <InfoTile icon={Phone} label="Phone" value={call.phone || "—"} />
+            <InfoTile icon={Phone} label="Company" value={call.company || "—"} />
           </div>
         </div>
 
@@ -79,52 +113,71 @@ export function CallDetailDrawer({ call, open, onOpenChange }: CallDetailDrawerP
               <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Summary
               </h3>
-              <Badge variant="outline" className="text-[10px]">
-                {call.customFields.summary}
-              </Badge>
+              {call.customFields.summary && call.customFields.summary !== "—" && (
+                <Badge variant="outline" className="text-[10px]">
+                  {call.customFields.summary}
+                </Badge>
+              )}
             </div>
             <p className="text-sm leading-relaxed text-foreground/90">
-              {call.customFields.longSummary}
+              {call.customFields.longSummary || "No summary available for this call."}
             </p>
           </section>
 
-          {/* Transcript */}
+          {/* Transcript / Conversation */}
           <section>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Total Conversation
             </h3>
-            <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
-              {call.customFields.transcript.map((line, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "flex gap-2",
-                    line.speaker === "Agent" ? "flex-row" : "flex-row-reverse",
-                  )}
-                >
+
+            {hasStructuredTranscript ? (
+              // Structured transcript (bubble style)
+              <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
+                {call.customFields.transcript!.map((line, i) => (
                   <div
+                    key={i}
                     className={cn(
-                      "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
-                      line.speaker === "Agent"
-                        ? "rounded-tl-sm bg-card text-foreground"
-                        : "rounded-tr-sm bg-primary text-primary-foreground",
+                      "flex gap-2",
+                      line.speaker === "Agent" ? "flex-row" : "flex-row-reverse"
                     )}
                   >
                     <div
                       className={cn(
-                        "mb-0.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider",
-                        line.speaker === "Agent" ? "text-muted-foreground" : "text-primary-foreground/80",
+                        "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm shadow-sm",
+                        line.speaker === "Agent"
+                          ? "rounded-tl-sm bg-card text-foreground"
+                          : "rounded-tr-sm bg-primary text-primary-foreground"
                       )}
                     >
-                      <span>{line.speaker}</span>
-                      <span>·</span>
-                      <span>{line.time}</span>
+                      <div
+                        className={cn(
+                          "mb-0.5 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider",
+                          line.speaker === "Agent"
+                            ? "text-muted-foreground"
+                            : "text-primary-foreground/80"
+                        )}
+                      >
+                        <span>{line.speaker}</span>
+                        <span>·</span>
+                        <span>{line.time}</span>
+                      </div>
+                      <p className="leading-snug">{line.text}</p>
                     </div>
-                    <p className="leading-snug">{line.text}</p>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : rawConversation ? (
+              // Raw text conversation from Supabase
+              <div className="rounded-xl border border-border bg-secondary/40 p-4">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                  {rawConversation}
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-secondary/40 p-6 text-center text-sm text-muted-foreground">
+                No conversation transcript available for this call.
+              </div>
+            )}
           </section>
 
           {/* Footer actions */}

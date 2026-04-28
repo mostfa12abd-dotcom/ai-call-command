@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=woqufuhlntwfohbpjnru",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer sbp_00856f27eb481a04c42401e3f5d7d31176c782d1"
+      }
+    },
+    "vapi": {
+      "type": "local",
+      "command": ["npx", "-y", "@vapi-ai/mcp-server"],
+      "enabled": true,
+      "environment": {
+        "VAPI_TOKEN": "819d90c7-5855-47d5-b3f7-564371208f76"
+      }
+    }
+  }
+}

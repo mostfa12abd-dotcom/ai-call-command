@@ -1,33 +1,53 @@
 import { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      toast({ title: "Missing fields", description: "Please enter your email and password." });
+      toast({ title: "Missing fields", description: "Please enter your email and password.", variant: "destructive" });
       return;
     }
     setLoading(true);
-    // UI-only: simulate auth then route to dashboard
-    setTimeout(() => {
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast({ title: "Account created", description: "Welcome to Voxa AI!" });
+        navigate("/dashboard");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast({ title: "Welcome back", description: "Signed in successfully." });
+        navigate("/dashboard");
+      }
+    } catch (error: any) {
+      toast({ title: "Authentication error", description: error.message, variant: "destructive" });
+    } finally {
       setLoading(false);
-      toast({ title: "Welcome back", description: "Signed in successfully." });
-      navigate("/dashboard");
-    }, 700);
+    }
   };
 
   return (
@@ -44,9 +64,9 @@ export default function Login() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{isSignUp ? "Create an account" : "Welcome back"}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Sign in to your AI Call Center dashboard
+              {isSignUp ? "Sign up to start using your AI Call Center dashboard" : "Sign in to your AI Call Center dashboard"}
             </p>
           </div>
 
@@ -110,10 +130,10 @@ export default function Login() {
             <Button type="submit" className="h-11 w-full" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Signing in...
+                  <Loader2 className="h-4 w-4 animate-spin" /> {isSignUp ? "Creating account..." : "Signing in..."}
                 </>
               ) : (
-                "Sign in"
+                isSignUp ? "Sign up" : "Sign in"
               )}
             </Button>
 
@@ -145,10 +165,14 @@ export default function Login() {
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/signup" className="font-medium text-primary hover:underline">
-              Create one
-            </Link>
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="font-medium text-primary hover:underline"
+            >
+              {isSignUp ? "Sign in" : "Create one"}
+            </button>
           </p>
         </div>
       </div>

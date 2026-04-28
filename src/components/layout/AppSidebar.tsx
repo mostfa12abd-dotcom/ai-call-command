@@ -33,23 +33,6 @@ import {
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, exact: true },
   { title: "Customer", url: "/customers", icon: Users },
-  { title: "Project", url: "/project", icon: FolderKanban },
-  { title: "Task", url: "/task", icon: CheckSquare },
-  { title: "Leads", url: "/leads", icon: Target },
-  { title: "Sales", url: "/sales", icon: TrendingUp },
-  { title: "POS", url: "/pos", icon: ShoppingCart },
-  { title: "Automation", url: "/automation", icon: Workflow },
-  { title: "AI Studio", url: "/ai-studio", icon: Sparkles },
-  { title: "AI Voice Call Center", url: "/dashboard", icon: PhoneCall, highlight: true },
-];
-
-const supportItems = [
-  { title: "Proposals", url: "/proposals", icon: FileText },
-  { title: "Contact", url: "/contact", icon: Contact },
-  { title: "Support", url: "/support", icon: LifeBuoy },
-  { title: "Team", url: "/team", icon: UsersRound },
-  { title: "Report", url: "/report", icon: BarChart3 },
-  { title: "Setting", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
@@ -113,27 +96,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-4">
-          {!collapsed && (
-            <SidebarGroupLabel className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              General
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {supportItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild className="h-auto p-0 hover:bg-transparent">
-                    <NavLink to={item.url} className={linkClass} activeClassName={activeClass}>
-                      <item.icon className="h-[18px] w-[18px] shrink-0" />
-                      {!collapsed && <span className="flex-1 truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+
       </SidebarContent>
     </Sidebar>
   );

@@ -47,9 +47,9 @@ export function AppHeader({ title, breadcrumb }: AppHeaderProps) {
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <Avatar className="h-9 w-9 ring-2 ring-background cursor-pointer transition-opacity hover:opacity-80">
-                  <AvatarFallback className="bg-gradient-primary text-xs font-semibold text-primary-foreground">
+              <button className="rounded-lg outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <Avatar className="h-9 w-9 rounded-lg border border-border cursor-pointer transition-opacity hover:opacity-80">
+                  <AvatarFallback className="rounded-lg bg-gradient-primary text-xs font-semibold text-primary-foreground">
                     {user?.email?.substring(0, 2).toUpperCase() || "US"}
                   </AvatarFallback>
                 </Avatar>

@@ -80,7 +80,14 @@ const Dashboard = () => {
         : "00:00",
       durationSeconds: call.call_duration || 0,
       status: call.status === "Pickup" ? "Pickups" : call.status,
-      date: new Date(call.created_at).toLocaleString(),
+      date: new Date(call.created_at).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }),
       customFields: {
         satisfaction: call.satisfaction || "None",
         summary: call.two_word_summary || "—",

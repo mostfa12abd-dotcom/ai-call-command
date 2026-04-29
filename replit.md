@@ -28,6 +28,6 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 
 ## Artifacts
 
-- `artifacts/voxa` — Voxa AI call center dashboard (React + Vite + Tailwind v3 + shadcn). Ported from a Lovable.dev project. Auth and data are currently a local mock backed by an in-memory store (`artifacts/voxa/src/lib/supabase.ts` + `src/data/mockData.ts`) so the original Supabase call sites in `contexts/AuthContext.tsx`, `hooks/useDashboardData.ts`, `hooks/useCustomersData.ts`, and `pages/CustomerDetail.tsx` keep working unchanged. Any email/password signs in. Routes: `/login`, `/dashboard`, `/customers`, `/customers/:id`, `/settings`. Mounted at `/`.
+- `artifacts/voxa` — Voxa AI call center dashboard (React + Vite + Tailwind v3 + shadcn). Ported from a Lovable.dev project. **Auth and data are wired to the real Supabase project** via `@supabase/supabase-js` — see `artifacts/voxa/src/lib/supabase.ts`. Required env vars: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. The hooks (`useDashboardData`, `useCustomersData`) and `pages/CustomerDetail.tsx` query the `calls`, `customers`, `tenant_settings`, `tenant_columns`, and `tenant_custom_actions` tables filtered by `tenant_id = auth.uid()`. Built-in i18n layer (English/Arabic) lives in `src/i18n/translations.ts` with the `useLanguage()` hook providing `t()`. Routes: `/login`, `/dashboard`, `/customers`, `/customers/:id`, `/settings`. Mounted at `/`.
 - `artifacts/api-server` — shared Express API scaffold (currently only `/api/healthz`).
 - `artifacts/mockup-sandbox` — design/mockup sandbox.

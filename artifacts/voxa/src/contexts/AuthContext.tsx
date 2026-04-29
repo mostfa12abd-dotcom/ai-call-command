@@ -1,17 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 
-// Local types (originally from @supabase/supabase-js).
-export interface User {
-  id: string;
-  email: string;
-  // @ts-ignore - allow extra fields used elsewhere in the codebase
-  [key: string]: any;
-}
-export interface Session {
-  user: User;
-  access_token: string;
-}
+export type { Session, User };
 
 interface AuthContextType {
   user: User | null;
@@ -29,16 +20,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session as any);
-      setUser((session?.user as any) ?? null);
+      setSession(session);
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session as any);
-      setUser((session?.user as any) ?? null);
+      setSession(session);
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 

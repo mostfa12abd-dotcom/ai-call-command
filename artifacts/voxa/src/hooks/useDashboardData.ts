@@ -92,11 +92,11 @@ export function resolveDataPath(row: CallRow, path: string): string {
 
 // الأعمدة الافتراضية إذا لم يكن للعميل إعدادات خاصة
 const DEFAULT_COLUMNS: TenantColumn[] = [
-  { column_key: "caller_name",      label: "Caller",       data_path: "caller_name",      visible: true, position: 1 },
-  { column_key: "call_duration",    label: "Duration",     data_path: "call_duration",    visible: true, position: 2 },
-  { column_key: "status",           label: "Status",       data_path: "status",           visible: true, position: 3 },
-  { column_key: "satisfaction",     label: "Satisfaction", data_path: "satisfaction",     visible: true, position: 4 },
-  { column_key: "two_word_summary", label: "Summary",      data_path: "two_word_summary", visible: true, position: 5 },
+  { column_key: "caller_name",      label: "Name",          data_path: "caller_name",      visible: true, position: 1 },
+  { column_key: "call_duration",    label: "Duration",      data_path: "call_duration",    visible: true, position: 2 },
+  { column_key: "credits",          label: "Credits",       data_path: "custom_data.cost", visible: true, position: 3 },
+  { column_key: "status",           label: "Status",        data_path: "status",           visible: true, position: 4 },
+  { column_key: "two_word_summary", label: "Summary",       data_path: "two_word_summary", visible: true, position: 5 },
 ];
 
 export function useDashboardData() {

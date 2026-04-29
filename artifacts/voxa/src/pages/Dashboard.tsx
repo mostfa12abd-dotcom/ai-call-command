@@ -303,6 +303,10 @@ const Dashboard = () => {
                                       <p className="truncate text-sm font-semibold text-foreground">
                                         {value}
                                       </p>
+                                      <div className="flex flex-col text-[10px] leading-tight text-muted-foreground">
+                                        <span>{call.custom_data?.customer?.number || call.custom_data?.phone || "—"}</span>
+                                        <span>{call.custom_data?.customer?.email || call.custom_data?.email || "—"}</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </TableCell>

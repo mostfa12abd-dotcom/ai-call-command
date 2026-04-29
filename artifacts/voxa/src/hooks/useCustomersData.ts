@@ -40,7 +40,7 @@ export function useCustomersData() {
       // 2) Get unique customers from calls using assistantId
       const { data: callsData, error: callsErr } = await supabase
         .from("calls")
-        .select("caller_name, created_at, company, custom_data")
+        .select("id, caller_name, created_at, company, custom_data")
         .eq("tenant_id", assistantId)
         .order("created_at", { ascending: false });
 

@@ -67,6 +67,7 @@ function parseRawConversation(raw: string) {
 }
 
 export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] }: CallDetailDrawerProps) {
+  const { t, dir } = useLanguage();
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioTime, setAudioTime] = useState(0);
@@ -168,7 +169,21 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
   };
 
   const drawerActions = customActions.filter(a => a.page_location === 'call_drawer');
-  const { dir } = useLanguage();
+
+  // Derive endedReason from rawCall
+  const rawEndedReason = call.rawCall?.ended_reason || call.rawCall?.custom_data?.endedReason || call.rawCall?.custom_data?.call?.endedReason;
+  
+  let endedByInfo = null;
+  if (rawEndedReason) {
+    const normalized = rawEndedReason.toLowerCase();
+    if (normalized === 'assistant-hung-up') {
+      endedByInfo = { who: t("call.endedBy.ai" as any), completed: true, label: t("call.status.completed" as any), color: "text-success bg-success-soft" };
+    } else if (normalized === 'customer-hung-up') {
+      endedByInfo = { who: t("call.endedBy.customer" as any), completed: false, label: t("call.status.customerEnded" as any), color: "text-warning bg-warning-soft" };
+    } else {
+      endedByInfo = { who: t("call.endedBy.system" as any), completed: false, label: t("call.status.incomplete" as any), color: "text-destructive bg-[hsl(var(--destructive-soft))]" };
+    }
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -209,6 +224,19 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                   {sat.emoji} {call.customFields.satisfaction}
                 </Badge>
               </div>
+              
+              {endedByInfo && (
+                <div className="mt-3 flex items-center gap-2 text-xs font-medium">
+                  <span className="text-muted-foreground">{t("call.endedBy" as any)}:</span>
+                  <Badge variant="outline" className="rounded-full px-2 py-0">
+                    {endedByInfo.who}
+                  </Badge>
+                  <span className="text-muted-foreground ml-1">{t("call.completionStatus" as any)}:</span>
+                  <Badge className={cn("rounded-full border-transparent px-2 py-0 text-[10px]", endedByInfo.color)}>
+                    {endedByInfo.label}
+                  </Badge>
+                </div>
+              )}
             </div>
           </div>
 

@@ -197,7 +197,7 @@ const CustomerDetail = () => {
                   {/* Detailed Summary */}
                   <div>
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                      📝 {t("dashboard.drawer.summary")}
+                      📝 {t("dashboard.drawer.summary" as any) || "Summary"}
                     </h4>
                     <p className="text-sm text-muted-foreground leading-relaxed bg-secondary/20 p-4 rounded-xl border border-border/40">
                       {call.detailed_summary || "No detailed summary available."}
@@ -208,7 +208,7 @@ const CustomerDetail = () => {
                   {call.recording_url && (
                     <div>
                       <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                        🎙️ {t("dashboard.drawer.recording")}
+                        🎙️ {t("dashboard.drawer.recording" as any) || "Recording"}
                       </h4>
                       <audio controls className="w-full h-10 rounded-lg">
                         <source src={call.recording_url} type="audio/mpeg" />
@@ -221,11 +221,11 @@ const CustomerDetail = () => {
                   {call.total_conversation && (
                     <div>
                       <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
-                        💬 {t("dashboard.drawer.transcript")}
+                        💬 Transcript
                       </h4>
                       <div className="max-h-[300px] overflow-y-auto rounded-xl border border-border/40 bg-secondary/10 p-4">
                         <div className="space-y-4">
-                          {call.total_conversation.split('\n').filter(line => line.trim()).map((line, idx) => {
+                          {call.total_conversation.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => {
                             const isAI = line.startsWith('AI:');
                             return (
                               <div key={idx} className={cn("flex flex-col", isAI ? "items-start" : "items-end")}>

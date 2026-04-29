@@ -90,6 +90,17 @@ export const translations = {
   "customer.empty": { en: "No calls found for this customer.", ar: "لا توجد مكالمات لهذا العميل." },
   "customer.callDefault": { en: "Call", ar: "مكالمة" },
 
+  // Call Details
+  "call.endedBy": { en: "Ended by", ar: "أُغلقت بواسطة" },
+  "call.endedBy.ai": { en: "AI Assistant", ar: "الذكاء الاصطناعي" },
+  "call.endedBy.customer": { en: "Customer", ar: "العميل" },
+  "call.endedBy.system": { en: "System / Timeout", ar: "النظام / انقطاع" },
+  "call.completionStatus": { en: "Completion Status", ar: "حالة المكالمة" },
+  "call.status.completed": { en: "Completed", ar: "مكتملة" },
+  "call.status.customerEnded": { en: "Customer Hung Up", ar: "أغلق العميل الخط" },
+  "call.status.incomplete": { en: "Incomplete / Disconnected", ar: "غير مكتملة / فصلت" },
+
+
   // Settings
   "settings.title": { en: "Settings", ar: "الإعدادات" },
   "settings.tab.account": { en: "Account", ar: "الحساب" },

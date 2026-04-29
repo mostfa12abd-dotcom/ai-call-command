@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { toast } = useToast();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -24,14 +24,14 @@ const Settings = () => {
 
   return (
     <DashboardLayout
-      title="Settings"
-      breadcrumb={["Dashboard", "AI Voice Call Center", "Settings"]}
+      title={t("settings.title")}
+      breadcrumb={[t("nav.dashboard"), t("dashboard.crumb.center"), t("settings.title")]}
     >
       <Tabs defaultValue="account" className="space-y-6">
         <TabsList className="h-auto flex-wrap rounded-xl border border-border/70 bg-card p-1 shadow-card">
-          <TabsTrigger value="account" className="rounded-lg px-4 text-sm">Account</TabsTrigger>
-          <TabsTrigger value="appearance" className="rounded-lg px-4 text-sm">Appearance</TabsTrigger>
-          <TabsTrigger value="language" className="rounded-lg px-4 text-sm">Language</TabsTrigger>
+          <TabsTrigger value="account" className="rounded-lg px-4 text-sm">{t("settings.tab.account")}</TabsTrigger>
+          <TabsTrigger value="appearance" className="rounded-lg px-4 text-sm">{t("settings.tab.appearance")}</TabsTrigger>
+          <TabsTrigger value="language" className="rounded-lg px-4 text-sm">{t("settings.tab.language")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="account">
@@ -39,8 +39,8 @@ const Settings = () => {
             <div className="mb-5 flex items-center gap-2">
               <User className="h-5 w-5 text-muted-foreground" />
               <div>
-                <h3 className="text-base font-semibold tracking-tight">Account</h3>
-                <p className="text-xs text-muted-foreground">Manage your signed-in account.</p>
+                <h3 className="text-base font-semibold tracking-tight">{t("settings.account.title")}</h3>
+                <p className="text-xs text-muted-foreground">{t("settings.account.subtitle")}</p>
               </div>
             </div>
 
@@ -51,11 +51,11 @@ const Settings = () => {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-foreground">Signed in as</p>
+                <p className="text-sm font-semibold text-foreground">{t("settings.account.signedInAs")}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email || "user@example.com"}</p>
               </div>
               <Button variant="outline" onClick={handleLogout} className="gap-1.5 text-destructive hover:text-destructive">
-                <LogOut className="h-4 w-4" /> Log out
+                <LogOut className="h-4 w-4" /> {t("common.signOut")}
               </Button>
             </div>
           </div>
@@ -64,15 +64,15 @@ const Settings = () => {
         <TabsContent value="appearance">
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
             <div className="mb-5">
-              <h3 className="text-base font-semibold tracking-tight">Appearance</h3>
-              <p className="text-xs text-muted-foreground">Choose how the dashboard looks to you.</p>
+              <h3 className="text-base font-semibold tracking-tight">{t("settings.appearance.title")}</h3>
+              <p className="text-xs text-muted-foreground">{t("settings.appearance.subtitle")}</p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               {[
-                { value: "light", label: "Light", icon: Sun },
-                { value: "dark", label: "Dark", icon: Moon },
-                { value: "system", label: "System", icon: Monitor },
+                { value: "light", label: t("settings.appearance.light"), icon: Sun },
+                { value: "dark", label: t("settings.appearance.dark"), icon: Moon },
+                { value: "system", label: t("settings.appearance.system"), icon: Monitor },
               ].map((opt) => {
                 const Icon = opt.icon;
                 const active = theme === opt.value;
@@ -108,10 +108,8 @@ const Settings = () => {
             <div className="mb-5 flex items-center gap-2">
               <Languages className="h-5 w-5 text-muted-foreground" />
               <div>
-                <h3 className="text-base font-semibold tracking-tight">Language / اللغة</h3>
-                <p className="text-xs text-muted-foreground">
-                  Choose your preferred language. اختر لغتك المفضلة.
-                </p>
+                <h3 className="text-base font-semibold tracking-tight">{t("settings.language.title")}</h3>
+                <p className="text-xs text-muted-foreground">{t("settings.language.subtitle")}</p>
               </div>
             </div>
 
@@ -128,6 +126,7 @@ const Settings = () => {
                       setLanguage(opt.code);
                       toast({ title: opt.code === "ar" ? "تم تغيير اللغة" : "Language changed" });
                     }}
+                    aria-label={opt.label}
                     className={cn(
                       "group relative flex items-center justify-between rounded-xl border p-4 text-left transition-all",
                       active

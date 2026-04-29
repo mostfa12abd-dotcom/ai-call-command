@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -64,20 +66,20 @@ export default function Login() {
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">{isSignUp ? "Create an account" : "Welcome back"}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{isSignUp ? "Create an account" : t("login.welcome")}</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {isSignUp ? "Sign up to start using your AI Call Center dashboard" : "Sign in to your AI Call Center dashboard"}
+              {isSignUp ? "Sign up to start using your AI Call Center dashboard" : t("login.subtitle")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("login.email")}</Label>
               <Input
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="you@company.com"
+                placeholder={t("login.emailPlaceholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11"
@@ -86,13 +88,13 @@ export default function Login() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t("login.password")}</Label>
                 <button
                   type="button"
                   className="text-xs font-medium text-primary hover:underline"
                   onClick={() => toast({ title: "Reset link sent", description: "Check your inbox." })}
                 >
-                  Forgot password?
+                  {t("login.forgot")}
                 </button>
               </div>
               <div className="relative">
@@ -123,7 +125,7 @@ export default function Login() {
                 onCheckedChange={(v) => setRemember(Boolean(v))}
               />
               <Label htmlFor="remember" className="text-sm font-normal text-muted-foreground">
-                Remember me for 30 days
+                {t("login.remember")}
               </Label>
             </div>
 
@@ -133,7 +135,7 @@ export default function Login() {
                   <Loader2 className="h-4 w-4 animate-spin" /> {isSignUp ? "Creating account..." : "Signing in..."}
                 </>
               ) : (
-                isSignUp ? "Sign up" : "Sign in"
+                isSignUp ? "Sign up" : t("common.signIn")
               )}
             </Button>
 
@@ -143,7 +145,7 @@ export default function Login() {
               </div>
               <div className="relative flex justify-center">
                 <span className="bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground">
-                  or
+                  {t("login.or")}
                 </span>
               </div>
             </div>
@@ -160,18 +162,18 @@ export default function Login() {
                 <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/>
               </svg>
-              Continue with Google
+              {t("login.continueGoogle")}
             </Button>
           </form>
 
           <p className="mt-8 text-center text-sm text-muted-foreground">
-            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+            {isSignUp ? "Already have an account?" : t("login.noAccount")}{" "}
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
               className="font-medium text-primary hover:underline"
             >
-              {isSignUp ? "Sign in" : "Create one"}
+              {isSignUp ? t("common.signIn") : t("login.createOne")}
             </button>
           </p>
         </div>
@@ -186,23 +188,22 @@ export default function Login() {
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
           <div className="flex items-center gap-2 text-sm font-medium opacity-90">
             <span className="h-2 w-2 rounded-full bg-success" />
-            Live · 1,284 calls handled today
+            {t("login.live")}
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold leading-tight">
-              Every call, <br /> understood.
+            <h2 className="whitespace-pre-line text-4xl font-bold leading-tight">
+              {t("login.heroTitle")}
             </h2>
             <p className="max-w-md text-base leading-relaxed opacity-90">
-              Voxa transforms voice conversations into actionable insights — pickups, missed
-              opportunities, satisfaction, and follow-ups, all in one place.
+              {t("login.heroBody")}
             </p>
 
             <div className="grid grid-cols-3 gap-4 pt-4">
               {[
-                { k: "98%", v: "Pickup rate" },
-                { k: "2.4m", v: "Avg duration" },
-                { k: "4.8★", v: "Satisfaction" },
+                { k: "98%", v: t("login.statPickup") },
+                { k: "2.4m", v: t("login.statDuration") },
+                { k: "4.8★", v: t("login.statSatisfaction") },
               ].map((s) => (
                 <div key={s.v} className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
                   <div className="text-2xl font-bold">{s.k}</div>
@@ -212,7 +213,7 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="text-xs opacity-70">© 2026 Voxa AI · All rights reserved</p>
+          <p className="text-xs opacity-70">{t("login.footer")}</p>
         </div>
       </div>
     </div>

@@ -29,15 +29,23 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { TranslationKey } from "@/i18n/translations";
 
-const mainItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, exact: true },
-  { title: "Customer", url: "/customers", icon: Users },
-  { title: "Settings", url: "/settings", icon: Settings },
+const mainItems: Array<{
+  titleKey: TranslationKey;
+  url: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+}> = [
+  { titleKey: "nav.dashboard", url: "/dashboard", icon: LayoutDashboard, exact: true },
+  { titleKey: "nav.customers", url: "/customers", icon: Users },
+  { titleKey: "nav.settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { t } = useLanguage();
   const collapsed = state === "collapsed";
 
   const linkClass = collapsed
@@ -55,7 +63,7 @@ export function AppSidebar() {
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="text-base font-bold tracking-tight text-foreground">Voxa</span>
-              <span className="text-[11px] text-muted-foreground">AI Call Center</span>
+              <span className="text-[11px] text-muted-foreground">{t("brand.tagline")}</span>
             </div>
           )}
         </div>
@@ -65,34 +73,35 @@ export function AppSidebar() {
         <SidebarGroup>
           {!collapsed && (
             <SidebarGroupLabel className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Workspace
+              {t("nav.workspace")}
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={collapsed ? item.title : undefined}
-                    className={collapsed ? "h-10 p-0 hover:bg-transparent" : "h-auto p-0 hover:bg-transparent"}
-                  >
-                    <NavLink
-                      to={item.url}
-                      end={item.exact}
-                      className={linkClass}
-                      activeClassName={activeClass}
+              {mainItems.map((item) => {
+                const label = t(item.titleKey);
+                return (
+                  <SidebarMenuItem key={item.titleKey}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={collapsed ? label : undefined}
+                      className={collapsed ? "h-10 p-0 hover:bg-transparent" : "h-auto p-0 hover:bg-transparent"}
                     >
-                      <item.icon className="h-[18px] w-[18px] shrink-0" />
-                      {!collapsed && (
-                        <>
-                          <span className="flex-1 truncate">{item.title}</span>
-                        </>
-                      )}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <NavLink
+                        to={item.url}
+                        end={item.exact}
+                        className={linkClass}
+                        activeClassName={activeClass}
+                      >
+                        <item.icon className="h-[18px] w-[18px] shrink-0" />
+                        {!collapsed && (
+                          <span className="flex-1 truncate">{label}</span>
+                        )}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

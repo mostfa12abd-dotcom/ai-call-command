@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCustomersData } from "@/hooks/useCustomersData";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const palette = [
@@ -33,6 +34,7 @@ const initialsOf = (name: string) =>
 const Customers = () => {
   const navigate = useNavigate();
   const { customers, loading, error } = useCustomersData();
+  const { t, dir } = useLanguage();
   const [search, setSearch] = useState("");
 
   const filtered = customers.filter(
@@ -44,30 +46,30 @@ const Customers = () => {
 
   return (
     <DashboardLayout
-      title="Customers"
-      breadcrumb={["Customers"]}
+      title={t("customers.title")}
+      breadcrumb={[t("customers.title")]}
     >
       <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
           <div>
             <h2 className="text-base font-semibold tracking-tight text-foreground">
-              All Customers
-              <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              {t("customers.allTitle")}
+              <span className={cn("rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground", dir === "rtl" ? "mr-2" : "ml-2")}>
                 {loading ? "..." : filtered.length}
               </span>
             </h2>
             <p className="text-xs text-muted-foreground">
-              Unique callers across all your call campaigns.
+              {t("customers.allSubtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Search className={cn("pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground", dir === "rtl" ? "right-3" : "left-3")} />
               <Input
-                placeholder="Search customers"
+                placeholder={t("customers.searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9 w-56 rounded-lg border-border bg-secondary/60 pl-9 text-sm shadow-none"
+                className={cn("h-9 w-56 rounded-lg border-border bg-secondary/60 text-sm shadow-none", dir === "rtl" ? "pr-9" : "pl-9")}
               />
             </div>
           </div>
@@ -76,25 +78,25 @@ const Customers = () => {
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Loading customers...
+            {t("customers.loading")}
           </div>
         ) : error ? (
           <div className="py-10 text-center text-sm text-destructive">{error}</div>
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-sm text-muted-foreground">
-            No customers found for this account yet.
+            {t("customers.empty")}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Customer</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Company</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Phone</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Total Calls</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Last Call</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">Actions</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.customer")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.company")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.phone")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.totalCalls")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.lastCall")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -151,7 +153,7 @@ const Customers = () => {
                         className="h-7 text-xs"
                         onClick={() => navigate(`/customers/${c.id}`)}
                       >
-                        View Profile
+                        {t("common.viewProfile")}
                       </Button>
                     </TableCell>
                   </TableRow>

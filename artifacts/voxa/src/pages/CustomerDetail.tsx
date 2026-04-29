@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const palette = [
@@ -30,6 +31,7 @@ const CustomerDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t, dir } = useLanguage();
   const [customer, setCustomer] = useState<any>(null);
   const [calls, setCalls] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +96,7 @@ const CustomerDetail = () => {
   return (
     <DashboardLayout
       title={customer.name}
-      breadcrumb={["Dashboard", "Customers", customer.name]}
+      breadcrumb={[t("nav.dashboard"), t("customers.title"), customer.name]}
     >
       {/* Back button */}
       <Button
@@ -103,7 +105,7 @@ const CustomerDetail = () => {
         onClick={() => navigate("/customers")}
         className="mb-4 gap-1.5 text-muted-foreground hover:text-foreground"
       >
-        <ArrowLeft className="h-4 w-4" /> Back to Customers
+        <ArrowLeft className={cn("h-4 w-4", dir === "rtl" ? "rotate-180" : "")} /> {t("customer.back")}
       </Button>
 
       {/* Profile Card */}
@@ -151,7 +153,7 @@ const CustomerDetail = () => {
       {/* Calls History */}
       <div className="rounded-2xl border border-border/70 bg-card shadow-card">
         <div className="border-b border-border/60 px-5 py-4">
-          <h3 className="text-base font-semibold text-foreground">Call History</h3>
+          <h3 className="text-base font-semibold text-foreground">{t("customer.callHistory")}</h3>
           <p className="text-xs text-muted-foreground">All calls from this customer</p>
         </div>
 

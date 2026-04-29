@@ -25,3 +25,9 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## Artifacts
+
+- `artifacts/voxa` — Voxa AI call center dashboard (React + Vite + Tailwind v3 + shadcn). Ported from a Lovable.dev project. Auth and data are currently a local mock backed by an in-memory store (`artifacts/voxa/src/lib/supabase.ts` + `src/data/mockData.ts`) so the original Supabase call sites in `contexts/AuthContext.tsx`, `hooks/useDashboardData.ts`, `hooks/useCustomersData.ts`, and `pages/CustomerDetail.tsx` keep working unchanged. Any email/password signs in. Routes: `/login`, `/dashboard`, `/customers`, `/customers/:id`, `/settings`. Mounted at `/`.
+- `artifacts/api-server` — shared Express API scaffold (currently only `/api/healthz`).
+- `artifacts/mockup-sandbox` — design/mockup sandbox.

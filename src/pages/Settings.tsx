@@ -10,38 +10,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
-const columnDefaults = [
-  { key: "caller", label: "Caller", on: true },
-  { key: "company", label: "Company", on: true },
-  { key: "duration", label: "Call Duration", on: true },
-  { key: "status", label: "Status", on: true },
-  { key: "satisfaction", label: "Satisfaction", on: true },
-  { key: "summary", label: "Two-Word Summary", on: true },
-  { key: "phone", label: "Phone Number", on: false },
-  { key: "tags", label: "Tags", on: false },
-];
-
 const Settings = () => {
   const { toast } = useToast();
   const { language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [columns, setColumns] = useState(columnDefaults);
-  const [showKey, setShowKey] = useState(false);
-  const apiKey = "vx_live_9f3a7c2e8b1d4f5a6c9e2b8a1d4f7c3e";
 
   const handleLogout = async () => {
     await signOut();
     navigate("/login");
-  };
-
-  const handleSave = () =>
-    toast({ title: "Settings saved", description: "Your changes are now live." });
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(apiKey);
-    toast({ title: "API key copied" });
   };
 
   return (

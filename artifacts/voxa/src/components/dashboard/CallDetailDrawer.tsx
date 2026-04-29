@@ -332,25 +332,6 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
             )}
           </section>
 
-          {/* Footer actions */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Button variant="outline" className="flex-1">
-              <CheckCircle2 className="h-4 w-4" /> Mark as Reviewed
-            </Button>
-            <Button className="flex-1 bg-gradient-primary text-primary-foreground hover:opacity-90">
-              <CalendarPlus className="h-4 w-4" /> Schedule Follow-up
-            </Button>
-            {drawerActions.map(action => (
-              <Button 
-                key={action.action_id}
-                onClick={() => handleCustomAction(action)}
-                disabled={loadingAction === action.action_id}
-                className={cn("flex-1", action.color_class || "bg-secondary text-foreground")}
-              >
-                {loadingAction === action.action_id ? "..." : action.label}
-              </Button>
-            ))}
-          </div>
         </div>
       </SheetContent>
     </Sheet>

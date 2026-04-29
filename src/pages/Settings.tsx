@@ -58,9 +58,6 @@ const Settings = () => {
           <TabsTrigger value="account" className="rounded-lg px-4 text-sm">Account</TabsTrigger>
           <TabsTrigger value="appearance" className="rounded-lg px-4 text-sm">Appearance</TabsTrigger>
           <TabsTrigger value="language" className="rounded-lg px-4 text-sm">Language</TabsTrigger>
-          <TabsTrigger value="business" className="rounded-lg px-4 text-sm">Business Info</TabsTrigger>
-          <TabsTrigger value="columns" className="rounded-lg px-4 text-sm">Dashboard Columns</TabsTrigger>
-          <TabsTrigger value="api" className="rounded-lg px-4 text-sm">API Keys</TabsTrigger>
         </TabsList>
 
         <TabsContent value="account">

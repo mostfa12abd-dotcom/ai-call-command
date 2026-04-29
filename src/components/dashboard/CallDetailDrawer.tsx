@@ -78,21 +78,13 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
     setDuration(call?.durationSeconds || 0);
   }, [call]);
 
-  if (!call) return null;
-
-  const sat = satisfactionMeta[call.customFields.satisfaction] ?? satisfactionMeta["None"];
-  const isPickup = call.status === "Pickups" || call.status === "Pickup";
-
-  // Build transcript display:
-  // 1) If there's a structured transcript array, use it
-  // 2) If there's a raw totalConversation string, display it as plain text
-  const hasStructuredTranscript =
-    call.customFields.transcript && call.customFields.transcript.length > 0;
-  const rawConversation =
-    call.customFields.totalConversation || "";
-
   // Prepare transcript items with estimated or real timestamps
   const transcriptItems = useMemo(() => {
+    if (!call) return [];
+    
+    const hasStructuredTranscript = call.customFields?.transcript && call.customFields.transcript.length > 0;
+    const rawConversation = call.customFields?.totalConversation || "";
+
     if (!hasStructuredTranscript && !rawConversation) return [];
     
     const items = hasStructuredTranscript 
@@ -100,19 +92,27 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
       : parseRawConversation(rawConversation);
       
     // If we don't have accurate timestamps from the backend, we estimate them based on text length
-    const totalChars = items.reduce((acc, item) => acc + item.text.length, 0);
+    const totalChars = items.reduce((acc, item) => acc + (item.text?.length || 0), 0);
     // Use an estimated duration if we don't have an exact one from audio or call data
-    const safeDuration = duration > 0 ? duration : (call.durationSeconds > 0 ? call.durationSeconds : 60);
+    const safeDuration = duration > 0 ? duration : ((call.durationSeconds && call.durationSeconds > 0) ? call.durationSeconds : 60);
     let currentEstimatedTime = 0;
 
     return items.map(item => {
-      const itemDuration = (item.text.length / totalChars) * safeDuration;
+      const itemDuration = totalChars > 0 ? ((item.text?.length || 0) / totalChars) * safeDuration : 0;
       const startTime = item.startTime !== undefined ? item.startTime : currentEstimatedTime;
       currentEstimatedTime += itemDuration;
       
       return { ...item, startTime, endTime: startTime + itemDuration };
     });
-  }, [call, hasStructuredTranscript, rawConversation, duration]);
+  }, [call, duration]);
+
+  if (!call) return null;
+
+  const sat = satisfactionMeta[call.customFields.satisfaction] ?? satisfactionMeta["None"];
+  const isPickup = call.status === "Pickups" || call.status === "Pickup";
+
+  const hasStructuredTranscript = call.customFields.transcript && call.customFields.transcript.length > 0;
+  const rawConversation = call.customFields.totalConversation || "";
 
   const handleCustomAction = async (action: TenantCustomAction) => {
     try {

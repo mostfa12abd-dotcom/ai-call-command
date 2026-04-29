@@ -1,5 +1,8 @@
 {
   "buildCommand": "pnpm --filter @workspace/voxa... run typecheck && pnpm --filter @workspace/voxa... build",
   "outputDirectory": "artifacts/voxa/dist/public",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

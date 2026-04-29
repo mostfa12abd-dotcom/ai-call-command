@@ -129,6 +129,7 @@ const Settings = () => {
           </div>
         </TabsContent>
 
+        <TabsContent value="language">
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
             <div className="mb-5 flex items-center gap-2">
               <Languages className="h-5 w-5 text-muted-foreground" />

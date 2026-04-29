@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, RefreshCw, Save, Eye, EyeOff } from "lucide-react";
+import { Copy, RefreshCw, Save, Eye, EyeOff, Languages, Check } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 const columnDefaults = [
   { key: "caller", label: "Caller", on: true },
@@ -21,6 +23,7 @@ const columnDefaults = [
 
 const Settings = () => {
   const { toast } = useToast();
+  const { language, setLanguage } = useLanguage();
   const [columns, setColumns] = useState(columnDefaults);
   const [showKey, setShowKey] = useState(false);
   const apiKey = "vx_live_9f3a7c2e8b1d4f5a6c9e2b8a1d4f7c3e";
@@ -42,6 +45,7 @@ const Settings = () => {
         <TabsList className="h-10 rounded-xl border border-border/70 bg-card p-1 shadow-card">
           <TabsTrigger value="business" className="rounded-lg px-4 text-sm">Business Info</TabsTrigger>
           <TabsTrigger value="columns" className="rounded-lg px-4 text-sm">Dashboard Columns</TabsTrigger>
+          <TabsTrigger value="language" className="rounded-lg px-4 text-sm">Language</TabsTrigger>
           <TabsTrigger value="api" className="rounded-lg px-4 text-sm">API Keys</TabsTrigger>
         </TabsList>
 
@@ -116,6 +120,54 @@ const Settings = () => {
               <Button onClick={handleSave} className="gap-1.5 bg-gradient-primary text-primary-foreground hover:opacity-90">
                 <Save className="h-4 w-4" /> Save changes
               </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="language">
+          <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
+            <div className="mb-5 flex items-center gap-2">
+              <Languages className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h3 className="text-base font-semibold tracking-tight">Language / اللغة</h3>
+                <p className="text-xs text-muted-foreground">
+                  Choose your preferred language. اختر لغتك المفضلة.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { code: "en" as const, label: "English", sub: "Left to right" },
+                { code: "ar" as const, label: "العربية", sub: "من اليمين إلى اليسار" },
+              ].map((opt) => {
+                const active = language === opt.code;
+                return (
+                  <button
+                    key={opt.code}
+                    onClick={() => {
+                      setLanguage(opt.code);
+                      toast({ title: opt.code === "ar" ? "تم تغيير اللغة" : "Language changed" });
+                    }}
+                    className={cn(
+                      "group relative flex items-center justify-between rounded-xl border p-4 text-left transition-all",
+                      active
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-secondary/40"
+                    )}
+                  >
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{opt.label}</p>
+                      <p className="text-xs text-muted-foreground">{opt.sub}</p>
+                    </div>
+                    {active && (
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <Check className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </TabsContent>

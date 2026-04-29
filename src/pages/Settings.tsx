@@ -176,28 +176,9 @@ const Settings = () => {
             </div>
           </div>
         </TabsContent>
-
+      </Tabs>
     </DashboardLayout>
   );
 };
-
-function Field({
-  label,
-  defaultValue,
-  type = "text",
-}: {
-  label: string;
-  defaultValue: string;
-  type?: string;
-}) {
-  return (
-    <div>
-      <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </Label>
-      <Input type={type} defaultValue={defaultValue} className="mt-1.5" />
-    </div>
-  );
-}
 
 export default Settings;

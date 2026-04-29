@@ -2,7 +2,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText } from "lucide-react";
+import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
 import { useState } from "react";
@@ -26,6 +26,7 @@ export interface DrawerCall {
     transcript?: { speaker: "Agent" | "Caller"; time: string; text: string }[];
     totalConversation?: string;
   };
+  recordingUrl?: string;
   rawCall?: any;
   uiColumns?: { column_key: string; label: string; data_path: string; position: number; visible: boolean }[];
 }
@@ -179,6 +180,22 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
               {call.customFields.longSummary || "No summary available for this call."}
             </p>
           </section>
+
+          {/* Call Recording */}
+          {call.recordingUrl && (
+            <section className="rounded-xl border border-border bg-secondary/20 p-4">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <Play className="h-3 w-3" /> Call Recording
+              </h3>
+              <audio 
+                controls 
+                className="w-full h-10"
+                src={call.recordingUrl}
+              >
+                Your browser does not support the audio element.
+              </audio>
+            </section>
+          )}
 
           {/* Transcript / Conversation */}
           <section>

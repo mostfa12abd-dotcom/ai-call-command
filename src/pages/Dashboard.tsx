@@ -88,6 +88,7 @@ const Dashboard = () => {
         totalConversation: call.total_conversation || "",
         transcript: [],
       },
+      recordingUrl: call.recording_url,
       rawCall: call, // إرسال المكالمة الخام لكي يستخدمها الـ Drawer
       uiColumns: columns
     };

@@ -13,6 +13,7 @@ export interface CallRow {
   total_conversation: string;
   detailed_summary: string;
   custom_data: Record<string, any>;
+  recording_url?: string;
   created_at: string;
 }
 

@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Copy, RefreshCw, Save, Eye, EyeOff, Languages, Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Copy, RefreshCw, Save, Eye, EyeOff, Languages, Check, Sun, Moon, Monitor, LogOut, User } from "lucide-react";
+import { useTheme } from "next-themes";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 const columnDefaults = [

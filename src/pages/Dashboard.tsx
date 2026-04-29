@@ -86,7 +86,7 @@ const Dashboard = () => {
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false,
+        hour12: true,
       }),
       customFields: {
         satisfaction: call.satisfaction || "None",

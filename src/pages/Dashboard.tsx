@@ -251,7 +251,7 @@ const Dashboard = () => {
                       <td colSpan={7} className="border-0 p-0">
                         <div
                           className={cn(
-                            "flex items-center px-5",
+                            "flex items-center justify-center px-5",
                             gIdx === 0 ? "pb-3 pt-4" : "pb-3 pt-6"
                           )}
                         >

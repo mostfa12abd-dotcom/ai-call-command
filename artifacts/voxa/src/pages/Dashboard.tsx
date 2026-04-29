@@ -60,6 +60,7 @@ const Dashboard = () => {
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
 
@@ -109,8 +110,9 @@ const Dashboard = () => {
 
   const filtered = calls.filter(
     (c) =>
-      c.caller_name?.toLowerCase().includes(search.toLowerCase()) ||
-      c.company?.toLowerCase().includes(search.toLowerCase())
+      (statusFilter === "all" || c.status === statusFilter) &&
+      (c.caller_name?.toLowerCase().includes(search.toLowerCase()) ||
+       c.company?.toLowerCase().includes(search.toLowerCase()))
   );
 
   // Group calls by date (day/month/year), language-aware
@@ -217,11 +219,17 @@ const Dashboard = () => {
                 className={cn("h-9 w-52 rounded-lg border-border bg-secondary/60 text-sm shadow-none", isRtl ? "pr-9" : "pl-9")}
               />
             </div>
-            <Button variant="outline" size="sm" className="h-9 gap-1.5">
-              <Filter className="h-3.5 w-3.5" /> {t("common.filter")}
-            </Button>
-            <Button variant="outline" size="sm" className="h-9 gap-1.5">
-              <Download className="h-3.5 w-3.5" /> {t("common.export")}
+            <Button 
+              variant={statusFilter === "all" ? "outline" : "default"} 
+              size="sm" 
+              className="h-9 gap-1.5"
+              onClick={() => {
+                const statuses = ["all", "Pickup", "Missed"];
+                const next = statuses[(statuses.indexOf(statusFilter) + 1) % statuses.length];
+                setStatusFilter(next);
+              }}
+            >
+              <Filter className="h-3.5 w-3.5" /> {statusFilter === "all" ? t("common.filter") : statusFilter}
             </Button>
           </div>
         </div>

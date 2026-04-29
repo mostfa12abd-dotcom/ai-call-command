@@ -34,7 +34,7 @@ export default function Login() {
           password,
         });
         if (error) throw error;
-        toast({ title: "Account created", description: "Welcome to Voxa AI!" });
+        toast({ title: "Account created", description: "Welcome!" });
         navigate("/dashboard");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -57,12 +57,9 @@ export default function Login() {
       {/* Left: Form */}
       <div className="flex w-full flex-col justify-center px-6 py-10 sm:px-12 lg:w-1/2 lg:px-20">
         <div className="mx-auto w-full max-w-md">
-          {/* Brand */}
+          {/* Brand - Removed Voxa and Logo */}
           <div className="mb-10 flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
-              <Phone className="h-4 w-4" />
-            </div>
-            <span className="text-lg font-semibold tracking-tight">Voxa AI</span>
+            <span className="text-lg font-semibold tracking-tight uppercase">{t("nav.workspace")}</span>
           </div>
 
           <div className="mb-8">

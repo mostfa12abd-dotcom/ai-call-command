@@ -62,13 +62,9 @@ export function AppSidebar() {
     >
       <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-primary shadow-card">
-            <PhoneCall className="h-4.5 w-4.5 text-primary-foreground" strokeWidth={2.5} />
-          </div>
           {!collapsed && (
             <div className="flex flex-col leading-tight">
-              <span className="text-base font-bold tracking-tight text-foreground">Voxa</span>
-              <span className="text-[11px] text-muted-foreground">{t("brand.tagline")}</span>
+              <span className="text-sm font-semibold tracking-tight text-foreground uppercase">{t("nav.workspace")}</span>
             </div>
           )}
         </div>

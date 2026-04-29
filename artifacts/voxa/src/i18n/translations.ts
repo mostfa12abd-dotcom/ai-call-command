@@ -9,15 +9,15 @@ export type Language = "ar" | "en";
 
 export const translations = {
   // Brand & generic chrome
-  "brand.tagline": { en: "AI Call Center", ar: "مركز الاتصال الذكي" },
+  "brand.tagline": { en: "AI Call Center", ar: "مركز الاتصال" },
   "nav.workspace": { en: "Workspace", ar: "مساحة العمل" },
   "nav.dashboard": { en: "Dashboard", ar: "لوحة التحكم" },
   "nav.customers": { en: "Customer", ar: "العملاء" },
   "nav.settings": { en: "Settings", ar: "الإعدادات" },
 
   "header.subtitle": {
-    en: "Real-time analytics and insights for your AI-powered call center.",
-    ar: "تحليلات ورؤى لحظية لمركز الاتصال المدعوم بالذكاء الاصطناعي.",
+    en: "",
+    ar: "",
   },
 
   "common.loading": { en: "Loading...", ar: "جارٍ التحميل..." },
@@ -37,7 +37,7 @@ export const translations = {
   "login.welcome": { en: "Welcome back", ar: "أهلاً بعودتك" },
   "login.subtitle": {
     en: "Sign in to your AI Call Center dashboard",
-    ar: "سجّل دخولك إلى لوحة مركز الاتصال الذكي",
+    ar: "سجّل دخولك إلى لوحة التحكم",
   },
   "login.email": { en: "Email", ar: "البريد الإلكتروني" },
   "login.emailPlaceholder": { en: "you@company.com", ar: "you@company.com" },
@@ -50,14 +50,14 @@ export const translations = {
   "login.createOne": { en: "Create one", ar: "أنشئ حساباً" },
   "login.heroTitle": { en: "Every call,\nunderstood.", ar: "كل اتصال،\nمفهوم." },
   "login.heroBody": {
-    en: "Voxa transforms voice conversations into actionable insights — pickups, missed opportunities, satisfaction, and follow-ups, all in one place.",
-    ar: "تحوّل Voxa المحادثات الصوتية إلى رؤى قابلة للتنفيذ — المكالمات المُجابة، والفرص الفائتة، ومستوى الرضا، والمتابعات، كلّها في مكان واحد.",
+    en: "Transforming voice conversations into actionable insights.",
+    ar: "تحويل المحادثات الصوتية إلى رؤى قابلة للتنفيذ.",
   },
   "login.live": { en: "Live · 1,284 calls handled today", ar: "مباشر · 1,284 مكالمة معالجة اليوم" },
   "login.statPickup": { en: "Pickup rate", ar: "نسبة الردّ" },
   "login.statDuration": { en: "Avg duration", ar: "متوسط المدة" },
   "login.statSatisfaction": { en: "Satisfaction", ar: "الرضا" },
-  "login.footer": { en: "© 2026 Voxa AI · All rights reserved", ar: "© 2026 Voxa AI · جميع الحقوق محفوظة" },
+  "login.footer": { en: "© 2026 AI Center · All rights reserved", ar: "© 2026 مركز الذكاء الاصطناعي · جميع الحقوق محفوظة" },
 
   // Customers page
   "customers.title": { en: "Customers", ar: "العملاء" },
@@ -115,7 +115,7 @@ export const translations = {
 
   // Dashboard
   "dashboard.title": { en: "Dashboard", ar: "لوحة التحكم" },
-  "dashboard.crumb.center": { en: "AI Voice Call Center", ar: "مركز الاتصال الصوتي الذكي" },
+  "dashboard.crumb.center": { en: "AI Call Center", ar: "مركز الاتصال" },
   "dashboard.kpi.totalCalls": { en: "Total Calls", ar: "إجمالي المكالمات" },
   "dashboard.kpi.avgDuration": { en: "Avg Call Duration", ar: "متوسط مدة المكالمة" },
   "dashboard.kpi.missed": { en: "Missed Calls", ar: "مكالمات فائتة" },

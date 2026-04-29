@@ -124,6 +124,54 @@ const Settings = () => {
           </div>
         </TabsContent>
 
+        <TabsContent value="language">
+          <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
+            <div className="mb-5 flex items-center gap-2">
+              <Languages className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <h3 className="text-base font-semibold tracking-tight">Language / اللغة</h3>
+                <p className="text-xs text-muted-foreground">
+                  Choose your preferred language. اختر لغتك المفضلة.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                { code: "en" as const, label: "English", sub: "Left to right" },
+                { code: "ar" as const, label: "العربية", sub: "من اليمين إلى اليسار" },
+              ].map((opt) => {
+                const active = language === opt.code;
+                return (
+                  <button
+                    key={opt.code}
+                    onClick={() => {
+                      setLanguage(opt.code);
+                      toast({ title: opt.code === "ar" ? "تم تغيير اللغة" : "Language changed" });
+                    }}
+                    className={cn(
+                      "group relative flex items-center justify-between rounded-xl border p-4 text-left transition-all",
+                      active
+                        ? "border-primary bg-primary/5 shadow-sm"
+                        : "border-border hover:border-primary/50 hover:bg-secondary/40"
+                    )}
+                  >
+                    <div>
+                      <p className="text-base font-semibold text-foreground">{opt.label}</p>
+                      <p className="text-xs text-muted-foreground">{opt.sub}</p>
+                    </div>
+                    {active && (
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <Check className="h-3.5 w-3.5" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </TabsContent>
+
         <TabsContent value="api">
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
             <div className="mb-5">

@@ -122,7 +122,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
 
     return items.map(item => {
       const itemDuration = totalChars > 0 ? ((item.text?.length || 0) / totalChars) * safeDuration : 0;
-      const startTime = item.startTime !== undefined ? item.startTime : currentEstimatedTime;
+      const startTime = (item as any).startTime !== undefined ? (item as any).startTime : currentEstimatedTime;
       currentEstimatedTime += itemDuration;
       
       return { ...item, startTime, endTime: startTime + itemDuration };

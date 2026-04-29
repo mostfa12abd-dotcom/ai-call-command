@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 // Generic shape that works with both mock data and real Supabase data
 export interface DrawerCall {
@@ -23,7 +23,7 @@ export interface DrawerCall {
     summary: string;
     longSummary: string;
     // Can be either a pre-built transcript array OR a raw conversation string
-    transcript?: { speaker: "Agent" | "Caller"; time: string; text: string }[];
+    transcript?: { speaker: "Agent" | "Caller"; time: string; text: string; startTime?: number; endTime?: number }[];
     totalConversation?: string;
   };
   recordingUrl?: string;
@@ -67,6 +67,16 @@ function parseRawConversation(raw: string) {
 
 export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] }: CallDetailDrawerProps) {
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioTime, setAudioTime] = useState(0);
+  const [duration, setDuration] = useState(call?.durationSeconds || 0);
+
+  // Sync state when drawer opens with a new call
+  useEffect(() => {
+    setIsPlaying(false);
+    setAudioTime(0);
+    setDuration(call?.durationSeconds || 0);
+  }, [call]);
 
   if (!call) return null;
 
@@ -80,6 +90,29 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
     call.customFields.transcript && call.customFields.transcript.length > 0;
   const rawConversation =
     call.customFields.totalConversation || "";
+
+  // Prepare transcript items with estimated or real timestamps
+  const transcriptItems = useMemo(() => {
+    if (!hasStructuredTranscript && !rawConversation) return [];
+    
+    const items = hasStructuredTranscript 
+      ? call.customFields.transcript! 
+      : parseRawConversation(rawConversation);
+      
+    // If we don't have accurate timestamps from the backend, we estimate them based on text length
+    const totalChars = items.reduce((acc, item) => acc + item.text.length, 0);
+    // Use an estimated duration if we don't have an exact one from audio or call data
+    const safeDuration = duration > 0 ? duration : (call.durationSeconds > 0 ? call.durationSeconds : 60);
+    let currentEstimatedTime = 0;
+
+    return items.map(item => {
+      const itemDuration = (item.text.length / totalChars) * safeDuration;
+      const startTime = item.startTime !== undefined ? item.startTime : currentEstimatedTime;
+      currentEstimatedTime += itemDuration;
+      
+      return { ...item, startTime, endTime: startTime + itemDuration };
+    });
+  }, [call, hasStructuredTranscript, rawConversation, duration]);
 
   const handleCustomAction = async (action: TenantCustomAction) => {
     try {
@@ -191,6 +224,14 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                 controls 
                 className="w-full h-10"
                 src={call.recordingUrl}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onTimeUpdate={(e) => setAudioTime(e.currentTarget.currentTime)}
+                onLoadedMetadata={(e) => {
+                  if (e.currentTarget.duration && e.currentTarget.duration !== Infinity) {
+                    setDuration(e.currentTarget.duration);
+                  }
+                }}
               >
                 Your browser does not support the audio element.
               </audio>
@@ -203,19 +244,28 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
               Total Conversation
             </h3>
 
-            {hasStructuredTranscript || rawConversation ? (
+            {transcriptItems.length > 0 ? (
               <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
-                {(hasStructuredTranscript 
-                  ? call.customFields.transcript! 
-                  : parseRawConversation(rawConversation)
-                ).map((line, i) => {
+                {transcriptItems.map((line, i) => {
                   const isAI = line.speaker === "Agent" || line.speaker === "AI" || line.speaker.includes("AI");
+                  
+                  // Sync Logic: Show items only if their start time has passed.
+                  // isSyncMode triggers when you hit play or move the slider.
+                  const isSyncMode = isPlaying || audioTime > 0;
+                  
+                  // Added a tiny buffer (0.5s) to start showing slightly earlier than strictly needed
+                  const isVisible = !isSyncMode || (line.startTime! <= audioTime + 0.5);
+
+                  if (!isVisible) return null;
+
                   return (
                     <div
                       key={i}
                       className={cn(
-                        "flex gap-2",
-                        isAI ? "flex-row-reverse" : "flex-row"
+                        "flex gap-2 transition-all duration-500 ease-in-out",
+                        isAI ? "flex-row-reverse" : "flex-row",
+                        // Animation to slide in gently
+                        "animate-in fade-in slide-in-from-bottom-2"
                       )}
                     >
                       <div

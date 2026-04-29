@@ -45,6 +45,7 @@ const Settings = () => {
         <TabsList className="h-10 rounded-xl border border-border/70 bg-card p-1 shadow-card">
           <TabsTrigger value="business" className="rounded-lg px-4 text-sm">Business Info</TabsTrigger>
           <TabsTrigger value="columns" className="rounded-lg px-4 text-sm">Dashboard Columns</TabsTrigger>
+          <TabsTrigger value="language" className="rounded-lg px-4 text-sm">Language</TabsTrigger>
           <TabsTrigger value="api" className="rounded-lg px-4 text-sm">API Keys</TabsTrigger>
         </TabsList>
 

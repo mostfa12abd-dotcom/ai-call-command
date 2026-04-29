@@ -12,6 +12,7 @@ import Login from "./pages/Login.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 

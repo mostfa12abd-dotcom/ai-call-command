@@ -78,10 +78,33 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
     setDuration(call?.durationSeconds || 0);
   }, [call]);
 
-  // Prepare transcript items with estimated or real timestamps
+  // Prepare transcript items with exact timestamps from Vapi or fallback to estimation
   const transcriptItems = useMemo(() => {
     if (!call) return [];
     
+    // Check if we have exact Vapi artifact messages (from rawCall or custom_data)
+    const vapiMessages = call.rawCall?.artifact?.messages || call.rawCall?.custom_data?.artifact?.messages || call.rawCall?.custom_data?.message?.artifact?.messages;
+    
+    if (vapiMessages && Array.isArray(vapiMessages) && vapiMessages.length > 0) {
+      // We have exact timestamps!
+      const validMessages = vapiMessages.filter((m: any) => m.role === 'bot' || m.role === 'user');
+      if (validMessages.length > 0) {
+        // Use the first message's time as base 0.0 seconds
+        const baseTime = validMessages[0].time || 0;
+        return validMessages.map((msg: any) => {
+          const startTimeSeconds = msg.time ? Math.max(0, (msg.time - baseTime) / 1000) : 0;
+          return {
+            speaker: msg.role === 'bot' ? 'Agent' : 'Caller',
+            text: msg.message,
+            time: new Date(msg.time).toLocaleTimeString(),
+            startTime: startTimeSeconds,
+            endTime: msg.endTime ? Math.max(0, (msg.endTime - baseTime) / 1000) : startTimeSeconds + 2
+          };
+        });
+      }
+    }
+
+    // Fallback logic if exact timestamps are not available
     const hasStructuredTranscript = call.customFields?.transcript && call.customFields.transcript.length > 0;
     const rawConversation = call.customFields?.totalConversation || "";
 

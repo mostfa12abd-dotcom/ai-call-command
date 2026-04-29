@@ -177,41 +177,6 @@ const Settings = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="api">
-          <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
-            <div className="mb-5">
-              <h3 className="text-base font-semibold tracking-tight">API Keys</h3>
-              <p className="text-xs text-muted-foreground">
-                Use these keys to integrate Voxa with your CRM, Zapier, or custom apps.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Live Key
-                </Label>
-                <div className="mt-1.5 flex gap-2">
-                  <div className="flex h-10 flex-1 items-center rounded-lg border border-input bg-secondary/60 px-3 font-mono text-sm">
-                    {showKey ? apiKey : "•".repeat(36)}
-                  </div>
-                  <Button variant="outline" size="icon" onClick={() => setShowKey((s) => !s)}>
-                    {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                  <Button variant="outline" size="icon" onClick={handleCopy}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" className="gap-1.5">
-                    <RefreshCw className="h-4 w-4" /> Regenerate
-                  </Button>
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Keep this secret. Regenerating will invalidate the old key immediately.
-              </p>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
     </DashboardLayout>
   );
 };

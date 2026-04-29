@@ -6,6 +6,7 @@ import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText, Play } fr
 import { cn } from "@/lib/utils";
 import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
 import { useState, useMemo, useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Generic shape that works with both mock data and real Supabase data
 export interface DrawerCall {
@@ -167,11 +168,12 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
   };
 
   const drawerActions = customActions.filter(a => a.page_location === 'call_drawer');
+  const { dir } = useLanguage();
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side="right"
+        side={dir === "rtl" ? "left" : "right"}
         className="w-full overflow-y-auto p-0 sm:max-w-none sm:w-1/2"
       >
         {/* Header */}

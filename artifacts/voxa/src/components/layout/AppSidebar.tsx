@@ -45,8 +45,9 @@ const mainItems: Array<{
 
 export function AppSidebar() {
   const { state } = useSidebar();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const collapsed = state === "collapsed";
+  const isRtl = dir === "rtl";
 
   const linkClass = collapsed
     ? "flex h-10 w-10 items-center justify-center rounded-xl text-sidebar-foreground/80 transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mx-auto"
@@ -54,7 +55,11 @@ export function AppSidebar() {
   const activeClass = "bg-sidebar-accent text-sidebar-accent-foreground font-semibold";
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-sidebar-border">
+    <Sidebar
+      side={isRtl ? "right" : "left"}
+      collapsible="icon"
+      className={isRtl ? "border-l border-sidebar-border" : "border-r border-sidebar-border"}
+    >
       <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-primary shadow-card">

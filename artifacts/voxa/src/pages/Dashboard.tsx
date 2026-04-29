@@ -244,8 +244,15 @@ const Dashboard = () => {
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
                   <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.col.time")}</TableHead>
                   {columns.map((col) => (
-                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider">
-                      {col.label}
+                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider text-right">
+                      {language === "ar" ? (
+                        col.label === "Name" ? "الاسم" :
+                        col.label === "Duration" ? "المدة" :
+                        col.label === "Credits" ? "الرصيد" :
+                        col.label === "Status" ? "الحالة" :
+                        col.label === "Summary" ? "الملخص" :
+                        col.label
+                      ) : col.label}
                     </TableHead>
                   ))}
                 </TableRow>

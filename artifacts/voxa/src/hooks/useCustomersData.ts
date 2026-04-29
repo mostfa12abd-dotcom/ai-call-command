@@ -28,17 +28,20 @@ export function useCustomersData() {
       setLoading(true);
       setError(null);
 
-      // 1) Fetch known customers
-      const { data: custData } = await supabase
-        .from("customers")
-        .select("*")
-        .eq("tenant_id", user.id);
+      // 1) Fetch known customers and tenant settings
+      const [settingsRes, custRes] = await Promise.all([
+        supabase.from("tenant_settings").select("vapi_assistant_id").eq("id", user.id).single(),
+        supabase.from("customers").select("*").eq("tenant_id", user.id)
+      ]);
 
-      // 2) Get unique customers from calls
+      const assistantId = settingsRes.data?.vapi_assistant_id || user.id;
+      const custData = custRes.data;
+
+      // 2) Get unique customers from calls using assistantId
       const { data: callsData, error: callsErr } = await supabase
         .from("calls")
         .select("caller_name, created_at, company, custom_data")
-        .eq("tenant_id", user.id)
+        .eq("tenant_id", assistantId)
         .order("created_at", { ascending: false });
 
       if (callsErr) {

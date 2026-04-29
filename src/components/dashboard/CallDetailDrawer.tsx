@@ -334,8 +334,8 @@ function InfoTile({
   value: string;
 }) {
   return (
-    <div className="rounded-xl border border-border/60 bg-card/80 p-3 backdrop-blur-sm">
-      <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <div className="rounded-xl border border-border/60 bg-card/80 p-3 text-center backdrop-blur-sm">
+      <div className="flex items-center justify-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
         <Icon className="h-3 w-3" /> {label}
       </div>
       <p className="mt-1 truncate text-sm font-semibold text-foreground">{value}</p>

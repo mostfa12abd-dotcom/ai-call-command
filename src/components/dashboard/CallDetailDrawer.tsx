@@ -89,16 +89,20 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
       // We have exact timestamps!
       const validMessages = vapiMessages.filter((m: any) => m.role === 'bot' || m.role === 'user');
       if (validMessages.length > 0) {
-        // Use the first message's time as base 0.0 seconds
-        const baseTime = validMessages[0].time || 0;
         return validMessages.map((msg: any) => {
-          const startTimeSeconds = msg.time ? Math.max(0, (msg.time - baseTime) / 1000) : 0;
+          // Vapi provides 'secondsFromStart' which is the exact offset in the audio file!
+          const startTimeSeconds = typeof msg.secondsFromStart === 'number' 
+            ? msg.secondsFromStart 
+            : (msg.time ? Math.max(0, (msg.time - validMessages[0].time) / 1000) : 0);
+            
+          const durationSeconds = msg.endTime && msg.time ? (msg.endTime - msg.time) / 1000 : 2;
+          
           return {
             speaker: msg.role === 'bot' ? 'Agent' : 'Caller',
             text: msg.message,
-            time: new Date(msg.time).toLocaleTimeString(),
+            time: msg.time ? new Date(msg.time).toLocaleTimeString() : "",
             startTime: startTimeSeconds,
-            endTime: msg.endTime ? Math.max(0, (msg.endTime - baseTime) / 1000) : startTimeSeconds + 2
+            endTime: startTimeSeconds + durationSeconds
           };
         });
       }

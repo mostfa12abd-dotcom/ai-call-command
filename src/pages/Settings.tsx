@@ -23,6 +23,7 @@ const columnDefaults = [
 
 const Settings = () => {
   const { toast } = useToast();
+  const { language, setLanguage } = useLanguage();
   const [columns, setColumns] = useState(columnDefaults);
   const [showKey, setShowKey] = useState(false);
   const apiKey = "vx_live_9f3a7c2e8b1d4f5a6c9e2b8a1d4f7c3e";

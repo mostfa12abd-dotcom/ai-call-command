@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface CustomerRow {
   id: string;
@@ -14,6 +15,8 @@ export interface CustomerRow {
 
 export function useCustomersData() {
   const { user } = useAuth();
+  const { language } = useLanguage();
+  const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
   const [customers, setCustomers] = useState<CustomerRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +58,7 @@ export function useCustomersData() {
                 Math.max(
                   ...customerCalls.map((x) => new Date(x.created_at).getTime())
                 )
-              ).toLocaleDateString()
+              ).toLocaleDateString(dateLocale)
             : null;
         return {
           ...c,
@@ -69,7 +72,7 @@ export function useCustomersData() {
     };
 
     fetchCustomers();
-  }, [user]);
+  }, [user, dateLocale]);
 
   return { customers, loading, error };
 }

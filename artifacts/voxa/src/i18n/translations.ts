@@ -26,6 +26,12 @@ export const translations = {
   "common.signOut": { en: "Log out", ar: "تسجيل الخروج" },
   "common.back": { en: "Back", ar: "رجوع" },
   "common.viewProfile": { en: "View Profile", ar: "عرض الملف الشخصي" },
+  "common.filter": { en: "Filter", ar: "تصفية" },
+  "common.export": { en: "Export", ar: "تصدير" },
+  "common.am": { en: "AM", ar: "صباحًا" },
+  "common.pm": { en: "PM", ar: "مساءً" },
+  "common.today": { en: "Today", ar: "اليوم" },
+  "common.yesterday": { en: "Yesterday", ar: "أمس" },
 
   // Login page
   "login.welcome": { en: "Welcome back", ar: "أهلاً بعودتك" },
@@ -71,8 +77,18 @@ export const translations = {
   "customers.loading": { en: "Loading customers...", ar: "جارٍ تحميل العملاء..." },
 
   // Customer detail
+  "customer.title": { en: "Customer", ar: "عميل" },
   "customer.back": { en: "Back to Customers", ar: "العودة إلى العملاء" },
   "customer.callHistory": { en: "Call History", ar: "سجل المكالمات" },
+  "customer.callHistorySub": { en: "All calls from this customer", ar: "جميع المكالمات من هذا العميل" },
+  "customer.loading": { en: "Loading customer...", ar: "جارٍ تحميل بيانات العميل..." },
+  "customer.notFound": { en: "Customer not found.", ar: "لم يتم العثور على العميل." },
+  "customer.since": { en: "Since", ar: "منذ" },
+  "customer.stat.total": { en: "Total Calls", ar: "إجمالي المكالمات" },
+  "customer.stat.pickups": { en: "Pickups", ar: "تم الرد" },
+  "customer.stat.missed": { en: "Missed", ar: "فائتة" },
+  "customer.empty": { en: "No calls found for this customer.", ar: "لا توجد مكالمات لهذا العميل." },
+  "customer.callDefault": { en: "Call", ar: "مكالمة" },
 
   // Settings
   "settings.title": { en: "Settings", ar: "الإعدادات" },
@@ -107,7 +123,15 @@ export const translations = {
   "dashboard.kpi.appointments": { en: "Appointments", ar: "المواعيد" },
   "dashboard.kpi.totalTime": { en: "Total Call Time", ar: "إجمالي وقت المكالمات" },
   "dashboard.callsTitle": { en: "Recent Calls", ar: "المكالمات الأخيرة" },
+  "dashboard.callsSubtitle": {
+    en: "Click any row to open the full transcript.",
+    ar: "اضغط على أي صف لعرض نص المكالمة الكامل.",
+  },
   "dashboard.searchPlaceholder": { en: "Search calls", ar: "ابحث في المكالمات" },
+  "dashboard.crumb.overview": { en: "Overview", ar: "نظرة عامة" },
+  "dashboard.col.time": { en: "Time", ar: "الوقت" },
+  "dashboard.loading": { en: "Loading calls...", ar: "جارٍ تحميل المكالمات..." },
+  "dashboard.empty": { en: "No calls found for this account yet.", ar: "لا توجد مكالمات لهذا الحساب حتى الآن." },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

@@ -31,7 +31,8 @@ const CustomerDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
+  const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
   const [customer, setCustomer] = useState<any>(null);
   const [calls, setCalls] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,10 +73,13 @@ const CustomerDetail = () => {
 
   if (loading) {
     return (
-      <DashboardLayout title="Customer" breadcrumb={["Dashboard", "Customers", "Loading..."]}>
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("common.loading")]}
+      >
         <div className="flex items-center justify-center py-32 text-muted-foreground">
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Loading customer...
+          <Loader2 className={cn("h-5 w-5 animate-spin", dir === "rtl" ? "ml-2" : "mr-2")} />
+          {t("customer.loading")}
         </div>
       </DashboardLayout>
     );
@@ -83,8 +87,11 @@ const CustomerDetail = () => {
 
   if (!customer) {
     return (
-      <DashboardLayout title="Customer" breadcrumb={["Dashboard", "Customers", "Not Found"]}>
-        <div className="py-16 text-center text-muted-foreground">Customer not found.</div>
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("customer.notFound")]}
+      >
+        <div className="py-16 text-center text-muted-foreground">{t("customer.notFound")}</div>
       </DashboardLayout>
     );
   }
@@ -130,22 +137,22 @@ const CustomerDetail = () => {
             )}
             <span className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              Since {new Date(customer.created_at).toLocaleDateString()}
+              {t("customer.since")} {new Date(customer.created_at).toLocaleDateString(dateLocale)}
             </span>
           </div>
         </div>
         <div className="flex gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">{totalCalls}</div>
-            <div className="text-xs text-muted-foreground">Total Calls</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.total")}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-success">{pickupCalls}</div>
-            <div className="text-xs text-muted-foreground">Pickups</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.pickups")}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-destructive">{missedCalls}</div>
-            <div className="text-xs text-muted-foreground">Missed</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.missed")}</div>
           </div>
         </div>
       </div>
@@ -154,12 +161,12 @@ const CustomerDetail = () => {
       <div className="rounded-2xl border border-border/70 bg-card shadow-card">
         <div className="border-b border-border/60 px-5 py-4">
           <h3 className="text-base font-semibold text-foreground">{t("customer.callHistory")}</h3>
-          <p className="text-xs text-muted-foreground">All calls from this customer</p>
+          <p className="text-xs text-muted-foreground">{t("customer.callHistorySub")}</p>
         </div>
 
         {calls.length === 0 ? (
           <div className="py-16 text-center text-sm text-muted-foreground">
-            No calls found for this customer.
+            {t("customer.empty")}
           </div>
         ) : (
           <div className="divide-y divide-border/60">
@@ -178,9 +185,9 @@ const CustomerDetail = () => {
                       : <PhoneMissed className="h-4 w-4 text-destructive" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">{call.two_word_summary || "Call"}</p>
+                    <p className="text-sm font-medium text-foreground">{call.two_word_summary || t("customer.callDefault")}</p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date(call.created_at).toLocaleString()} · {durationStr}
+                      {new Date(call.created_at).toLocaleString(dateLocale)} · {durationStr}
                     </p>
                     {call.detailed_summary && (
                       <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{call.detailed_summary}</p>

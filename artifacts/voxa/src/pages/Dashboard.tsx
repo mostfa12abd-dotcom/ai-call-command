@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDashboardData, resolveDataPath, type CallRow, type TenantCustomAction } from "@/hooks/useDashboardData";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const palette = [
@@ -55,9 +56,12 @@ const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
 
 const Dashboard = () => {
   const { calls, kpis, loading, error, columns, customActions, featureFlags } = useDashboardData();
+  const { t, language } = useLanguage();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+
+  const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
 
   const handleRowClick = (call: CallRow) => {
     // Map Supabase row to the shape CallDetailDrawer expects
@@ -80,7 +84,7 @@ const Dashboard = () => {
         : "00:00",
       durationSeconds: call.call_duration || 0,
       status: call.status === "Pickup" ? "Pickups" : call.status,
-      date: new Date(call.created_at).toLocaleString("en-GB", {
+      date: new Date(call.created_at).toLocaleString(dateLocale, {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -109,7 +113,7 @@ const Dashboard = () => {
       c.company?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // تجميع المكالمات حسب التاريخ (يوم/شهر/سنة)
+  // Group calls by date (day/month/year), language-aware
   const formatDateLabel = (dateStr: string) => {
     const d = new Date(dateStr);
     const today = new Date();
@@ -121,9 +125,9 @@ const Dashboard = () => {
       a.getMonth() === b.getMonth() &&
       a.getDate() === b.getDate();
 
-    if (sameDay(d, today)) return "اليوم";
-    if (sameDay(d, yesterday)) return "أمس";
-    return d.toLocaleDateString("ar-EG", {
+    if (sameDay(d, today)) return t("common.today");
+    if (sameDay(d, yesterday)) return t("common.yesterday");
+    return d.toLocaleDateString(dateLocale, {
       weekday: "long",
       day: "numeric",
       month: "long",
@@ -135,7 +139,7 @@ const Dashboard = () => {
     const d = new Date(dateStr);
     let h = d.getHours();
     const m = d.getMinutes().toString().padStart(2, "0");
-    const period = h >= 12 ? "مساءً" : "صباحًا";
+    const period = h >= 12 ? t("common.pm") : t("common.am");
     h = h % 12;
     if (h === 0) h = 12;
     return `${h}:${m} ${period}`;
@@ -153,36 +157,38 @@ const Dashboard = () => {
     group.items.push(c);
   });
 
+  const isRtl = language === "ar";
+
   return (
     <DashboardLayout
-      title="AI Voice Call Center"
-      breadcrumb={["Overview"]}
+      title={t("dashboard.crumb.center")}
+      breadcrumb={[t("dashboard.crumb.overview")]}
     >
       {/* KPI Grid */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <KpiCard
-          label="Total Calls"
-          value={loading ? "..." : kpis.totalCalls.toLocaleString()}
+          label={t("dashboard.kpi.totalCalls")}
+          value={loading ? "..." : kpis.totalCalls.toLocaleString(dateLocale)}
           icon={Phone}
           tone="primary"
           trend={{ value: "", positive: true }}
         />
         <KpiCard
-          label="Avg Call Duration"
+          label={t("dashboard.kpi.avgDuration")}
           value={loading ? "..." : kpis.avgDuration}
           icon={Clock}
           tone="primary"
           trend={{ value: "", positive: true }}
         />
         <KpiCard
-          label="Missed Calls"
+          label={t("dashboard.kpi.missed")}
           value={loading ? "..." : String(kpis.missedCalls)}
           icon={PhoneMissed}
           tone="destructive"
           trend={{ value: "", positive: false }}
         />
         <KpiCard
-          label="Total Call Time"
+          label={t("dashboard.kpi.totalTime")}
           value={loading ? "..." : kpis.totalCallTime}
           icon={Timer}
           tone="primary"
@@ -195,48 +201,48 @@ const Dashboard = () => {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
           <div>
             <h2 className="text-base font-semibold tracking-tight text-foreground">
-              Recent Calls
+              {t("dashboard.callsTitle")}
             </h2>
             <p className="text-xs text-muted-foreground">
-              Click any row to open the full transcript.
+              {t("dashboard.callsSubtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative hidden sm:block">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <Search className={cn("pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground", isRtl ? "right-3" : "left-3")} />
               <Input
-                placeholder="Search calls"
+                placeholder={t("dashboard.searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="h-9 w-52 rounded-lg border-border bg-secondary/60 pl-9 text-sm shadow-none"
+                className={cn("h-9 w-52 rounded-lg border-border bg-secondary/60 text-sm shadow-none", isRtl ? "pr-9" : "pl-9")}
               />
             </div>
             <Button variant="outline" size="sm" className="h-9 gap-1.5">
-              <Filter className="h-3.5 w-3.5" /> Filter
+              <Filter className="h-3.5 w-3.5" /> {t("common.filter")}
             </Button>
             <Button variant="outline" size="sm" className="h-9 gap-1.5">
-              <Download className="h-3.5 w-3.5" /> Export
+              <Download className="h-3.5 w-3.5" /> {t("common.export")}
             </Button>
           </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Loading calls...
+            <Loader2 className={cn("h-5 w-5 animate-spin", isRtl ? "ml-2" : "mr-2")} />
+            {t("dashboard.loading")}
           </div>
         ) : error ? (
           <div className="py-10 text-center text-sm text-destructive">{error}</div>
         ) : filtered.length === 0 ? (
           <div className="py-16 text-center text-sm text-muted-foreground">
-            No calls found for this account yet.
+            {t("dashboard.empty")}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
-                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">Time</TableHead>
+                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.col.time")}</TableHead>
                   {columns.map((col) => (
                     <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider">
                       {col.label}

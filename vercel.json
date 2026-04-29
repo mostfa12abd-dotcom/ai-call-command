@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm --filter @workspace/voxa... run typecheck && pnpm --filter @workspace/voxa... build",
   "outputDirectory": "artifacts/voxa/dist/public",
   "framework": "vite"
 }

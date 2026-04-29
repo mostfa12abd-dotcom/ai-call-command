@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, RefreshCw, Save, Eye, EyeOff } from "lucide-react";
+import { Copy, RefreshCw, Save, Eye, EyeOff, Languages, Check } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 const columnDefaults = [
   { key: "caller", label: "Caller", on: true },

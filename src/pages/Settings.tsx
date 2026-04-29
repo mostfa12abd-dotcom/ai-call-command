@@ -1,12 +1,8 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Copy, RefreshCw, Save, Eye, EyeOff, Languages, Check, Sun, Moon, Monitor, LogOut, User } from "lucide-react";
+import { Languages, Check, Sun, Moon, Monitor, LogOut, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";

@@ -206,17 +206,23 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <InfoTile icon={Calendar} label="When" value={call.date} />
-            {call.uiColumns?.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").map((col) => (
-              <InfoTile 
-                key={col.column_key}
-                icon={col.column_key === "call_duration" ? Clock : FileText} 
-                label={col.label} 
-                value={call.rawCall ? resolveDataPath(call.rawCall, col.data_path) : "—"} 
-              />
-            ))}
+          <div className="mt-5 flex justify-center">
+            <div className="w-1/2">
+              <InfoTile icon={Calendar} label="When" value={call.date} />
+            </div>
           </div>
+          {call.uiColumns && call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").map((col) => (
+                <InfoTile 
+                  key={col.column_key}
+                  icon={col.column_key === "call_duration" ? Clock : FileText} 
+                  label={col.label} 
+                  value={call.rawCall ? resolveDataPath(call.rawCall, col.data_path) : "—"} 
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-6 px-6 py-6">

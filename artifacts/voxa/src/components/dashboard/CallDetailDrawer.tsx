@@ -176,13 +176,26 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
   let endedByInfo = null;
   if (rawEndedReason) {
     const normalized = rawEndedReason.toLowerCase();
-    if (normalized === 'assistant-hung-up') {
-      endedByInfo = { who: t("call.endedBy.ai" as any), completed: true, label: t("call.status.completed" as any), color: "text-success bg-success-soft" };
-    } else if (normalized === 'customer-hung-up') {
-      endedByInfo = { who: t("call.endedBy.customer" as any), completed: false, label: t("call.status.customerEnded" as any), color: "text-warning bg-warning-soft" };
-    } else {
-      endedByInfo = { who: t("call.endedBy.system" as any), completed: false, label: t("call.status.incomplete" as any), color: "text-destructive bg-[hsl(var(--destructive-soft))]" };
+    let label = t("call.status.completed" as any) || "Completed";
+    let color = "text-success bg-success-soft";
+    let completed = true;
+
+    if (normalized.includes('customer')) {
+      completed = false;
+      label = t("call.status.customerEnded" as any) || "Customer Ended";
+      color = "text-warning bg-warning-soft";
+    } else if (normalized.includes('error') || normalized.includes('timeout') || normalized.includes('system')) {
+      completed = false;
+      label = t("call.status.incomplete" as any) || "Incomplete";
+      color = "text-destructive bg-[hsl(var(--destructive-soft))]";
     }
+
+    endedByInfo = { 
+      who: rawEndedReason, 
+      completed, 
+      label, 
+      color 
+    };
   }
 
   return (

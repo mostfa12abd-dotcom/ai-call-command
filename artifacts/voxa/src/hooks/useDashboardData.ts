@@ -4,7 +4,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface CallRow {
   id: string;
+  vapi_id?: string;
   caller_name: string;
+  customer_number?: string;
+  ended_reason?: string;
   company: string;
   call_duration: number;
   status: string;
@@ -153,7 +156,7 @@ export function useDashboardData() {
       }
 
       // 2) جيب المكالمات
-      const tenantId = tenantData?.vapi_assistant_id || user.id;
+      const tenantId = user.id;
       const { data, error: fetchError } = await supabase
         .from("calls")
         .select("*")

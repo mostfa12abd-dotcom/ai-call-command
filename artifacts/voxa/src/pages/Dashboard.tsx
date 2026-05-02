@@ -74,7 +74,7 @@ const Dashboard = () => {
         avatarColor: palette[0],
       },
       company: call.company || "—",
-      phone: call.custom_data?.phone || "—",
+      phone: call.customer_number || call.custom_data?.phone || "—",
       email: call.custom_data?.email || "—",
       duration: call.call_duration
         ? `${Math.floor(call.call_duration / 60)
@@ -319,7 +319,7 @@ const Dashboard = () => {
                                         {value}
                                       </p>
                                       <div className="flex flex-col text-[10px] leading-tight text-muted-foreground">
-                                        <span>{call.custom_data?.customer?.number || call.custom_data?.phone || "—"}</span>
+                                        <span>{call.customer_number || call.custom_data?.phone || "—"}</span>
                                         <span>{call.custom_data?.customer?.email || call.custom_data?.email || "—"}</span>
                                       </div>
                                     </div>

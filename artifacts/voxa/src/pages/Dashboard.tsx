@@ -250,9 +250,9 @@ const Dashboard = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
-                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.col.time")}</TableHead>
+                  <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider text-start">{t("dashboard.col.time")}</TableHead>
                   {columns.map((col) => (
-                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider text-right">
+                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider text-start">
                       {language === "ar" ? (
                         col.label === "Name" ? "الاسم" :
                         col.label === "Duration" ? "المدة" :

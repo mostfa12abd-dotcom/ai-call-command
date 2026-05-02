@@ -82,6 +82,9 @@ export function resolveDataPath(row: CallRow, path: string): string {
   let value: any = row;
   for (const part of parts) {
     if (value == null) return "—";
+    if (typeof value === "string") {
+      try { value = JSON.parse(value); } catch(e) {}
+    }
     value = value[part];
   }
   if (value == null || value === "") return "—";
@@ -89,6 +92,9 @@ export function resolveDataPath(row: CallRow, path: string): string {
     const m = Math.floor(value / 60).toString().padStart(2, "0");
     const s = (value % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
+  }
+  if (typeof value === "number" && path.includes("cost")) {
+    return `$${value.toFixed(2)}`;
   }
   return String(value);
 }

@@ -333,38 +333,84 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
             </section>
           )}
 
-          {/* WhatsApp Conversation */}
           {whatsappMessages.length > 0 && (
             <section className="rounded-xl border border-border bg-secondary/10 p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 💬 محادثة الواتساب
               </h3>
               <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                {whatsappMessages.map((msg) => {
-                  const messageObj = msg.message;
-                  const isAI = messageObj.type === "ai";
-                  
-                  let text = messageObj.content || "";
-                  if (text === "NO_MESSAGE_INITIAL_CONTACT") {
-                      text = "مكالمة جديدة (بدء المتابعة الآلية)";
+                {(() => {
+                  const parsedDisplayMessages: { id: string; isAI: boolean; text: string }[] = [];
+
+                  for (let i = 0; i < whatsappMessages.length; i++) {
+                    const msg = whatsappMessages[i];
+                    const messageObj = msg.message;
+                    const isAI = messageObj.type === "ai";
+                    let text = messageObj.content || "";
+
+                    if (isAI) {
+                      let isStructured = false;
+                      try {
+                        const parsed = JSON.parse(text);
+                        let customerMsg = parsed.customer_original_message || (parsed.output && parsed.output.customer_original_message);
+                        let aiMsg = parsed.ai_sent_message || (parsed.output && parsed.output.ai_sent_message);
+
+                        if (customerMsg && aiMsg) {
+                          isStructured = true;
+                          // Prevent duplicate human message if it was already added by the previous webhook step
+                          const lastMsg = parsedDisplayMessages[parsedDisplayMessages.length - 1];
+                          if (lastMsg && !lastMsg.isAI && lastMsg.text !== "مكالمة جديدة (بدء المتابعة الآلية)") {
+                            parsedDisplayMessages.pop();
+                          }
+
+                          if (customerMsg !== "NO_MESSAGE_INITIAL_CONTACT") {
+                            parsedDisplayMessages.push({ id: `${msg.id}-cust`, isAI: false, text: customerMsg });
+                          }
+                          parsedDisplayMessages.push({ id: `${msg.id}-ai`, isAI: true, text: aiMsg });
+                        }
+                      } catch (e) {
+                        // Not JSON, ignore
+                      }
+
+                      if (!isStructured) {
+                        parsedDisplayMessages.push({ id: msg.id, isAI: true, text });
+                      }
+                    } else {
+                      // Human message fallback / processing
+                      if (text === "NO_MESSAGE_INITIAL_CONTACT" || text.includes("NO_MESSAGE_INITIAL_CONTACT")) {
+                        parsedDisplayMessages.push({ id: msg.id, isAI: false, text: "مكالمة جديدة (بدء المتابعة الآلية)" });
+                      } else {
+                        // Clean up the webhook text just in case JSON isn't used
+                        let cleanText = text.replace("Incoming Message:", "").trim();
+                        const transcriptIndex = cleanText.indexOf("Previous Call Transcript:");
+                        if (transcriptIndex !== -1) {
+                          cleanText = cleanText.substring(0, transcriptIndex).trim();
+                        }
+                        if (cleanText) {
+                          parsedDisplayMessages.push({ id: msg.id, isAI: false, text: cleanText });
+                        }
+                      }
+                    }
                   }
 
-                  return (
-                    <div key={msg.id} className={cn("flex flex-col", isAI ? "items-start" : "items-end")}>
+                  return parsedDisplayMessages.map((msg) => (
+                    <div key={msg.id} className={cn("flex flex-col", msg.isAI ? "items-start" : "items-end")}>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
-                        {isAI ? "AI Assistant" : "Customer"}
+                        {msg.isAI ? "AI Assistant" : "Customer"}
                       </span>
-                      <div className={cn(
-                        "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
-                        isAI 
-                          ? "bg-card text-foreground rounded-tl-none border border-border/40" 
-                          : "bg-emerald-600 text-white rounded-tr-none"
-                      )}>
-                        {text}
+                      <div
+                        className={cn(
+                          "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
+                          msg.isAI
+                            ? "bg-card text-foreground rounded-tl-none border border-border/40"
+                            : "bg-emerald-600 text-white rounded-tr-none"
+                        )}
+                      >
+                        {msg.text}
                       </div>
                     </div>
-                  );
-                })}
+                  ));
+                })()}
               </div>
             </section>
           )}

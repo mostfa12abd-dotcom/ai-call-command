@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
 import { useState, useMemo, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/lib/supabase";
 
 // Generic shape that works with both mock data and real Supabase data
 export interface DrawerCall {
@@ -72,12 +73,32 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioTime, setAudioTime] = useState(0);
   const [duration, setDuration] = useState(call?.durationSeconds || 0);
+  const [whatsappMessages, setWhatsappMessages] = useState<any[]>([]);
 
   // Sync state when drawer opens with a new call
   useEffect(() => {
     setIsPlaying(false);
     setAudioTime(0);
     setDuration(call?.durationSeconds || 0);
+    
+    // Fetch WhatsApp messages
+    const fetchWa = async () => {
+      if (call?.phone) {
+        const phoneWithPlus = call.phone.startsWith("+") ? call.phone : "+" + call.phone;
+        const phoneWithoutPlus = call.phone.startsWith("+") ? call.phone.slice(1) : call.phone;
+        
+        const { data: waData } = await supabase
+          .from("n8n_chat_histories")
+          .select("*")
+          .in("session_id", [phoneWithPlus, phoneWithoutPlus, call.phone])
+          .order("id", { ascending: true });
+
+        setWhatsappMessages(waData || []);
+      } else {
+        setWhatsappMessages([]);
+      }
+    };
+    fetchWa();
   }, [call]);
 
   // Prepare transcript items with exact timestamps from Vapi or fallback to estimation
@@ -312,10 +333,52 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
             </section>
           )}
 
+          {/* WhatsApp Conversation */}
+          {whatsappMessages.length > 0 && (
+            <section className="rounded-xl border border-border bg-secondary/10 p-4">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                💬 محادثة الواتساب
+              </h3>
+              <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                {whatsappMessages.map((msg) => {
+                  const messageObj = msg.message;
+                  const isAI = messageObj.type === "ai";
+                  
+                  let text = messageObj.content || "";
+                  if (!isAI && text.includes("Previous Call Transcript:")) {
+                      const match = text.match(/Incoming Message:\s*(.*?)\n\nPrevious Call/);
+                      if (match) {
+                          text = match[1].trim();
+                          if (text === "NO_MESSAGE_INITIAL_CONTACT") {
+                              text = "[Customer initially contacted]";
+                          }
+                      }
+                  }
+
+                  return (
+                    <div key={msg.id} className={cn("flex flex-col", isAI ? "items-start" : "items-end")}>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
+                        {isAI ? "AI Assistant" : "Customer"}
+                      </span>
+                      <div className={cn(
+                        "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
+                        isAI 
+                          ? "bg-card text-foreground rounded-tl-none border border-border/40" 
+                          : "bg-emerald-600 text-white rounded-tr-none"
+                      )}>
+                        {text}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Transcript / Conversation */}
           <section>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Total Conversation
+              📞 محادثة المكالمة (Call Transcript)
             </h3>
 
             {transcriptItems.length > 0 ? (

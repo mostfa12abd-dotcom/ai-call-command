@@ -35,6 +35,7 @@ const CustomerDetail = () => {
   const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
   const [customer, setCustomer] = useState<any>(null);
   const [calls, setCalls] = useState<any[]>([]);
+  const [whatsappMessages, setWhatsappMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -63,6 +64,21 @@ const CustomerDetail = () => {
           .order("created_at", { ascending: false });
 
         setCalls(callsData || []);
+      }
+
+      // Fetch WhatsApp messages
+      if (cust?.phone) {
+        // try finding exact match, or match without + sign, or if phone in db lacks +
+        const phoneWithPlus = cust.phone.startsWith("+") ? cust.phone : "+" + cust.phone;
+        const phoneWithoutPlus = cust.phone.startsWith("+") ? cust.phone.slice(1) : cust.phone;
+        
+        const { data: waData } = await supabase
+          .from("n8n_chat_histories")
+          .select("*")
+          .in("session_id", [phoneWithPlus, phoneWithoutPlus, cust.phone])
+          .order("id", { ascending: true });
+
+        setWhatsappMessages(waData || []);
       }
 
       setLoading(false);
@@ -157,7 +173,54 @@ const CustomerDetail = () => {
         </div>
       </div>
 
+      {/* WhatsApp History */}
+      {whatsappMessages.length > 0 && (
+        <div className="mb-8 space-y-4">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            💬 محادثة الواتساب
+          </h3>
+          <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+              {whatsappMessages.map((msg) => {
+                const messageObj = msg.message;
+                const isAI = messageObj.type === "ai";
+                
+                let text = messageObj.content || "";
+                if (!isAI && text.includes("Previous Call Transcript:")) {
+                    const match = text.match(/Incoming Message:\s*(.*?)\n\nPrevious Call/);
+                    if (match) {
+                        text = match[1].trim();
+                        if (text === "NO_MESSAGE_INITIAL_CONTACT") {
+                            text = "[Customer initially contacted]";
+                        }
+                    }
+                }
+
+                return (
+                  <div key={msg.id} className={cn("flex flex-col", isAI ? "items-start" : "items-end")}>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
+                      {isAI ? "AI Assistant" : "Customer"}
+                    </span>
+                    <div className={cn(
+                      "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
+                      isAI 
+                        ? "bg-secondary text-foreground rounded-tl-none border border-border/40" 
+                        : "bg-emerald-600 text-white rounded-tr-none"
+                    )}>
+                      {text}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Calls History */}
+      <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
+        📞 محادثة المكالمة (Call History)
+      </h3>
       <div className="space-y-6">
         {calls.length === 0 ? (
           <div className="rounded-2xl border border-border/70 bg-card p-16 text-center text-sm text-muted-foreground shadow-card">

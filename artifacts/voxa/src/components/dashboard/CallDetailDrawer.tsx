@@ -345,14 +345,8 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                   const isAI = messageObj.type === "ai";
                   
                   let text = messageObj.content || "";
-                  if (!isAI && text.includes("Previous Call Transcript:")) {
-                      const match = text.match(/Incoming Message:\s*(.*?)\n\nPrevious Call/);
-                      if (match) {
-                          text = match[1].trim();
-                          if (text === "NO_MESSAGE_INITIAL_CONTACT") {
-                              text = "[Customer initially contacted]";
-                          }
-                      }
+                  if (text === "NO_MESSAGE_INITIAL_CONTACT") {
+                      text = "مكالمة جديدة (بدء المتابعة الآلية)";
                   }
 
                   return (

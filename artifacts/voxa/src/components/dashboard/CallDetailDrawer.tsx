@@ -351,6 +351,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                     </span>
                   );
                 })()}
+              </div>
             </div>
           </div>
 

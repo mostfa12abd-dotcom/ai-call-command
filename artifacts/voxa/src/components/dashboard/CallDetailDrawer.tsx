@@ -2,7 +2,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText, Play } from "lucide-react";
+import { Calendar, Clock, Phone, CheckCircle2, CalendarPlus, FileText, Play, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { resolveDataPath, type TenantCustomAction } from "@/hooks/useDashboardData";
 import { useState, useMemo, useEffect } from "react";
@@ -293,27 +293,66 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                 {call.caller.name}
               </h2>
               <p className="truncate text-sm text-muted-foreground">{call.company}</p>
+
+              {/* Phone & Email */}
+              <div className="mt-1 space-y-0.5">
+                {call.phone && call.phone !== "—" && (
+                  <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Phone className="h-3 w-3" />{call.phone}
+                  </p>
+                )}
+                {(() => {
+                  const email = call.rawCall?.custom_data
+                    ? (() => { try { const cd = typeof call.rawCall.custom_data === "string" ? JSON.parse(call.rawCall.custom_data.trim()) : call.rawCall.custom_data; return cd?.customer_email || cd?.email; } catch { return null; } })()
+                    : call.email;
+                  return email ? (
+                    <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Mail className="h-3 w-3" />{email}
+                    </p>
+                  ) : null;
+                })()}
+              </div>
+
+              {/* Status Badges */}
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                <Badge
-                  className={cn(
-                    "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                    isPickup
-                      ? "bg-success-soft text-success hover:bg-success-soft"
-                      : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]"
-                  )}
-                >
-                  {call.status}
-                </Badge>
-                <Badge
-                  className={cn(
-                    "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                    sat.tone
-                  )}
-                >
+                {/* Smart Status Badge */}
+                {(() => {
+                  const s = call.status?.toLowerCase();
+                  let cls = "bg-emerald-100 text-emerald-700";
+                  let label = call.status;
+                  if (s === "booked online") { cls = "bg-blue-100 text-blue-700"; label = t("status.bookedOnline" as any); }
+                  else if (s === "booked ftf") { cls = "bg-emerald-100 text-emerald-700"; label = t("status.bookedFTF" as any); }
+                  else if (s === "follow up" || s === "followup") { cls = "bg-amber-100 text-amber-700"; label = t("status.followUp" as any); }
+                  else if (s === "missed") { cls = "bg-rose-100 text-rose-700"; }
+                  return (
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${cls}`}>
+                      {label}
+                    </span>
+                  );
+                })()}
+
+                {/* Satisfaction Badge */}
+                <Badge className={cn("rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold", sat.tone)}>
                   {sat.emoji} {call.customFields.satisfaction}
                 </Badge>
+
+                {/* Call Completed Badge */}
+                {(() => {
+                  const cd = call.rawCall?.custom_data
+                    ? (() => { try { return typeof call.rawCall.custom_data === "string" ? JSON.parse(call.rawCall.custom_data.trim()) : call.rawCall.custom_data; } catch { return {}; } })()
+                    : {};
+                  const completed = cd?.call_completed;
+                  if (completed === undefined || completed === null) return null;
+                  return (
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                      completed ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+                    }`}>
+                      {completed ? `✓ ${t("common.completed.yes" as any)}` : `✗ ${t("common.completed.no" as any)}`}
+                    </span>
+                  );
+                })()}
               </div>
-              
+
               {endedByInfo && (
                 <div className="mt-3 flex items-center gap-2 text-xs font-medium">
                   <span className="text-muted-foreground">{t("call.endedBy" as any)}:</span>

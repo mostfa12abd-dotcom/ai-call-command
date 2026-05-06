@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Phone, Building2, Calendar, PhoneCall, PhoneMissed, Loader2 } from "lucide-react";
+import { ArrowLeft, Phone, Building2, Calendar, PhoneCall, PhoneMissed, Loader2, Mail } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -204,6 +204,11 @@ const CustomerDetail = () => {
             {customer.phone && (
               <span className="flex items-center gap-1.5">
                 <Phone className="h-3.5 w-3.5" /> {customer.phone}
+              </span>
+            )}
+            {customer.email && (
+              <span className="flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" /> {customer.email}
               </span>
             )}
             <span className="flex items-center gap-1.5">

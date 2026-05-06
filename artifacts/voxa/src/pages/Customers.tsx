@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Phone, Building2, Loader2 } from "lucide-react";
+import { Search, Phone, Building2, Loader2, Mail, DollarSign } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -95,6 +95,7 @@ const Customers = () => {
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.company")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.phone")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.totalCalls")}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.kpi.totalCredits" as any)}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.lastCall")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.actions")}</TableHead>
                 </TableRow>
@@ -129,18 +130,32 @@ const Customers = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        {c.phone ? (
-                          <>
-                            <Phone className="h-3.5 w-3.5" />
-                            {c.phone}
-                          </>
-                        ) : "—"}
-                      </span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="flex items-center gap-1.5 text-sm text-foreground">
+                          {c.phone && c.phone !== "—" ? (
+                            <>
+                              <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                              {c.phone}
+                            </>
+                          ) : <span className="text-muted-foreground">—</span>}
+                        </span>
+                        {c.email && (
+                          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Mail className="h-3 w-3" />
+                            {c.email}
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
                         {c.call_count ?? 0}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex items-center gap-1 font-mono text-sm tabular-nums text-foreground">
+                        <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                        {(c.total_credits ?? 0).toFixed(3)}
                       </span>
                     </TableCell>
                     <TableCell>

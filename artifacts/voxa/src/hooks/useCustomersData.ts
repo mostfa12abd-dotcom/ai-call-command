@@ -14,6 +14,7 @@ export interface CustomerRow {
   created_at: string;
   call_count?: number;
   last_call?: string;
+  total_credits?: number;
 }
 
 export function useCustomersData() {
@@ -31,27 +32,25 @@ export function useCustomersData() {
       setLoading(true);
       setError(null);
 
-      // 1) Fetch known customers from the customers table
+      // 1) Fetch known customers from customers table (has email, followup_status, call_completed)
       const { data: custData } = await supabase
         .from("customers")
         .select("*")
         .eq("tenant_id", user.id);
 
-      // 2) Get calls — try user.id first, fallback to vapi_assistant_id
+      // 2) Fetch all calls — try user.id, fallback to vapi_assistant_id
       const { data: settingsData } = await supabase
         .from("tenant_settings")
         .select("vapi_assistant_id")
         .eq("id", user.id)
         .single();
 
-      // Try with user.id first (the standard way)
       let { data: callsData, error: callsErr } = await supabase
         .from("calls")
         .select("id, caller_name, created_at, company, custom_data, customer_number")
         .eq("tenant_id", user.id)
         .order("created_at", { ascending: false });
 
-      // If no results, try with vapi_assistant_id as fallback
       if ((!callsData || callsData.length === 0) && settingsData?.vapi_assistant_id) {
         const fallback = await supabase
           .from("calls")
@@ -68,37 +67,51 @@ export function useCustomersData() {
         return;
       }
 
+      // Build customer map — key by phone number (primary) or name (fallback)
       const customerMap = new Map<string, CustomerRow>();
 
-      // First add known customers from the customers table
+      // Seed from the customers table first (has email/status data)
       (custData || []).forEach(c => {
-        customerMap.set((c.name || c.id).toLowerCase(), {
+        const key = normalizePhone(c.phone) || (c.name || c.id).toLowerCase();
+        customerMap.set(key, {
           ...c,
           call_count: 0,
-          last_call: "—"
+          last_call: "—",
+          total_credits: 0,
         });
       });
 
-      // Then enrich/add from calls
+      // Enrich from calls — match by phone number first, then by name
       (callsData || []).forEach(call => {
+        const phone = normalizePhone(call.customer_number || call.custom_data?.customer?.number || call.custom_data?.phone);
         const name = call.caller_name || "Unknown";
-        const key = name.toLowerCase();
+        const cost = parseCost(call.custom_data?.cost);
 
-        if (customerMap.has(key)) {
-          const existing = customerMap.get(key)!;
+        // Try phone key first, then name key
+        const key = phone || name.toLowerCase();
+        const existing = customerMap.get(key);
+
+        if (existing) {
           existing.call_count = (existing.call_count || 0) + 1;
+          existing.total_credits = (existing.total_credits || 0) + cost;
+          if (!existing.phone && phone) existing.phone = phone;
+          if (!existing.email && call.custom_data?.customer_email) {
+            existing.email = call.custom_data.customer_email;
+          }
           if (existing.last_call === "—") {
             existing.last_call = new Date(call.created_at).toLocaleDateString(dateLocale);
           }
         } else {
           customerMap.set(key, {
             id: call.id,
-            name: name,
-            phone: call.customer_number || call.custom_data?.customer?.number || call.custom_data?.phone || "—",
+            name,
+            phone: phone || "—",
             company: call.company || "—",
+            email: call.custom_data?.customer_email || undefined,
             created_at: call.created_at,
             call_count: 1,
-            last_call: new Date(call.created_at).toLocaleDateString(dateLocale)
+            last_call: new Date(call.created_at).toLocaleDateString(dateLocale),
+            total_credits: cost,
           });
         }
       });
@@ -111,4 +124,17 @@ export function useCustomersData() {
   }, [user, dateLocale]);
 
   return { customers, loading, error };
+}
+
+// Normalize phone: remove spaces, dashes, keep only digits and leading +
+function normalizePhone(phone?: string | null): string {
+  if (!phone) return "";
+  const cleaned = phone.replace(/[\s\-().]/g, "");
+  return cleaned || "";
+}
+
+function parseCost(cost: any): number {
+  if (typeof cost === "number") return cost;
+  if (typeof cost === "string") return parseFloat(cost) || 0;
+  return 0;
 }

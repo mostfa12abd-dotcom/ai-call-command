@@ -147,25 +147,14 @@ const Customers = () => {
                     </TableCell>
                     <TableCell>
                       {(() => {
-                        const status = c.followup_status?.toLowerCase();
-                        if (status === "booked online") {
-                          return (
-                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
-                              {t("status.bookedOnline" as any)}
-                            </span>
-                          );
-                        }
-                        if (status === "booked ftf") {
-                          return (
-                            <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-                              {t("status.bookedFTF" as any)}
-                            </span>
-                          );
-                        }
-                        // Default to follow up (yellow)
+                        const s = (c.followup_status || c.status)?.toLowerCase();
+                        let cls = "bg-amber-100 text-amber-700";
+                        let label: string = t("status.followUp" as any);
+                        if (s === "booked online") { cls = "bg-blue-100 text-blue-700"; label = t("status.bookedOnline" as any); }
+                        else if (s === "booked ftf") { cls = "bg-emerald-100 text-emerald-700"; label = t("status.bookedFTF" as any); }
                         return (
-                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-                            {t("status.followUp" as any)}
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${cls}`}>
+                            {label}
                           </span>
                         );
                       })()}

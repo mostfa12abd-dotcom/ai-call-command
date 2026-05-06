@@ -233,11 +233,11 @@ const CustomerDetail = () => {
         </div>
       </div>
 
-      {/* Follow-up Status & Completion Badges */}
+      {/* Status & Completion Badges */}
       <div className="mb-6 flex flex-wrap gap-3">
-        {/* Follow-up Status */}
+        {/* Status Badge */}
         {(() => {
-          const status = customer.followup_status?.toLowerCase() || "follow up";
+          const s = (customer.followup_status || customer.status)?.toLowerCase();
           const statusColors: Record<string, string> = {
             "follow up":    "bg-amber-100 text-amber-700 border-amber-200",
             "booked online":"bg-blue-100 text-blue-700 border-blue-200",
@@ -248,10 +248,8 @@ const CustomerDetail = () => {
             "booked online":"status.bookedOnline",
             "booked ftf":   "status.bookedFTF",
           };
-          
-          const colorClass = statusColors[status] || statusColors["follow up"];
-          const transKey = statusKeys[status] || "status.followUp";
-          
+          const colorClass = statusColors[s || ""] || statusColors["follow up"];
+          const transKey = statusKeys[s || ""] || "status.followUp";
           return (
             <Badge className={cn("rounded-full border px-3 py-1 text-xs font-semibold shadow-none", colorClass)}>
               {t(transKey)}
@@ -259,7 +257,7 @@ const CustomerDetail = () => {
           );
         })()}
 
-        {/* Call Completed Status */}
+        {/* Call Completed Badge */}
         {customer.call_completed !== undefined && (
           <Badge
             className={cn(

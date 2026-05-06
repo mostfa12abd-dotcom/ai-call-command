@@ -336,48 +336,30 @@ const Dashboard = () => {
                             }
 
                             if (col.column_key === "status") {
-                              const isPickup = value.toLowerCase() === "pickup" || value.toLowerCase() === "pickups";
-                              return (
-                                <TableCell key={col.column_key}>
-                                  <Badge
-                                    className={cn(
-                                      "rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold",
-                                      isPickup
-                                        ? "bg-success-soft text-success hover:bg-success-soft"
-                                        : "bg-[hsl(var(--destructive-soft))] text-destructive hover:bg-[hsl(var(--destructive-soft))]"
-                                    )}
-                                  >
-                                    <span className={cn("mr-1.5 inline-block h-1.5 w-1.5 rounded-full", isPickup ? "bg-success" : "bg-destructive")} />
-                                    {value}
-                                  </Badge>
-                                </TableCell>
-                              );
-                            }
+                              const s = value?.toLowerCase();
+                              let badgeClass = "";
+                              let label = value;
 
-                            if (col.column_key === "followup_status") {
-                              const status = value?.toLowerCase();
-                              if (status === "booked online") {
-                                return (
-                                  <TableCell key={col.column_key}>
-                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
-                                      {t("status.bookedOnline" as any)}
-                                    </span>
-                                  </TableCell>
-                                );
+                              if (s === "booked online") {
+                                badgeClass = "bg-blue-100 text-blue-700";
+                                label = t("status.bookedOnline" as any);
+                              } else if (s === "booked ftf") {
+                                badgeClass = "bg-emerald-100 text-emerald-700";
+                                label = t("status.bookedFTF" as any);
+                              } else if (s === "follow up" || s === "followup") {
+                                badgeClass = "bg-amber-100 text-amber-700";
+                                label = t("status.followUp" as any);
+                              } else if (s === "missed") {
+                                badgeClass = "bg-rose-100 text-rose-700";
+                              } else {
+                                // pickup / default — green
+                                badgeClass = "bg-emerald-100 text-emerald-700";
                               }
-                              if (status === "booked ftf") {
-                                return (
-                                  <TableCell key={col.column_key}>
-                                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-                                      {t("status.bookedFTF" as any)}
-                                    </span>
-                                  </TableCell>
-                                );
-                              }
+
                               return (
                                 <TableCell key={col.column_key}>
-                                  <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-                                    {t("status.followUp" as any)}
+                                  <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold", badgeClass)}>
+                                    {label}
                                   </span>
                                 </TableCell>
                               );

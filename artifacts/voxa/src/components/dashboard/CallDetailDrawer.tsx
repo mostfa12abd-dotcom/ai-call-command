@@ -156,6 +156,61 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
     });
   }, [call, duration]);
 
+  const parsedWhatsappMessages = useMemo(() => {
+    const parsedDisplayMessages: { id: string; isAI: boolean; text: string }[] = [];
+    for (let i = 0; i < whatsappMessages.length; i++) {
+      const msg = whatsappMessages[i];
+      const messageObj = msg.message;
+      const isAI = messageObj.type === "ai";
+      let text = messageObj.content || "";
+
+      if (isAI) {
+        let isStructured = false;
+        try {
+          const parsed = JSON.parse(text);
+          let customerMsg = parsed.customer_original_message || (parsed.output && parsed.output.customer_original_message);
+          let aiMsg = parsed.ai_sent_message || (parsed.output && parsed.output.ai_sent_message);
+
+          if (customerMsg && aiMsg) {
+            isStructured = true;
+            // Prevent duplicate human message
+            const lastMsg = parsedDisplayMessages[parsedDisplayMessages.length - 1];
+            if (lastMsg && !lastMsg.isAI) {
+              parsedDisplayMessages.pop();
+            }
+
+            if (customerMsg !== "NO_MESSAGE_INITIAL_CONTACT") {
+              parsedDisplayMessages.push({ id: `${msg.id}-cust`, isAI: false, text: customerMsg });
+            }
+            parsedDisplayMessages.push({ id: `${msg.id}-ai`, isAI: true, text: aiMsg });
+          }
+        } catch (e) {
+          // Not JSON, ignore
+        }
+
+        if (!isStructured) {
+          parsedDisplayMessages.push({ id: msg.id, isAI: true, text });
+        }
+      } else {
+        // Human message fallback / processing
+        if (text === "NO_MESSAGE_INITIAL_CONTACT" || text.includes("NO_MESSAGE_INITIAL_CONTACT")) {
+          // Ignore completely
+        } else {
+          // Clean up the webhook text
+          let cleanText = text.replace("Incoming Message:", "").trim();
+          const transcriptIndex = cleanText.indexOf("Previous Call Transcript:");
+          if (transcriptIndex !== -1) {
+            cleanText = cleanText.substring(0, transcriptIndex).trim();
+          }
+          if (cleanText) {
+            parsedDisplayMessages.push({ id: msg.id, isAI: false, text: cleanText });
+          }
+        }
+      }
+    }
+    return parsedDisplayMessages;
+  }, [whatsappMessages]);
+
   if (!call) return null;
 
   const sat = satisfactionMeta[call.customFields.satisfaction] ?? satisfactionMeta["None"];

@@ -351,28 +351,14 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                     </span>
                   );
                 })()}
-              </div>
-
-              {endedByInfo && (
-                <div className="mt-3 flex items-center gap-2 text-xs font-medium">
-                  <span className="text-muted-foreground">{t("call.endedBy" as any)}:</span>
-                  <Badge variant="outline" className="rounded-full px-2 py-0">
-                    {endedByInfo.who}
-                  </Badge>
-                  <span className="text-muted-foreground ml-1">{t("call.completionStatus" as any)}:</span>
-                  <Badge className={cn("rounded-full border-transparent px-2 py-0 text-[10px]", endedByInfo.color)}>
-                    {endedByInfo.label}
-                  </Badge>
-                </div>
-              )}
             </div>
           </div>
 
           <div className="mt-5 space-y-3">
             <InfoTile icon={Calendar} label="When" value={call.date} />
-            {call.uiColumns && call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").length > 0 && (
+            {call.uiColumns && call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction" && c.column_key !== "call_completed" && c.column_key !== "followup_status").length > 0 && (
               <div className="grid grid-cols-2 gap-3">
-                {call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction").map((col) => (
+                {call.uiColumns.filter(c => c.column_key !== "caller_name" && c.column_key !== "status" && c.column_key !== "satisfaction" && c.column_key !== "call_completed" && c.column_key !== "followup_status").map((col) => (
                   <InfoTile 
                     key={col.column_key}
                     icon={col.column_key === "call_duration" ? Clock : FileText} 

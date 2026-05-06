@@ -311,6 +311,16 @@ const Dashboard = () => {
                             const value = resolveDataPath(call, col.data_path);
                             
                             if (col.column_key === "caller_name") {
+                              // custom_data comes as a JSON string from Supabase — parse it
+                              const cd = (() => {
+                                const raw = call.custom_data;
+                                if (!raw) return {};
+                                if (typeof raw === "object") return raw;
+                                try { return JSON.parse(String(raw).trim()); } catch { return {}; }
+                              })();
+                              const email = cd?.customer_email || cd?.email;
+                              const phone = call.customer_number || cd?.phone;
+
                               return (
                                 <TableCell key={col.column_key}>
                                   <div className="flex items-center gap-3">
@@ -324,10 +334,8 @@ const Dashboard = () => {
                                         {value}
                                       </p>
                                       <div className="flex flex-col text-[10px] leading-tight text-muted-foreground">
-                                        <span>{call.customer_number || call.custom_data?.phone || "—"}</span>
-                                        <span className="truncate max-w-[150px]">
-                                          {call.custom_data?.customer_email || call.custom_data?.email || call.custom_data?.customer?.email || ""}
-                                        </span>
+                                        {phone && <span>{phone}</span>}
+                                        {email && <span className="truncate max-w-[160px]">{email}</span>}
                                       </div>
                                     </div>
                                   </div>

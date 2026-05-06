@@ -83,12 +83,20 @@ export function useCustomersData() {
 
       // Enrich from calls — match by phone number first, then by name
       (callsData || []).forEach(call => {
-        const phone = normalizePhone(call.customer_number || call.custom_data?.customer?.number || call.custom_data?.phone);
+        // custom_data may come as a JSON string from Supabase — parse it first
+        const cd: Record<string, any> = (() => {
+          const raw = call.custom_data;
+          if (!raw) return {};
+          if (typeof raw === "object") return raw;
+          try { return JSON.parse(String(raw).trim()); } catch { return {}; }
+        })();
+
+        const phone = normalizePhone(call.customer_number || cd?.customer?.number || cd?.phone);
         const name = call.caller_name || "Unknown";
-        const cost = parseCost(call.custom_data?.cost);
-        const email = call.custom_data?.customer_email;
-        const followup_status = call.status || call.custom_data?.followup_status;
-        const call_completed = call.custom_data?.call_completed;
+        const cost = parseCost(cd?.cost);
+        const email = cd?.customer_email || cd?.email;
+        const followup_status = cd?.followup_status || call.status;
+        const call_completed = cd?.call_completed;
 
         // Try phone key first, then name key
         const key = phone || name.toLowerCase();
@@ -101,7 +109,7 @@ export function useCustomersData() {
           if (!existing.email && email) existing.email = email;
           
           // Always take the most recent call's status and completion
-          existing.followup_status = followup_status || existing.followup_status;
+          if (followup_status) existing.followup_status = followup_status;
           if (call_completed !== undefined) existing.call_completed = call_completed;
 
           if (existing.last_call === "—") {

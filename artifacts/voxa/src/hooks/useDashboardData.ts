@@ -58,6 +58,16 @@ const formatTotalTime = (totalSeconds: number): string => {
   return `${h}h ${m}m`;
 };
 
+// Parse custom_data whether it comes as string or object
+function parseCustomData(raw: any): Record<string, any> {
+  if (!raw) return {};
+  if (typeof raw === "object") return raw;
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw.trim()); } catch { return {}; }
+  }
+  return {};
+}
+
 const computeKpis = (rows: CallRow[]): KpiData => {
   const totalCalls = rows.length;
   const missedCalls = rows.filter(
@@ -70,7 +80,8 @@ const computeKpis = (rows: CallRow[]): KpiData => {
       ? Math.round(totalSeconds / pickedUpCalls.length)
       : 0;
   const totalCreditsNum = rows.reduce((sum, c) => {
-    const cost = c.custom_data?.cost ?? c.custom_data?.["cost"];
+    const cd = parseCustomData(c.custom_data);
+    const cost = cd?.cost;
     return sum + (typeof cost === "number" ? cost : parseFloat(cost) || 0);
   }, 0);
   return {
@@ -88,19 +99,22 @@ export function resolveDataPath(row: CallRow, path: string): string {
   let value: any = row;
   for (const part of parts) {
     if (value == null) return "—";
+    // Parse string JSON at any level (custom_data stored as string)
     if (typeof value === "string") {
-      try { value = JSON.parse(value); } catch(e) {}
+      try { value = JSON.parse(value.trim()); } catch(e) {}
     }
     value = value[part];
   }
   if (value == null || value === "") return "—";
+  // Boolean: return true/false string so caller can detect it
+  if (typeof value === "boolean") return String(value);
   if (typeof value === "number" && path === "call_duration") {
     const m = Math.floor(value / 60).toString().padStart(2, "0");
     const s = (value % 60).toString().padStart(2, "0");
     return `${m}:${s}`;
   }
   if (typeof value === "number" && path.includes("cost")) {
-    return `$${value.toFixed(2)}`;
+    return `$${value.toFixed(3)}`;
   }
   return String(value);
 }

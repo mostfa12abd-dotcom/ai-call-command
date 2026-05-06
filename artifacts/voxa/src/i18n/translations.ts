@@ -25,6 +25,13 @@ export const translations = {
   "common.pm": { en: "PM", ar: "مساءً" },
   "common.today": { en: "Today", ar: "اليوم" },
   "common.yesterday": { en: "Yesterday", ar: "أمس" },
+  "common.status": { en: "Status", ar: "الحالة" },
+  "common.completed": { en: "Completion", ar: "الإتمام" },
+  "common.completed.yes": { en: "Completed", ar: "مكتملة" },
+  "common.completed.no": { en: "Not Completed", ar: "غير مكتملة" },
+  "status.followUp": { en: "Follow Up", ar: "متابعة" },
+  "status.bookedOnline": { en: "Booked Online", ar: "حجز أونلاين" },
+  "status.bookedFTF": { en: "Booked FTF", ar: "حجز وجهاً لوجه" },
 
   // Login page
   "login.welcome": { en: "Welcome back", ar: "أهلاً بعودتك" },
@@ -155,6 +162,11 @@ export const translations = {
   "col.credits": { en: "Credits", ar: "الرصيد" },
   "col.status": { en: "Status", ar: "الحالة" },
   "col.summary": { en: "Summary", ar: "الملخص" },
+
+  "satisfaction.high": { en: "High", ar: "مرتفع" },
+  "satisfaction.medium": { en: "Medium", ar: "متوسط" },
+  "satisfaction.low": { en: "Low", ar: "منخفض" },
+  "satisfaction.none": { en: "None", ar: "غير محدد" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

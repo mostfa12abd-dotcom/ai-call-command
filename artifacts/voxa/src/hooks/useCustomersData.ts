@@ -86,6 +86,9 @@ export function useCustomersData() {
         const phone = normalizePhone(call.customer_number || call.custom_data?.customer?.number || call.custom_data?.phone);
         const name = call.caller_name || "Unknown";
         const cost = parseCost(call.custom_data?.cost);
+        const email = call.custom_data?.customer_email;
+        const followup_status = call.status || call.custom_data?.followup_status;
+        const call_completed = call.custom_data?.call_completed;
 
         // Try phone key first, then name key
         const key = phone || name.toLowerCase();
@@ -95,9 +98,12 @@ export function useCustomersData() {
           existing.call_count = (existing.call_count || 0) + 1;
           existing.total_credits = (existing.total_credits || 0) + cost;
           if (!existing.phone && phone) existing.phone = phone;
-          if (!existing.email && call.custom_data?.customer_email) {
-            existing.email = call.custom_data.customer_email;
-          }
+          if (!existing.email && email) existing.email = email;
+          
+          // Always take the most recent call's status and completion
+          existing.followup_status = followup_status || existing.followup_status;
+          if (call_completed !== undefined) existing.call_completed = call_completed;
+
           if (existing.last_call === "—") {
             existing.last_call = new Date(call.created_at).toLocaleDateString(dateLocale);
           }
@@ -107,7 +113,9 @@ export function useCustomersData() {
             name,
             phone: phone || "—",
             company: call.company || "—",
-            email: call.custom_data?.customer_email || undefined,
+            email: email || undefined,
+            followup_status: followup_status || undefined,
+            call_completed: call_completed,
             created_at: call.created_at,
             call_count: 1,
             last_call: new Date(call.created_at).toLocaleDateString(dateLocale),

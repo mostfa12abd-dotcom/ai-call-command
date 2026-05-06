@@ -92,10 +92,11 @@ const Customers = () => {
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.customer")}</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.company")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.phone")}</TableHead>
-                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.totalCalls")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.kpi.totalCredits" as any)}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("common.status" as any)}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("common.completed" as any)}</TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.totalCalls")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.lastCall")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.actions")}</TableHead>
                 </TableRow>
@@ -114,20 +115,11 @@ const Customers = () => {
                             {initialsOf(c.name)}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="text-sm font-semibold text-foreground">{c.name}</p>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{c.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{c.company !== "—" ? c.company : ""}</p>
+                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="flex items-center gap-1.5 text-sm text-foreground">
-                        {c.company ? (
-                          <>
-                            <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-                            {c.company}
-                          </>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </span>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col gap-0.5">
@@ -148,14 +140,50 @@ const Customers = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
-                        {c.call_count ?? 0}
-                      </span>
-                    </TableCell>
-                    <TableCell>
                       <span className="flex items-center gap-1 font-mono text-sm tabular-nums text-foreground">
                         <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
                         {(c.total_credits ?? 0).toFixed(3)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const status = c.followup_status?.toLowerCase();
+                        if (status === "booked online") {
+                          return (
+                            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                              {t("status.bookedOnline" as any)}
+                            </span>
+                          );
+                        }
+                        if (status === "booked ftf") {
+                          return (
+                            <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                              {t("status.bookedFTF" as any)}
+                            </span>
+                          );
+                        }
+                        // Default to follow up (yellow)
+                        return (
+                          <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                            {t("status.followUp" as any)}
+                          </span>
+                        );
+                      })()}
+                    </TableCell>
+                    <TableCell>
+                      {c.call_completed ? (
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                          ✓
+                        </span>
+                      ) : (
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                          ✗
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm font-semibold tabular-nums text-foreground">
+                        {c.call_count ?? 0}
                       </span>
                     </TableCell>
                     <TableCell>

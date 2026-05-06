@@ -168,12 +168,21 @@ export function useDashboardData() {
       }
 
       // 2) جيب المكالمات
-      const tenantId = user.id;
-      const { data, error: fetchError } = await supabase
+      let { data, error: fetchError } = await supabase
         .from("calls")
         .select("*")
-        .eq("tenant_id", tenantId)
+        .eq("tenant_id", user.id)
         .order("created_at", { ascending: false });
+
+      if ((!data || data.length === 0) && tenantData?.vapi_assistant_id) {
+        const fallback = await supabase
+          .from("calls")
+          .select("*")
+          .eq("tenant_id", tenantData.vapi_assistant_id)
+          .order("created_at", { ascending: false });
+        data = fallback.data;
+        fetchError = fallback.error;
+      }
 
       if (fetchError) {
         setError(fetchError.message);
@@ -183,7 +192,13 @@ export function useDashboardData() {
 
       const rows = (data as CallRow[]) || [];
       setCalls(rows);
-      setKpis(computeKpis(rows));
+      
+      const computed = computeKpis(rows);
+      // Return raw values for duration/credits to let UI localize them
+      setKpis({
+        ...computed,
+        totalCredits: computed.totalCredits.replace("$", "") // Remove $ if any, UI will format
+      });
       setLoading(false);
     };
 

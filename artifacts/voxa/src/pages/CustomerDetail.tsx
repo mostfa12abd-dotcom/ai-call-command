@@ -237,16 +237,24 @@ const CustomerDetail = () => {
       <div className="mb-6 flex flex-wrap gap-3">
         {/* Follow-up Status */}
         {(() => {
-          const status = customer.followup_status || "follow up";
-          const statusConfig: Record<string, { label: string; labelAr: string; className: string }> = {
-            "follow up":    { label: "Follow Up",    labelAr: "متابعة",              className: "bg-amber-100 text-amber-700 border-amber-200" },
-            "booked online":{ label: "Booked Online", labelAr: "تم الحجز أونلاين",    className: "bg-blue-100 text-blue-700 border-blue-200" },
-            "booked ftf":   { label: "Booked FTF",   labelAr: "تم الحجز وجهاً لوجه",  className: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+          const status = customer.followup_status?.toLowerCase() || "follow up";
+          const statusColors: Record<string, string> = {
+            "follow up":    "bg-amber-100 text-amber-700 border-amber-200",
+            "booked online":"bg-blue-100 text-blue-700 border-blue-200",
+            "booked ftf":   "bg-emerald-100 text-emerald-700 border-emerald-200",
           };
-          const cfg = statusConfig[status.toLowerCase()] || statusConfig["follow up"];
+          const statusKeys: Record<string, any> = {
+            "follow up":    "status.followUp",
+            "booked online":"status.bookedOnline",
+            "booked ftf":   "status.bookedFTF",
+          };
+          
+          const colorClass = statusColors[status] || statusColors["follow up"];
+          const transKey = statusKeys[status] || "status.followUp";
+          
           return (
-            <Badge className={cn("rounded-full border px-3 py-1 text-xs font-semibold", cfg.className)}>
-              {language === "ar" ? cfg.labelAr : cfg.label}
+            <Badge className={cn("rounded-full border px-3 py-1 text-xs font-semibold shadow-none", colorClass)}>
+              {t(transKey)}
             </Badge>
           );
         })()}
@@ -255,15 +263,15 @@ const CustomerDetail = () => {
         {customer.call_completed !== undefined && (
           <Badge
             className={cn(
-              "rounded-full border px-3 py-1 text-xs font-semibold",
+              "rounded-full border px-3 py-1 text-xs font-semibold shadow-none",
               customer.call_completed
                 ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                : "bg-red-100 text-red-700 border-red-200"
+                : "bg-rose-100 text-rose-700 border-rose-200"
             )}
           >
             {customer.call_completed
-              ? (language === "ar" ? "✓ مكتملة" : "✓ Completed")
-              : (language === "ar" ? "✗ غير مكتملة" : "✗ Not Completed")}
+              ? `✓ ${t("common.completed.yes" as any)}`
+              : `✗ ${t("common.completed.no" as any)}`}
           </Badge>
         )}
       </div>

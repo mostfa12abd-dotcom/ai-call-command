@@ -185,21 +185,21 @@ const Dashboard = () => {
         />
         <KpiCard
           label={t("dashboard.kpi.missed")}
-          value={loading ? "..." : String(kpis.missedCalls)}
+          value={loading ? "..." : kpis.missedCalls.toLocaleString(dateLocale)}
           icon={PhoneMissed}
           tone="destructive"
           trend={{ value: "", positive: false }}
         />
         <KpiCard
           label={t("dashboard.kpi.totalTime")}
-          value={loading ? "..." : kpis.totalCallTime}
+          value={loading ? "..." : kpis.totalCallTime.replace("h", isRtl ? "س" : "h").replace("m", isRtl ? "د" : "m")}
           icon={Timer}
           tone="primary"
           trend={{ value: "", positive: true }}
         />
         <KpiCard
           label={t("dashboard.kpi.totalCredits")}
-          value={loading ? "..." : kpis.totalCredits}
+          value={loading ? "..." : (isRtl ? `${kpis.totalCredits} $` : `$${kpis.totalCredits}`)}
           icon={DollarSign}
           tone="primary"
           trend={{ value: "", positive: true }}
@@ -354,11 +354,13 @@ const Dashboard = () => {
 
                             if (col.column_key === "satisfaction") {
                               const satInfo = satisfactionMeta[value] || satisfactionMeta["None"];
+                              const transKey = `satisfaction.${value.toLowerCase()}` as any;
+                              const translatedValue = t(transKey) !== transKey ? t(transKey) : value;
                               return (
                                 <TableCell key={col.column_key}>
                                   <span className={cn("inline-flex items-center gap-1.5 text-sm font-medium", satInfo.tone)}>
                                     <span className="text-base leading-none">{satInfo.emoji}</span>
-                                    {value}
+                                    {translatedValue}
                                   </span>
                                 </TableCell>
                               );

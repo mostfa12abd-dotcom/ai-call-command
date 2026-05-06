@@ -228,10 +228,44 @@ const CustomerDetail = () => {
         </div>
       </div>
 
+      {/* Follow-up Status & Completion Badges */}
+      <div className="mb-6 flex flex-wrap gap-3">
+        {/* Follow-up Status */}
+        {(() => {
+          const status = customer.followup_status || "follow up";
+          const statusConfig: Record<string, { label: string; labelAr: string; className: string }> = {
+            "follow up":    { label: "Follow Up",    labelAr: "متابعة",              className: "bg-amber-100 text-amber-700 border-amber-200" },
+            "booked online":{ label: "Booked Online", labelAr: "تم الحجز أونلاين",    className: "bg-blue-100 text-blue-700 border-blue-200" },
+            "booked ftf":   { label: "Booked FTF",   labelAr: "تم الحجز وجهاً لوجه",  className: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+          };
+          const cfg = statusConfig[status.toLowerCase()] || statusConfig["follow up"];
+          return (
+            <Badge className={cn("rounded-full border px-3 py-1 text-xs font-semibold", cfg.className)}>
+              {language === "ar" ? cfg.labelAr : cfg.label}
+            </Badge>
+          );
+        })()}
+
+        {/* Call Completed Status */}
+        {customer.call_completed !== undefined && (
+          <Badge
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs font-semibold",
+              customer.call_completed
+                ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                : "bg-red-100 text-red-700 border-red-200"
+            )}
+          >
+            {customer.call_completed
+              ? (language === "ar" ? "✓ مكتملة" : "✓ Completed")
+              : (language === "ar" ? "✗ غير مكتملة" : "✗ Not Completed")}
+          </Badge>
+        )}
+      </div>
 
       {/* Calls History */}
       <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
-        📞 محادثة المكالمة (Call History)
+        {t("customer.callHistory.title")}
       </h3>
       <div className="space-y-6">
         {calls.length === 0 ? (
@@ -333,14 +367,16 @@ const CustomerDetail = () => {
       {parsedWhatsappMessages.length > 0 && (
         <div className="mt-8 space-y-4">
           <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-            💬 محادثة الواتساب
+            💬 {t("customer.whatsapp")}
           </h3>
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-card">
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
               {parsedWhatsappMessages.map((msg) => (
                 <div key={msg.id} className={cn("flex flex-col", msg.isAI ? "items-start" : "items-end")}>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
-                    {msg.isAI ? "AI Assistant" : "Customer"}
+                    {msg.isAI
+                      ? (language === "ar" ? "المساعد الذكي" : "AI Assistant")
+                      : (language === "ar" ? "العميل" : "Customer")}
                   </span>
                   <div
                     className={cn(

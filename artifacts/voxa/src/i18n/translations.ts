@@ -1,9 +1,5 @@
 // Central translation dictionary. Add a key here to make a string translatable.
 // Keep keys descriptive (e.g. `customers.totalCalls`) and grouped by surface.
-//
-// NOTE for the future: per-tenant customization (different labels, columns,
-// or actions per client) should be layered on top of this dictionary — the
-// resolved label is whichever the tenant override provides, otherwise t(key).
 
 export type Language = "ar" | "en";
 
@@ -15,10 +11,7 @@ export const translations = {
   "nav.customers": { en: "Customer", ar: "العملاء" },
   "nav.settings": { en: "Settings", ar: "الإعدادات" },
 
-  "header.subtitle": {
-    en: "",
-    ar: "",
-  },
+  "header.subtitle": { en: "", ar: "" },
 
   "common.loading": { en: "Loading...", ar: "جارٍ التحميل..." },
   "common.search": { en: "Search", ar: "بحث" },
@@ -73,6 +66,7 @@ export const translations = {
   "customers.col.totalCalls": { en: "Total Calls", ar: "إجمالي المكالمات" },
   "customers.col.lastCall": { en: "Last Call", ar: "آخر مكالمة" },
   "customers.col.actions": { en: "Actions", ar: "الإجراءات" },
+  "customers.col.status": { en: "Status", ar: "الحالة" },
   "customers.empty": { en: "No customers found for this account yet.", ar: "لا يوجد عملاء لهذا الحساب حتى الآن." },
   "customers.loading": { en: "Loading customers...", ar: "جارٍ تحميل العملاء..." },
 
@@ -89,17 +83,27 @@ export const translations = {
   "customer.stat.missed": { en: "Missed", ar: "فائتة" },
   "customer.empty": { en: "No calls found for this customer.", ar: "لا توجد مكالمات لهذا العميل." },
   "customer.callDefault": { en: "Call", ar: "مكالمة" },
+  "customer.followupStatus": { en: "Follow-up Status", ar: "حالة المتابعة" },
+  "customer.callCompleted": { en: "Call Completed", ar: "المكالمة مكتملة" },
+  "customer.callNotCompleted": { en: "Not Completed", ar: "غير مكتملة" },
+  "customer.status.followUp": { en: "Follow Up", ar: "متابعة" },
+  "customer.status.bookedOnline": { en: "Booked Online", ar: "تم الحجز أونلاين" },
+  "customer.status.bookedFTF": { en: "Booked FTF", ar: "تم الحجز وجهاً لوجه" },
+  "customer.whatsapp": { en: "WhatsApp Conversation", ar: "محادثة الواتساب" },
+  "customer.callHistory.title": { en: "📞 Call History", ar: "📞 سجل المكالمات" },
 
   // Call Details
   "call.endedBy": { en: "Ended by", ar: "أُغلقت بواسطة" },
   "call.endedBy.ai": { en: "AI Assistant", ar: "الذكاء الاصطناعي" },
   "call.endedBy.customer": { en: "Customer", ar: "العميل" },
   "call.endedBy.system": { en: "System / Timeout", ar: "النظام / انقطاع" },
-  "call.completionStatus": { en: "Completion Status", ar: "حالة المكالمة" },
+  "call.completionStatus": { en: "Completion Status", ar: "حالة الإتمام" },
   "call.status.completed": { en: "Completed", ar: "مكتملة" },
   "call.status.customerEnded": { en: "Customer Hung Up", ar: "أغلق العميل الخط" },
   "call.status.incomplete": { en: "Incomplete / Disconnected", ar: "غير مكتملة / فصلت" },
-
+  "call.transcript": { en: "📞 Call Transcript", ar: "📞 نص المكالمة" },
+  "call.summary": { en: "Summary", ar: "الملخص" },
+  "call.recording": { en: "Call Recording", ar: "تسجيل المكالمة" },
 
   // Settings
   "settings.title": { en: "Settings", ar: "الإعدادات" },
@@ -133,6 +137,7 @@ export const translations = {
   "dashboard.kpi.recall": { en: "Recall AFM", ar: "إعادة اتصال" },
   "dashboard.kpi.appointments": { en: "Appointments", ar: "المواعيد" },
   "dashboard.kpi.totalTime": { en: "Total Call Time", ar: "إجمالي وقت المكالمات" },
+  "dashboard.kpi.totalCredits": { en: "Total Credits", ar: "إجمالي الرصيد" },
   "dashboard.callsTitle": { en: "Recent Calls", ar: "المكالمات الأخيرة" },
   "dashboard.callsSubtitle": {
     en: "Click any row to open the full transcript.",
@@ -143,6 +148,13 @@ export const translations = {
   "dashboard.col.time": { en: "Time", ar: "الوقت" },
   "dashboard.loading": { en: "Loading calls...", ar: "جارٍ تحميل المكالمات..." },
   "dashboard.empty": { en: "No calls found for this account yet.", ar: "لا توجد مكالمات لهذا الحساب حتى الآن." },
+
+  // Column headers (dynamic labels from DB — Arabic fallbacks)
+  "col.name": { en: "Name", ar: "الاسم" },
+  "col.duration": { en: "Duration", ar: "المدة" },
+  "col.credits": { en: "Credits", ar: "الرصيد" },
+  "col.status": { en: "Status", ar: "الحالة" },
+  "col.summary": { en: "Summary", ar: "الملخص" },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

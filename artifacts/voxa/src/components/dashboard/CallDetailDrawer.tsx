@@ -453,13 +453,15 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
           {parsedWhatsappMessages.length > 0 && (
             <section className="rounded-xl border border-border bg-secondary/10 p-4 mt-6">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                💬 محادثة الواتساب
+                💬 {t("customer.whatsapp" as any)}
               </h3>
               <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
                 {parsedWhatsappMessages.map((msg) => (
                   <div key={msg.id} className={cn("flex flex-col", msg.isAI ? "items-start" : "items-end")}>
                     <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
-                      {msg.isAI ? "AI Assistant" : "Customer"}
+                      {msg.isAI
+                        ? (dir === "rtl" ? "المساعد الذكي" : "AI Assistant")
+                        : (dir === "rtl" ? "العميل" : "Customer")}
                     </span>
                     <div
                       className={cn(

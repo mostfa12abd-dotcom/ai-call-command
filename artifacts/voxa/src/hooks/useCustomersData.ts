@@ -8,6 +8,9 @@ export interface CustomerRow {
   name: string;
   phone: string;
   company: string;
+  email?: string;
+  followup_status?: string;
+  call_completed?: boolean;
   created_at: string;
   call_count?: number;
   last_call?: string;
@@ -28,21 +31,36 @@ export function useCustomersData() {
       setLoading(true);
       setError(null);
 
-      // 1) Fetch known customers and tenant settings
-      const [settingsRes, custRes] = await Promise.all([
-        supabase.from("tenant_settings").select("vapi_assistant_id").eq("id", user.id).single(),
-        supabase.from("customers").select("*").eq("tenant_id", user.id)
-      ]);
+      // 1) Fetch known customers from the customers table
+      const { data: custData } = await supabase
+        .from("customers")
+        .select("*")
+        .eq("tenant_id", user.id);
 
-      const assistantId = settingsRes.data?.vapi_assistant_id || user.id;
-      const custData = custRes.data;
+      // 2) Get calls — try user.id first, fallback to vapi_assistant_id
+      const { data: settingsData } = await supabase
+        .from("tenant_settings")
+        .select("vapi_assistant_id")
+        .eq("id", user.id)
+        .single();
 
-      // 2) Get unique customers from calls using assistantId
-      const { data: callsData, error: callsErr } = await supabase
+      // Try with user.id first (the standard way)
+      let { data: callsData, error: callsErr } = await supabase
         .from("calls")
-        .select("id, caller_name, created_at, company, custom_data")
-        .eq("tenant_id", assistantId)
+        .select("id, caller_name, created_at, company, custom_data, customer_number")
+        .eq("tenant_id", user.id)
         .order("created_at", { ascending: false });
+
+      // If no results, try with vapi_assistant_id as fallback
+      if ((!callsData || callsData.length === 0) && settingsData?.vapi_assistant_id) {
+        const fallback = await supabase
+          .from("calls")
+          .select("id, caller_name, created_at, company, custom_data, customer_number")
+          .eq("tenant_id", settingsData.vapi_assistant_id)
+          .order("created_at", { ascending: false });
+        callsData = fallback.data;
+        callsErr = fallback.error;
+      }
 
       if (callsErr) {
         setError(callsErr.message);
@@ -54,7 +72,7 @@ export function useCustomersData() {
 
       // First add known customers from the customers table
       (custData || []).forEach(c => {
-        customerMap.set(c.name.toLowerCase(), {
+        customerMap.set((c.name || c.id).toLowerCase(), {
           ...c,
           call_count: 0,
           last_call: "—"
@@ -65,7 +83,7 @@ export function useCustomersData() {
       (callsData || []).forEach(call => {
         const name = call.caller_name || "Unknown";
         const key = name.toLowerCase();
-        
+
         if (customerMap.has(key)) {
           const existing = customerMap.get(key)!;
           existing.call_count = (existing.call_count || 0) + 1;
@@ -74,9 +92,9 @@ export function useCustomersData() {
           }
         } else {
           customerMap.set(key, {
-            id: call.id, // Using call ID as a temporary customer ID if not in customers table
+            id: call.id,
             name: name,
-            phone: call.custom_data?.customer?.number || call.custom_data?.phone || "—",
+            phone: call.customer_number || call.custom_data?.customer?.number || call.custom_data?.phone || "—",
             company: call.company || "—",
             created_at: call.created_at,
             call_count: 1,

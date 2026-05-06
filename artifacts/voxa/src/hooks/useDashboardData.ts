@@ -42,6 +42,7 @@ export interface KpiData {
   avgDuration: string;
   missedCalls: number;
   totalCallTime: string;
+  totalCredits: string;
 }
 
 const formatDuration = (totalSeconds: number): string => {
@@ -68,11 +69,16 @@ const computeKpis = (rows: CallRow[]): KpiData => {
     pickedUpCalls.length > 0
       ? Math.round(totalSeconds / pickedUpCalls.length)
       : 0;
+  const totalCreditsNum = rows.reduce((sum, c) => {
+    const cost = c.custom_data?.cost ?? c.custom_data?.["cost"];
+    return sum + (typeof cost === "number" ? cost : parseFloat(cost) || 0);
+  }, 0);
   return {
     totalCalls,
     avgDuration: formatDuration(avgSeconds),
     missedCalls,
     totalCallTime: formatTotalTime(totalSeconds),
+    totalCredits: `$${totalCreditsNum.toFixed(3)}`,
   };
 };
 

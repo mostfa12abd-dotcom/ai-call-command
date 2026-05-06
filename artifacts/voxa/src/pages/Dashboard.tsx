@@ -8,6 +8,7 @@ import {
   Download,
   Search,
   Loader2,
+  DollarSign,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { KpiCard } from "@/components/dashboard/KpiCard";
@@ -167,7 +168,7 @@ const Dashboard = () => {
       breadcrumb={[t("dashboard.crumb.overview")]}
     >
       {/* KPI Grid */}
-      <section className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5 md:gap-4">
         <KpiCard
           label={t("dashboard.kpi.totalCalls")}
           value={loading ? "..." : kpis.totalCalls.toLocaleString(dateLocale)}
@@ -193,6 +194,13 @@ const Dashboard = () => {
           label={t("dashboard.kpi.totalTime")}
           value={loading ? "..." : kpis.totalCallTime}
           icon={Timer}
+          tone="primary"
+          trend={{ value: "", positive: true }}
+        />
+        <KpiCard
+          label={t("dashboard.kpi.totalCredits")}
+          value={loading ? "..." : kpis.totalCredits}
+          icon={DollarSign}
           tone="primary"
           trend={{ value: "", positive: true }}
         />
@@ -251,18 +259,15 @@ const Dashboard = () => {
               <TableHeader>
                 <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
                   <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider text-start">{t("dashboard.col.time")}</TableHead>
-                  {columns.map((col) => (
-                    <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider text-start">
-                      {language === "ar" ? (
-                        col.label === "Name" ? "الاسم" :
-                        col.label === "Duration" ? "المدة" :
-                        col.label === "Credits" ? "الرصيد" :
-                        col.label === "Status" ? "الحالة" :
-                        col.label === "Summary" ? "الملخص" :
-                        col.label
-                      ) : col.label}
-                    </TableHead>
-                  ))}
+                  {columns.map((col) => {
+                    const colLabelKey = `col.${col.label.toLowerCase()}` as any;
+                    const colLabel = t(colLabelKey) !== colLabelKey ? t(colLabelKey) : col.label;
+                    return (
+                      <TableHead key={col.column_key} className="text-[11px] font-semibold uppercase tracking-wider text-start">
+                        {colLabel}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               </TableHeader>
               <TableBody>

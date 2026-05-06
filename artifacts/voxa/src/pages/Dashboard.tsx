@@ -325,7 +325,9 @@ const Dashboard = () => {
                                       </p>
                                       <div className="flex flex-col text-[10px] leading-tight text-muted-foreground">
                                         <span>{call.customer_number || call.custom_data?.phone || "—"}</span>
-                                        <span>{call.custom_data?.customer?.email || call.custom_data?.email || "—"}</span>
+                                        <span className="truncate max-w-[150px]">
+                                          {call.custom_data?.customer_email || call.custom_data?.email || call.custom_data?.customer?.email || ""}
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -348,6 +350,52 @@ const Dashboard = () => {
                                     <span className={cn("mr-1.5 inline-block h-1.5 w-1.5 rounded-full", isPickup ? "bg-success" : "bg-destructive")} />
                                     {value}
                                   </Badge>
+                                </TableCell>
+                              );
+                            }
+
+                            if (col.column_key === "followup_status") {
+                              const status = value?.toLowerCase();
+                              if (status === "booked online") {
+                                return (
+                                  <TableCell key={col.column_key}>
+                                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                                      {t("status.bookedOnline" as any)}
+                                    </span>
+                                  </TableCell>
+                                );
+                              }
+                              if (status === "booked ftf") {
+                                return (
+                                  <TableCell key={col.column_key}>
+                                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+                                      {t("status.bookedFTF" as any)}
+                                    </span>
+                                  </TableCell>
+                                );
+                              }
+                              return (
+                                <TableCell key={col.column_key}>
+                                  <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
+                                    {t("status.followUp" as any)}
+                                  </span>
+                                </TableCell>
+                              );
+                            }
+
+                            if (col.column_key === "call_completed") {
+                              const isTrue = value === true || value === "true";
+                              return (
+                                <TableCell key={col.column_key}>
+                                  {isTrue ? (
+                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                                      ✓
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                                      ✗
+                                    </span>
+                                  )}
                                 </TableCell>
                               );
                             }

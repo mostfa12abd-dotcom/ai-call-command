@@ -111,7 +111,9 @@ const DEFAULT_COLUMNS: TenantColumn[] = [
   { column_key: "call_duration",    label: "Duration",      data_path: "call_duration",    visible: true, position: 2 },
   { column_key: "credits",          label: "Credits",       data_path: "custom_data.cost", visible: true, position: 3 },
   { column_key: "status",           label: "Status",        data_path: "status",           visible: true, position: 4 },
-  { column_key: "two_word_summary", label: "Summary",       data_path: "two_word_summary", visible: true, position: 5 },
+  { column_key: "followup_status",  label: "Follow-up",     data_path: "custom_data.followup_status", visible: true, position: 5 },
+  { column_key: "call_completed",   label: "Completion",     data_path: "custom_data.call_completed",  visible: true, position: 6 },
+  { column_key: "two_word_summary", label: "Summary",       data_path: "two_word_summary", visible: true, position: 7 },
 ];
 
 export function useDashboardData() {

@@ -112,8 +112,8 @@ const Dashboard = () => {
   const filtered = calls.filter(
     (c) =>
       (statusFilter === "all" || c.status === statusFilter) &&
-      (c.caller_name?.toLowerCase().includes(search.toLowerCase()) ||
-       c.company?.toLowerCase().includes(search.toLowerCase()))
+      ((c.caller_name || "").toLowerCase().includes(search.toLowerCase()) ||
+       (c.company || "").toLowerCase().includes(search.toLowerCase()))
   );
 
   // Group calls by date (day/month/year), language-aware

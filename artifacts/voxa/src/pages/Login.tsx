@@ -291,10 +291,10 @@ export default function Login() {
       </div>
 
       {/* Right: Decorative panel */}
-      <div className="relative hidden overflow-hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-primary to-[hsl(var(--primary)/0.7)]">
-        <div className="absolute inset-0 opacity-20" style={{
+      <div className="relative hidden overflow-hidden lg:flex lg:w-1/2" style={{ background: "linear-gradient(135deg, hsl(262 55% 40%) 0%, hsl(262 50% 25%) 50%, hsl(220 40% 15%) 100%)" }}>
+        <div className="absolute inset-0" style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 20%, hsl(0 0% 100% / 0.4) 0, transparent 40%), radial-gradient(circle at 80% 60%, hsl(0 0% 100% / 0.3) 0, transparent 40%)",
+            "radial-gradient(circle at 25% 25%, hsl(262 60% 65% / 0.25) 0, transparent 45%), radial-gradient(circle at 75% 65%, hsl(195 85% 55% / 0.20) 0, transparent 45%)",
         }} />
         <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
           <div className="flex items-center gap-2 text-sm font-medium opacity-90">

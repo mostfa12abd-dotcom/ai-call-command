@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,108 @@ export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  /* ── Soft ambient glow — follows mouse, muted purple ────────────────────── */
+  const glowRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    let tx = cx, ty = cy;
+    let rafId: number;
+    const el = glowRef.current;
+    const tick = () => {
+      cx += (tx - cx) * 0.07;
+      cy += (ty - cy) * 0.07;
+      if (el) {
+        el.style.backgroundImage =
+          `radial-gradient(ellipse 400px 300px at ${cx}px ${cy}px,` +
+          `rgba(124,58,237,0.07) 0%,` +
+          `rgba(80,140,255,0.04) 45%,` +
+          `rgba(6,182,212,0.02) 70%,` +
+          `transparent 100%)`;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
+    rafId = requestAnimationFrame(tick);
+    window.addEventListener("mousemove", onMove);
+    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(rafId); };
+  }, []);
+
+  /* ── Sand-particle field — more visible, reacts to cursor ───────────────── */
+  const particleCanvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = particleCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let mx = -2000, my = -2000;
+
+    interface P { x: number; y: number; ox: number; oy: number; vx: number; vy: number; r: number; op: number; hue: number; }
+    let pts: P[] = [];
+
+    const build = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+      pts = [];
+      const n = Math.round((canvas.width * canvas.height) / 5000); /* more particles */
+      for (let i = 0; i < n; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        pts.push({
+          x, y, ox: x, oy: y, vx: 0, vy: 0,
+          r: Math.random() * 1.6 + 0.5,
+          op: Math.random() * 0.45 + 0.20, /* higher base opacity — more visible */
+          hue: Math.random() > 0.55 ? 262 : 195
+        });
+      }
+    };
+    build();
+    window.addEventListener("resize", build);
+
+    const PUSH_R    = 120;
+    const VISIBLE_R = 200; /* wider visibility radius */
+    const SPRING    = 0.018;
+    const DAMP      = 0.90;
+    const PUSH_F    = 1.6;
+    let rafId: number;
+
+    const tick = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of pts) {
+        const dx = p.x - mx, dy = p.y - my;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < PUSH_R * PUSH_R) {
+          const d = Math.sqrt(d2);
+          const f = (1 - d / PUSH_R) * PUSH_F;
+          p.vx += (dx / d) * f;
+          p.vy += (dy / d) * f;
+        }
+        p.vx += (p.ox - p.x) * SPRING;
+        p.vy += (p.oy - p.y) * SPRING;
+        p.vx *= DAMP; p.vy *= DAMP;
+        p.x += p.vx; p.y += p.vy;
+
+        const dist = Math.sqrt((p.x - mx) ** 2 + (p.y - my) ** 2);
+        const near = Math.max(0, 1 - dist / VISIBLE_R);
+        const alpha = p.op + near * near * 0.5; /* stronger cursor boost */
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + near * 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue},65%,70%,${Math.min(alpha, 0.85)})`;
+        ctx.fill();
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
+    rafId = requestAnimationFrame(tick);
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("resize", build);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -53,9 +155,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background flex">
+    <div className="min-h-screen w-full bg-background flex text-foreground selection:bg-primary/30 relative overflow-hidden">
+      {/* ── Particle canvas ────────────────────────────────────────────────── */}
+      <canvas
+        ref={particleCanvasRef}
+        aria-hidden="true"
+        style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 2 }}
+      />
+      {/* ── Soft ambient glow ─────────────────────────────────────────────── */}
+      <div
+        ref={glowRef}
+        aria-hidden="true"
+        style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 8, willChange: "background-image" }}
+      />
       {/* Left: Form */}
-      <div className="flex w-full flex-col justify-center px-6 py-10 sm:px-12 lg:w-1/2 lg:px-20">
+      <div className="flex w-full flex-col justify-center px-6 py-10 sm:px-12 lg:w-1/2 lg:px-20 z-10 relative">
         <div className="mx-auto w-full max-w-md">
           {/* Brand - Removed Voxa and Logo */}
           <div className="mb-10 flex items-center gap-2">

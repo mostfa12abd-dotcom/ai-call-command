@@ -10,10 +10,10 @@ interface KpiCardProps {
 }
 
 const toneStyles: Record<NonNullable<KpiCardProps["tone"]>, string> = {
-  primary: "bg-[hsl(var(--primary-soft))] text-primary",
-  success: "bg-success-soft text-success",
+  primary:     "bg-[hsl(var(--primary-soft))]     text-primary",
+  success:     "bg-[hsl(var(--success-soft))]     text-success",
   destructive: "bg-[hsl(var(--destructive-soft))] text-destructive",
-  warning: "bg-warning-soft text-warning",
+  warning:     "bg-[hsl(var(--warning-soft))]     text-warning",
 };
 
 export function KpiCard({ label, value, icon: Icon, trend, tone = "primary" }: KpiCardProps) {
@@ -28,7 +28,7 @@ export function KpiCard({ label, value, icon: Icon, trend, tone = "primary" }: K
             className={cn(
               "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
               trend.positive
-                ? "bg-success-soft text-success"
+                ? "bg-[hsl(var(--success-soft))] text-success"
                 : "bg-[hsl(var(--destructive-soft))] text-destructive",
             )}
           >

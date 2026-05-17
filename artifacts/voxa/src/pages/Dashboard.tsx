@@ -29,15 +29,16 @@ import { useDashboardData, resolveDataPath, type CallRow, type TenantCustomActio
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
+// Avatar palette — uses CSS variables so it works in both light & dark mode
 const palette = [
-  "bg-blue-100 text-blue-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-rose-100 text-rose-700",
-  "bg-violet-100 text-violet-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-indigo-100 text-indigo-700",
-  "bg-pink-100 text-pink-700",
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
+  "bg-[hsl(var(--destructive-soft))] text-destructive",
+  "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]",
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
 ];
 
 const initialsOf = (name: string) =>
@@ -224,7 +225,7 @@ const Dashboard = () => {
                 placeholder={t("dashboard.searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={cn("h-9 w-52 rounded-lg border-border bg-secondary/60 text-sm shadow-none", isRtl ? "pr-9" : "pl-9")}
+                className={cn("h-9 w-52 rounded-lg border-border bg-muted text-sm shadow-none", isRtl ? "pr-9" : "pl-9")}
               />
             </div>
             <Button 
@@ -257,7 +258,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
+                <TableRow className="border-border/60 bg-muted/60 hover:bg-muted/60">
                   <TableHead className="w-28 text-[11px] font-semibold uppercase tracking-wider text-start">{t("dashboard.col.time")}</TableHead>
                   {columns.map((col) => {
                     const colLabelKey = `col.${col.label.toLowerCase()}` as any;
@@ -349,19 +350,19 @@ const Dashboard = () => {
                               let label = value;
 
                               if (s === "booked online") {
-                                badgeClass = "bg-blue-100 text-blue-700";
+                                badgeClass = "bg-[hsl(var(--primary-soft))] text-primary";
                                 label = t("status.bookedOnline" as any);
                               } else if (s === "booked ftf") {
-                                badgeClass = "bg-emerald-100 text-emerald-700";
+                                badgeClass = "bg-[hsl(var(--success-soft))] text-success";
                                 label = t("status.bookedFTF" as any);
                               } else if (s === "follow up" || s === "followup") {
-                                badgeClass = "bg-amber-100 text-amber-700";
+                                badgeClass = "bg-[hsl(var(--warning-soft))] text-warning";
                                 label = t("status.followUp" as any);
                               } else if (s === "missed") {
-                                badgeClass = "bg-rose-100 text-rose-700";
+                                badgeClass = "bg-[hsl(var(--destructive-soft))] text-destructive";
                               } else {
-                                // pickup / default — green
-                                badgeClass = "bg-emerald-100 text-emerald-700";
+                                // pickup / default — success
+                                badgeClass = "bg-[hsl(var(--success-soft))] text-success";
                               }
 
                               return (
@@ -378,11 +379,11 @@ const Dashboard = () => {
                               return (
                                 <TableCell key={col.column_key}>
                                   {isTrue ? (
-                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--success-soft))] text-success">
                                       ✓
                                     </span>
                                   ) : (
-                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--destructive-soft))] text-destructive">
                                       ✗
                                     </span>
                                   )}
@@ -407,7 +408,7 @@ const Dashboard = () => {
                             if (col.column_key === "two_word_summary") {
                               return (
                                 <TableCell key={col.column_key}>
-                                  <Badge variant="outline" className="rounded-md border-border bg-secondary/60 font-medium text-foreground">
+                                  <Badge variant="outline" className="rounded-md border-border/60 bg-[hsl(var(--primary-soft))] text-primary font-medium">
                                     {value}
                                   </Badge>
                                 </TableCell>

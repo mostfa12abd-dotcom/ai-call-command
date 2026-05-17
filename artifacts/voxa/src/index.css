@@ -137,4 +137,17 @@
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated;
   }
+  /* Semantic colour utilities — success & warning not built into Tailwind by default */
+  .text-success {
+    color: hsl(var(--success));
+  }
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
 }

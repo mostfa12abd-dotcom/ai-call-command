@@ -11,10 +11,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const palette = [
-  "bg-blue-100 text-blue-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-rose-100 text-rose-700",
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
+  "bg-[hsl(var(--destructive-soft))] text-destructive",
 ];
 
 const initialsOf = (name: string) =>
@@ -239,9 +239,9 @@ const CustomerDetail = () => {
         {(() => {
           const s = (customer.followup_status || customer.status)?.toLowerCase();
           const statusColors: Record<string, string> = {
-            "follow up":    "bg-amber-100 text-amber-700 border-amber-200",
-            "booked online":"bg-blue-100 text-blue-700 border-blue-200",
-            "booked ftf":   "bg-emerald-100 text-emerald-700 border-emerald-200",
+            "follow up":    "bg-[hsl(var(--warning-soft))] text-warning border-warning/20",
+            "booked online":"bg-[hsl(var(--primary-soft))] text-primary border-primary/20",
+            "booked ftf":   "bg-[hsl(var(--success-soft))] text-success border-success/20",
           };
           const statusKeys: Record<string, any> = {
             "follow up":    "status.followUp",
@@ -263,8 +263,8 @@ const CustomerDetail = () => {
             className={cn(
               "rounded-full border px-3 py-1 text-xs font-semibold shadow-none",
               customer.call_completed
-                ? "bg-emerald-100 text-emerald-700 border-emerald-200"
-                : "bg-rose-100 text-rose-700 border-rose-200"
+                ? "bg-[hsl(var(--success-soft))] text-success border-success/20"
+                : "bg-[hsl(var(--destructive-soft))] text-destructive border-destructive/20"
             )}
           >
             {customer.call_completed
@@ -355,7 +355,7 @@ const CustomerDetail = () => {
                                 <div className={cn(
                                   "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm",
                                   isAI 
-                                    ? "bg-white text-slate-800 rounded-tl-none border border-slate-100" 
+                                    ? "bg-muted text-foreground rounded-tl-none border border-border/60" 
                                     : "bg-primary text-primary-foreground rounded-tr-none"
                                 )}>
                                   {line.replace(/^(AI|User|Customer):/, '').trim()}

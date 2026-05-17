@@ -18,14 +18,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 const palette = [
-  "bg-blue-100 text-blue-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-rose-100 text-rose-700",
-  "bg-violet-100 text-violet-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-indigo-100 text-indigo-700",
-  "bg-pink-100 text-pink-700",
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
+  "bg-[hsl(var(--destructive-soft))] text-destructive",
+  "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]",
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
 ];
 
 const initialsOf = (name: string) =>
@@ -148,12 +148,12 @@ const Customers = () => {
                     <TableCell>
                       {(() => {
                         const s = (c.followup_status || c.status)?.toLowerCase();
-                        let cls = "bg-amber-100 text-amber-700";
+                        let cls = "bg-[hsl(var(--warning-soft))] text-warning";
                         let label: string = t("status.followUp" as any);
-                        if (s === "booked online") { cls = "bg-blue-100 text-blue-700"; label = t("status.bookedOnline" as any); }
-                        else if (s === "booked ftf") { cls = "bg-emerald-100 text-emerald-700"; label = t("status.bookedFTF" as any); }
+                        if (s === "booked online") { cls = "bg-[hsl(var(--primary-soft))] text-primary"; label = t("status.bookedOnline" as any); }
+                        else if (s === "booked ftf") { cls = "bg-[hsl(var(--success-soft))] text-success"; label = t("status.bookedFTF" as any); }
                         return (
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${cls}`}>
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}>
                             {label}
                           </span>
                         );
@@ -161,11 +161,11 @@ const Customers = () => {
                     </TableCell>
                     <TableCell>
                       {c.call_completed ? (
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--success-soft))] text-success font-semibold">
                           ✓
                         </span>
                       ) : (
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(var(--destructive-soft))] text-destructive font-semibold">
                           ✗
                         </span>
                       )}

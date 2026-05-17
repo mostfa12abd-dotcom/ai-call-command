@@ -1,0 +1,17 @@
+# UI Verification Task Plan
+
+- [ ] Navigate to http://localhost:5173
+- [ ] Verify login page (logout if already logged in)
+  - [ ] Check if background dots are visible
+  - [ ] Check if purple accent is soft
+  - [ ] Take screenshot of login page
+- [ ] Log in
+- [ ] Verify Main Dashboard (if visible)
+- [ ] Verify Customers Page
+  - [ ] Check panel colors (consistent with main dashboard, no cyan/teal)
+  - [ ] Check table header backgrounds
+  - [ ] Take screenshot of Customers page
+- [ ] Verify Settings Page (Customer Settings)
+  - [ ] Check panel colors and backgrounds
+  - [ ] Take screenshot of Settings page
+- [ ] Summarize findings

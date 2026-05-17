@@ -318,12 +318,12 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                 {/* Smart Status Badge */}
                 {(() => {
                   const s = call.status?.toLowerCase();
-                  let cls = "bg-emerald-100 text-emerald-700";
+                  let cls = "bg-[hsl(var(--success-soft))] text-success";
                   let label = call.status;
-                  if (s === "booked online") { cls = "bg-blue-100 text-blue-700"; label = t("status.bookedOnline" as any); }
-                  else if (s === "booked ftf") { cls = "bg-emerald-100 text-emerald-700"; label = t("status.bookedFTF" as any); }
-                  else if (s === "follow up" || s === "followup") { cls = "bg-amber-100 text-amber-700"; label = t("status.followUp" as any); }
-                  else if (s === "missed") { cls = "bg-rose-100 text-rose-700"; }
+                  if (s === "booked online") { cls = "bg-[hsl(var(--primary-soft))] text-primary"; label = t("status.bookedOnline" as any); }
+                  else if (s === "booked ftf") { cls = "bg-[hsl(var(--success-soft))] text-success"; label = t("status.bookedFTF" as any); }
+                  else if (s === "follow up" || s === "followup") { cls = "bg-[hsl(var(--warning-soft))] text-warning"; label = t("status.followUp" as any); }
+                  else if (s === "missed") { cls = "bg-[hsl(var(--destructive-soft))] text-destructive"; }
                   return (
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${cls}`}>
                       {label}
@@ -345,7 +345,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                   if (completed === undefined || completed === null) return null;
                   return (
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                      completed ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"
+                      completed ? "bg-[hsl(var(--success-soft))] text-success" : "bg-[hsl(var(--destructive-soft))] text-destructive"
                     }`}>
                       {completed ? `✓ ${t("common.completed.yes" as any)}` : `✗ ${t("common.completed.no" as any)}`}
                     </span>
@@ -392,7 +392,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
 
           {/* Call Recording */}
           {call.recordingUrl && (
-            <section className="rounded-xl border border-border bg-secondary/20 p-4">
+            <section className="rounded-xl border border-border bg-muted/30 p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 <Play className="h-3 w-3" /> Call Recording
               </h3>
@@ -421,7 +421,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
             </h3>
 
             {transcriptItems.length > 0 ? (
-              <div className="space-y-3 rounded-xl border border-border bg-secondary/40 p-3">
+              <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-3">
                 {transcriptItems.map((line, i) => {
                   const isAI = line.speaker === "Agent" || line.speaker === "AI" || line.speaker.includes("AI");
                   
@@ -469,7 +469,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
                 })}
               </div>
             ) : (
-              <div className="rounded-xl border border-border bg-secondary/40 p-6 text-center text-sm text-muted-foreground">
+              <div className="rounded-xl border border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
                 No conversation transcript available for this call.
               </div>
             )}
@@ -477,7 +477,7 @@ export function CallDetailDrawer({ call, open, onOpenChange, customActions = [] 
 
           {/* WhatsApp Conversation */}
           {parsedWhatsappMessages.length > 0 && (
-            <section className="rounded-xl border border-border bg-secondary/10 p-4 mt-6">
+            <section className="rounded-xl border border-border bg-muted/20 p-4 mt-6">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 💬 {t("customer.whatsapp" as any)}
               </h3>

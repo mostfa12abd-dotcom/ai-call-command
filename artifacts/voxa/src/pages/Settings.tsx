@@ -44,7 +44,7 @@ const Settings = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-secondary/30 p-4">
+            <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-muted/40 p-4">
               <Avatar className="h-12 w-12 rounded-lg border border-border">
                 <AvatarFallback className="rounded-lg bg-gradient-primary text-sm font-semibold text-primary-foreground">
                   {user?.email?.substring(0, 2).toUpperCase() || "US"}

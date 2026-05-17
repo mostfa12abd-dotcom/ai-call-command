@@ -24,9 +24,9 @@
     --primary-foreground: 0 0% 100%;
     --primary-soft: 262 60% 95%;
 
-    /* Secondary: Cyan matching main site */
-    --secondary: 195 85% 45%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: Muted Gray matching main dashboard style */
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 220 20% 95%;
     --muted-foreground: 220 12% 45%;
@@ -78,8 +78,8 @@
     --primary: 262 60% 58%;
     --primary-foreground: 0 0% 100%;
     --primary-soft: 262 60% 18%;
-    --secondary: 189 94% 43%;
-    --secondary-foreground: 0 0% 10%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 222 22% 16%;
     --muted-foreground: 220 12% 65%;
     --accent: 205 60% 18%;

@@ -294,7 +294,7 @@ const CustomerDetail = () => {
 
             return (
               <div key={call.id} className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-card">
-                <div className="border-b border-border/60 bg-secondary/30 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                <div className="border-b border-border/60 bg-muted/40 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-bold text-foreground">{call.two_word_summary || "Call Summary"}</h3>
                     <p className="text-xs text-muted-foreground">
@@ -319,7 +319,7 @@ const CustomerDetail = () => {
                     <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                       📝 {t("dashboard.drawer.summary" as any) || "Summary"}
                     </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed bg-secondary/20 p-4 rounded-xl border border-border/40">
+                    <p className="text-sm text-muted-foreground leading-relaxed bg-muted/20 p-4 rounded-xl border border-border/40">
                       {call.detailed_summary || "No detailed summary available."}
                     </p>
                   </div>
@@ -343,7 +343,7 @@ const CustomerDetail = () => {
                       <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         💬 Transcript
                       </h4>
-                      <div className="max-h-[300px] overflow-y-auto rounded-xl border border-border/40 bg-secondary/10 p-4">
+                      <div className="max-h-[300px] overflow-y-auto rounded-xl border border-border/40 bg-muted/10 p-4">
                         <div className="space-y-4">
                           {call.total_conversation.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => {
                             const isAI = line.startsWith('AI:');
@@ -393,7 +393,7 @@ const CustomerDetail = () => {
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
                       msg.isAI
-                        ? "bg-secondary text-foreground rounded-tl-none border border-border/40"
+                        ? "bg-muted text-foreground rounded-tl-none border border-border/40"
                         : "bg-emerald-600 text-white rounded-tr-none"
                     )}
                   >

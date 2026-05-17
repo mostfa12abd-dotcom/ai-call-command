@@ -69,7 +69,7 @@ const Customers = () => {
                 placeholder={t("customers.searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className={cn("h-9 w-56 rounded-lg border-border bg-secondary/60 text-sm shadow-none", dir === "rtl" ? "pr-9" : "pl-9")}
+                className={cn("h-9 w-56 rounded-lg border-border bg-muted text-sm shadow-none", dir === "rtl" ? "pr-9" : "pl-9")}
               />
             </div>
           </div>
@@ -90,7 +90,7 @@ const Customers = () => {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-border/60 bg-secondary/40 hover:bg-secondary/40">
+                <TableRow className="border-border/60 bg-muted/60 hover:bg-muted/60">
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.customer")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("customers.col.phone")}</TableHead>
                   <TableHead className="text-[11px] font-semibold uppercase tracking-wider">{t("dashboard.kpi.totalCredits" as any)}</TableHead>

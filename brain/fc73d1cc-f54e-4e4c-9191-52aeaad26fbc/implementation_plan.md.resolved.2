@@ -1,0 +1,34 @@
+# AI Secretary — Vivid Observability Update
+
+The goal is to make the agent's internal logic and Telegram interactions highly visible in the terminal using colored logs ("shouting" logs). This fulfill the user's request to see the bot "listening" and "answering" in real-time.
+
+## User Review Required
+
+> [!IMPORTANT]
+> This update adds `colorama` as a dependency.
+
+## Proposed Changes
+
+### [Observability Layer]
+
+#### [NEW] [agent_tracer.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/agent_tracer.py)
+*   Already created: records every LLM call, tool call, and token usage to files.
+
+#### [MODIFY] [telegram_handler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/bot/telegram_handler.py)
+*   Add `colorama` for colored terminal output.
+*   Print `[LISTEN]` when a message is received.
+*   Print `[REPLY]` when a message is sent.
+
+#### [MODIFY] [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+*   Print `[THINKING]` when the AI is processing.
+*   Print `[TOOL CALL]` when a tool is being executed with its arguments.
+
+#### [MODIFY] [requirements.txt](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/requirements.txt)
+*   Add `colorama`.
+
+## Verification Plan
+
+### Manual Verification
+*   Run the bot with `python main.py`.
+*   Send a message in Telegram.
+*   Verify the terminal shows colorful `[LISTEN]`, `[THINKING]`, `[TOOL CALL]`, and `[REPLY]` blocks.

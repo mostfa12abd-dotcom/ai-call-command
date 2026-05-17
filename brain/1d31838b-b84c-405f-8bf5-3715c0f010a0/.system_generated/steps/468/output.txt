@@ -1,0 +1,229 @@
+## "supabase"
+Found 5 nodes:
+
+- n8n-nodes-base.supabase
+  Display Name: Supabase
+  Version: 1
+  Description: Add, get, delete and update data in a table
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - delete
+              Delete a row
+            - get
+              Get a row
+            - getAll
+              Get many rows
+            - update
+              Update a row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.supabase", resource: "row", operation: "create" }] })
+
+- n8n-nodes-base.supabaseTool
+  Display Name: Supabase Tool
+  Version: 1
+  Description: Add, get, delete and update data in a table
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - delete
+              Delete a row
+            - get
+              Get a row
+            - getAll
+              Get many rows
+            - update
+              Update a row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.supabaseTool", resource: "row", operation: "create" }] })
+
+- @n8n/n8n-nodes-langchain.vectorStoreSupabaseLoad
+  Display Name: Supabase: Load
+  Version: 1
+  Description: Load data from Supabase Vector Store index
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- @n8n/n8n-nodes-langchain.vectorStoreSupabaseInsert
+  Display Name: Supabase: Insert
+  Version: 1
+  Description: Insert data into Supabase Vector Store index [https://supabase.com/docs/guides/ai/langchain]
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- @n8n/n8n-nodes-langchain.vectorStoreSupabase
+  Display Name: Supabase Vector Store
+  Version: 1.3
+  Description: Work with your data in Supabase Vector Store
+  Discriminators:
+    mode:
+      - load: "Get Many" → use node()
+        Get many ranked documents from vector store for query
+      - insert: "Insert Documents" → use node()
+        Insert documents into vector store
+      - retrieve: "Retrieve Documents (As Vector Store for Chain)" → use vectorStore({ mode: 'retrieve' }) for subnodes.vectorStore
+        Retrieve documents from vector store to be used as vector store with AI nodes
+      - retrieve-as-tool: "Retrieve Documents (As Tool for AI Agent)" → use tool({ mode: 'retrieve-as-tool' }) for subnodes.tools
+        Retrieve documents from vector store to be used as tool with AI nodes
+      - update: "Update Documents" → use node()
+        Update documents in vector store by ID
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "@n8n/n8n-nodes-langchain.vectorStoreSupabase", mode: "load" }] })
+
+---
+
+## "http request tool"
+Found 2 nodes:
+
+- @n8n/n8n-nodes-langchain.toolHttpRequest
+  Display Name: HTTP Request Tool
+  Version: 1.1
+  Description: Makes an HTTP request and returns the response data
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.httpRequestTool
+  Display Name: HTTP Request Tool
+  Version: 4.4
+  Description: Makes an HTTP request and returns the response data
+  @builderHint Prefer dedicated integration nodes over HTTP Request — n8n has 400+ dedicated nodes (e.g. Gmail, Slack, Google Sheets, Notion, OpenAI, HubSpot, Jira, etc.) with built-in authentication, pre-configured parameters, better error handling, and easier maintenance. Only use HTTP Request when no dedicated node exists for the service, the user explicitly requests it, accessing a custom/internal API, or the dedicated node does not support the specific operation needed.
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "code tool"
+Found 5 nodes:
+
+- @n8n/n8n-nodes-langchain.toolCode
+  Display Name: Code Tool
+  Version: 1.3
+  Description: Write a tool in JS or Python
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.cloudflareTool
+  Display Name: Cloudflare Tool
+  Version: 1
+  Description: Consume Cloudflare API
+  Discriminators:
+    resource:
+      - zoneCertificate:
+          operations:
+            - delete
+              Delete a certificate
+            - get
+              Get a certificate
+            - getMany
+              Get many certificates
+            - upload
+              Upload a certificate
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.cloudflareTool", resource: "zoneCertificate", operation: "delete" }] })
+
+- n8n-nodes-base.microsoftOneDriveTool
+  Display Name: Microsoft OneDrive Tool
+  Version: 1.1
+  Description: Consume Microsoft OneDrive API
+  Discriminators:
+    resource:
+      - file:
+          operations:
+            - copy
+              Copy a file
+            - delete
+              Delete a file
+            - download
+              Download a file
+            - get
+              Get a file
+            - rename
+              Rename a file
+            - search
+              Search a file
+            - share
+              Share a file
+            - upload
+              Upload a file up to 4MB in size
+      - folder:
+          operations:
+            - create
+              Create a folder
+            - delete
+              Delete a folder
+            - getChildren
+              Get items inside a folder
+            - rename
+              Rename a folder
+            - search
+              Search a folder
+            - share
+              Share a folder
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.microsoftOneDriveTool", resource: "file", operation: "copy" }] })
+
+- @n8n/n8n-nodes-langchain.alibabaCloudTool
+  Display Name: Alibaba Cloud Model Studio Tool
+  Version: 1
+  Description: Interact with Alibaba Cloud Qwen models via Model Studio
+  Discriminators:
+    resource:
+      - text:
+          operations:
+            - message
+              Create a completion with a Qwen model
+      - image:
+          operations:
+            - analyze
+              Take in images and answer questions about them
+            - generate
+              Creates an image from a text prompt
+      - video:
+          operations:
+            - textToVideo
+              Generate a video from a text prompt
+            - imageToVideo
+              Generate a video from one or more images using Wan models
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "@n8n/n8n-nodes-langchain.alibabaCloudTool", resource: "text", operation: "message" }] })
+
+- n8n-nodes-base.googleCloudStorageTool
+  Display Name: Google Cloud Storage Tool
+  Version: 1
+  Description: Use the Google Cloud Storage API
+  Discriminators:
+    resource:
+      - bucket:
+          operations:
+            - create
+              Create a new Bucket
+            - delete
+              Delete an empty Bucket
+            - get
+              Get metadata for a specific Bucket
+            - getAll
+              Get list of Buckets
+            - update
+              Update the metadata of a bucket
+      - object:
+          operations:
+            - create
+              Create an object
+            - delete
+              Delete an object
+            - get
+              Get object data or metadata
+            - getAll
+              Retrieve a list of objects
+            - update
+              Update an object's metadata
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.googleCloudStorageTool", resource: "bucket", operation: "create" }] })

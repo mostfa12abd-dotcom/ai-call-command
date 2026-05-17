@@ -1,0 +1,184 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (43,42)<a class='_7a00c34b' href='/en/' />
+[1] (273,52)<div  />
+	Qatar
+[2] (433,52)<img  />
+[3] (531,54)<div  />
+	[4] (531,52)<input class='_0c2ffce3' placeholder='Find Cars, Mobile Phones and more...' />
+[5] (601,52)<button aria-label='Search' class='bb5acd8e' />
+[6] (671,56)<a aria-label='language switch button' href='/properties/properties-for-rent/apartments-for-rent/?is_furnished=1' title='العربية' />
+[7] (779,54)<button aria-label='Login' class='_37208bb9' />
+	[8] (779,52)<span >Login />
+[9] (916,52)<button aria-label='Post your ad' class='_91e21052' />
+	[10] (916,52)<span  />
+		[11] (916,52)<span >Post Your Ad />
+Al Khawr
+(
+6
+)
+Furnished
+[12] (210,172)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=furnished_eq_1' />
+	[13] (210,172)<div  />
+		[14] (210,172)<div  />
+			[15] (210,172)<div  />
+				[16] (38,172)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice1' />
+				[17] (103,172)<label class='eb49ace5' />
+					[18] (103,169)<span >Yes (384) />
+[19] (210,222)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=furnished_eq_2' />
+	[20] (210,222)<div  />
+		[21] (210,222)<div  />
+			[22] (210,222)<div  />
+				[23] (38,222)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice2' />
+				[24] (99,222)<label class='eb49ace5' />
+					[25] (99,219)<span >No (210) />
+Level
+[26] (210,573)<div class='_8aa1a16d' scrollable='true' />
+	[27] (204,400)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_3' />
+		[28] (204,400)<div  />
+			[29] (204,400)<div  />
+				[30] (204,400)<div  />
+					[31] (38,400)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice3' />
+					[32] (89,400)<label class='eb49ace5' />
+						[33] (89,397)<span >1 (147) />
+	[34] (204,449)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_7' />
+		[35] (204,449)<div  />
+			[36] (204,449)<div  />
+				[37] (204,449)<div  />
+					[38] (38,449)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice7' />
+					[39] (90,449)<label class='eb49ace5' />
+						[40] (90,446)<span >5 (110) />
+	[41] (204,499)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_4' />
+		[42] (204,499)<div  />
+			[43] (204,499)<div  />
+				[44] (204,499)<div  />
+					[45] (38,499)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice4' />
+					[46] (89,499)<label class='eb49ace5' />
+						[47] (89,496)<span >2 (90) />
+	[48] (204,548)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_2' />
+		[49] (204,548)<div  />
+			[50] (204,548)<div  />
+				[51] (204,548)<div  />
+					[52] (38,548)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice2' />
+					[53] (135,548)<label class='eb49ace5' />
+						[54] (135,545)<span >Ground floor (62) />
+	[55] (204,597)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_5' />
+		[56] (204,597)<div  />
+			[57] (204,597)<div  />
+				[58] (204,597)<div  />
+					[59] (38,597)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice5' />
+					[60] (88,597)<label class='eb49ace5' />
+						[61] (88,594)<span >3 (39) />
+	[62] (204,647)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_6' />
+		[63] (204,647)<div  />
+			[64] (204,647)<div  />
+				[65] (204,647)<div  />
+					[66] (38,647)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice6' />
+					[67] (86,647)<label class='eb49ace5' />
+						[68] (86,644)<span >4 (21) />
+	[69] (204,696)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_8' />
+		[70] (204,696)<div  />
+			[71] (204,696)<div  />
+				[72] (204,696)<div  />
+					[73] (38,696)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice8' />
+					[74] (84,696)<label class='eb49ace5' />
+						[75] (84,693)<span >6 (11) />
+	[76] (204,746)<a href='/en/properties/properties-for-rent/apartments-for-rent/?filter=floor_level_eq_9' />
+		[77] (204,746)<div  />
+			[78] (204,746)<div  />
+				[79] (204,746)<div  />
+					[80] (38,746)<input class='_3bdff2c4 c4dd66ac' id='multiple_choice9' />
+					[81] (86,746)<label class='eb49ace5' />
+						[82] (86,742)<span >7 (10) />
+	Highest level (7)
+	9 (2)
+	Basement (1)
+Price
+[83] (105,923)<div  />
+	[84] (105,923)<input class='_0c2ffce3 _724f8860' placeholder='Min' />
+[85] (292,923)<div  />
+	[86] (292,923)<input class='_0c2ffce3 _724f8860' placeholder='Max' />
+[87] (724,241)<article  />
+	[88] (518,241)<div  />
+		[89] (518,241)<div  />
+			[90] (518,241)<div  />
+				[91] (518,241)<div  />
+					[92] (518,241)<div  />
+						[93] (518,241)<div  />
+							[94] (518,241)<div  />
+								[95] (518,241)<div  />
+									[96] (518,241)<div  />
+										[97] (518,241)<div  />
+											[98] (518,241)<div  />
+												[99] (518,241)<div  />
+			[100] (518,386)<div  />
+	[101] (724,241)<div  />
+		[102] (823,241)<div  />
+			[103] (823,241)<div  />
+			QAR 3,500
+			FULLY FURNISHED EXECUTIVE STUDIO NEAR DECC METRO STATION
+			[104] (996,113)<div  />
+				[105] (996,113)<div  />
+			1
+			1
+			48 SQM
+			West Bay, Doha
+			•
+			4 hours ago
+[106] (724,596)<article  />
+	[107] (518,596)<div  />
+		[108] (518,596)<div  />
+			[109] (518,596)<div  />
+				[110] (518,596)<div  />
+					[111] (518,596)<div  />
+						[112] (518,596)<div  />
+							[113] (518,596)<div  />
+								[114] (518,596)<div  />
+									[115] (518,596)<div  />
+										[116] (518,596)<div  />
+											[117] (518,596)<div  />
+												[118] (518,596)<div  />
+			[119] (518,742)<div  />
+	[120] (724,596)<div  />
+		[121] (823,596)<div  />
+			[122] (823,596)<div  />
+			QAR 4,000
+			شقق غرفتين وصالة للإيجار 2bhk Apartments for Rent – Umm Ghuwailina
+			[123] (996,469)<div  />
+				[124] (996,469)<div  />
+			2
+			2
+			150 SQM
+			Ar Rayyan, Ar Rayyan
+			•
+			4 hours ago
+[125] (724,952)<article  />
+	[126] (518,952)<div  />
+		[127] (518,952)<div  />
+			[128] (518,952)<div  />
+				[129] (518,952)<div  />
+					[130] (518,952)<div  />
+						[131] (518,952)<div  />
+							[132] (518,952)<div  />
+								[133] (518,952)<div  />
+									[134] (518,952)<div  />
+										[135] (518,952)<div  />
+											[136] (518,952)<div  />
+												[137] (518,952)<div  />
+	[138] (724,952)<div  />
+		[139] (823,952)<div  />
+			[140] (823,952)<div  />
+			QAR 4,000
+			استوديو مفروش بالقرب من قرية بروة Fully Furnished Studio
+			[141] (996,824)<div  />
+				[142] (996,824)<div  />
+			Studio
+			1
+			50 SQM
+			Abu Hamour, Ar Rayyan
+			•
+			4 hours ago
+
+</current_dom>

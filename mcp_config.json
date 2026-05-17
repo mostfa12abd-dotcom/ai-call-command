@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "serverUrl": "https://mcp.supabase.com/mcp"
+    },
+    "n8n-mcp": {
+      "serverUrl": "https://abdo2121.app.n8n.cloud/mcp-server/http",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlZDFlYmUyMC01ZTVhLTQ3NjktOWIxNy00ZTI0MzgwYmMzMmMiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6IjcyOGFkY2ZmLTAwMTQtNDUyNi1iM2U5LTQxYWNkNmI3YmVmNyIsImlhdCI6MTc3NzM4MDY4OX0.Gl_uM_lzGpMF545NC0qUYSAH6Rlzvrxvvb1HX8HjB1c"
+      },
+      "disabled": true
+    },
+    "vapi-mcp": {
+      "serverUrl": "https://mcp.vapi.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer 819d90c7-5855-47d5-b3f7-564371208f76"
+      }
+    }
+  }
+}

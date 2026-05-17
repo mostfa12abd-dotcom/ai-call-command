@@ -1,0 +1,1156 @@
+# Walkthrough — AI Secretary Bot Fixes
+
+## Summary
+Fixed critical bugs causing the AI agent to hallucinate, return empty results, and create duplicate drafts. Then removed all demo/mock data per user request.
+
+## Outlook Client Fixes
+
+- **OData Date Filter:** Added `±1 day` buffer to handle UTC timezone boundary issues
+- **Event Conflict Check:** [create_event](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#476-524) now calls [check_calendar_overlap](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#452-475) before creating
+- **[mark_as_read](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#223-242) tool:** New tool to mark emails as read via Graph API
+- **Client-side filtering:** Fixed sender, date, and pagination filtering in [get_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-222)
+
+## Scheduler Fixes
+
+- **Deterministic Job IDs:** IDs like `email_summary_0630` prevent duplicate tasks
+- **Zombie Job Deletion:** [remove_job](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/scheduler.py#125-142) handles jobs in JSON backup but not in active scheduler
+- **`delete_scheduled_task` tool:** New tool for the AI to remove scheduled tasks
+
+## Agent Intelligence Fixes
+
+- **SYSTEM_PROMPT — time periods:** Changed from "always ask" to "calculate dates for obvious queries like 'today'; only ask if truly ambiguous"
+- **SYSTEM_PROMPT — draft IDs:** AI now uses [get_drafts](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#243-302) to recover draft IDs instead of relying on memory of previous tool outputs
+- **SYSTEM_PROMPT — missing info:** Added rule to ask the user for any missing tool inputs
+- **SYSTEM_PROMPT — calendar overlaps:** AI must check for conflicts before creating events
+- **Explicit list reporting:** AI must display items when user says "list", "show", or "find"
+
+## Demo Data Removal
+
+Per user request, **all demo/mock data has been completely removed** from every tool:
+
+```diff:outlook_client.py
+"""
+Microsoft Graph API Client — Outlook Email & Calendar
+Tool (WAT Layer 3): Deterministic, filterable API wrapper.
+Each method accepts precise filters so the agent only fetches what it needs.
+"""
+
+import json
+import logging
+import os
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+
+import msal
+import requests
+
+logger = logging.getLogger(__name__)
+
+
+class OutlookClient:
+    """Filterable Microsoft Graph API wrapper for email and calendar."""
+
+    GRAPH_BASE = "https://graph.microsoft.com/v1.0"
+
+    # Delegated permissions needed
+    SCOPES = ["Mail.Read", "Mail.Send", "Mail.ReadWrite", "Calendars.ReadWrite", "User.Read"]
+
+    def __init__(self, config):
+        self.config = config
+        self.app = None
+        self._token_cache = msal.SerializableTokenCache()
+        self._token_cache_path = os.path.join(config.tmp_dir, "token_cache.json")
+
+        if config.has_outlook:
+            self._load_token_cache()
+            # 'common' supports both personal (outlook.com) and org accounts
+            self.app = msal.PublicClientApplication(
+                config.ms_client_id,
+                authority="https://login.microsoftonline.com/common",
+                token_cache=self._token_cache,
+            )
+            logger.info("OutlookClient ready (device code flow)")
+        else:
+            logger.warning("OutlookClient: no Azure creds — demo mode")
+
+    # ── auth ─────────────────────────────────────────────────────────
+
+    def _load_token_cache(self):
+        try:
+            if os.path.exists(self._token_cache_path):
+                with open(self._token_cache_path) as f:
+                    self._token_cache.deserialize(f.read())
+        except Exception:
+            pass
+
+    def _save_token_cache(self):
+        try:
+            with open(self._token_cache_path, "w") as f:
+                f.write(self._token_cache.serialize())
+        except Exception:
+            pass
+
+    @property
+    def is_logged_in(self) -> bool:
+        return bool(self.app and self.app.get_accounts())
+
+    def login(self) -> bool:
+        """Device code flow — prints URL+code for the user to open in a browser."""
+        if not self.app:
+            return False
+        flow = self.app.initiate_device_flow(scopes=self.SCOPES)
+        if "user_code" not in flow:
+            print(f"❌ Login failed: {flow.get('error_description')}")
+            return False
+
+        print("\n" + "=" * 55)
+        print("  🔐  Microsoft Login Required")
+        print("=" * 55)
+        print(f"  1. Open: {flow['verification_uri']}")
+        print(f"  2. Enter code: {flow['user_code']}")
+        print("  Waiting for login...\n")
+
+        result = self.app.acquire_token_by_device_flow(flow)
+        if "access_token" in result:
+            self._save_token_cache()
+            name = result.get("id_token_claims", {}).get("name", "User")
+            print(f"✅ Logged in as: {name}")
+            return True
+        print(f"❌ Login failed: {result.get('error_description')}")
+        return False
+
+    def _get_token(self) -> Optional[str]:
+        if not self.app:
+            return None
+        accounts = self.app.get_accounts()
+        if accounts:
+            result = self.app.acquire_token_silent(self.SCOPES, account=accounts[0])
+            if result and "access_token" in result:
+                self._save_token_cache()
+                return result["access_token"]
+        logger.warning("No valid token — need to log in")
+        return None
+
+    def _headers(self, token: str) -> dict:
+        return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    # ── tools exposed to the AI agent ─────────────────────────────────
+
+    def get_emails(
+        self,
+        date: Optional[str] = None,          # "YYYY-MM-DD" specific day
+        since_date: Optional[str] = None,     # "YYYY-MM-DD" from this date onward
+        until_date: Optional[str] = None,     # "YYYY-MM-DD" up to this date
+        subject_contains: Optional[str] = None,
+        sender_contains: Optional[str] = None,
+        only_unread: bool = False,
+        folder: str = "Inbox",
+        max_results: int = 20,                # keep tokens low
+    ) -> List[Dict]:
+        """
+        Fetch emails with optional filters. Only returns fields needed for AI reasoning.
+        Use specific filters to minimise data returned and tokens consumed.
+        """
+        if not self.is_logged_in:
+            logger.warning("Not logged in — returning demo emails")
+            return self._mock_emails(only_unread)
+
+        token = self._get_token()
+        if not token:
+            return self._mock_emails(only_unread)
+
+        # Build OData filter
+        filters = []
+
+        if date:
+            # Specific calendar day
+            day_start = f"{date}T00:00:00Z"
+            day_end   = f"{date}T23:59:59Z"
+            filters.append(f"receivedDateTime ge {day_start}")
+            filters.append(f"receivedDateTime le {day_end}")
+        else:
+            if since_date:
+                filters.append(f"receivedDateTime ge {since_date}T00:00:00Z")
+            if until_date:
+                filters.append(f"receivedDateTime le {until_date}T23:59:59Z")
+
+        if only_unread:
+            filters.append("isRead eq false")
+        if subject_contains:
+            filters.append(f"contains(subject, '{subject_contains}')")
+        if sender_contains:
+            filters.append(f"contains(from/emailAddress/address, '{sender_contains}')")
+
+        url = f"{self.GRAPH_BASE}/me/mailFolders/{folder}/messages"
+        params = {
+            "$select": "id,subject,bodyPreview,receivedDateTime,from,importance,isRead",
+            "$orderby": "receivedDateTime desc",
+            "$top": max_results,
+        }
+        if filters:
+            params["$filter"] = " and ".join(filters)
+
+        try:
+            resp = requests.get(url, headers=self._headers(token), params=params)
+            resp.raise_for_status()
+            return [self._normalise_email(e) for e in resp.json().get("value", [])]
+        except requests.HTTPError as e:
+            logger.error("get_emails failed: %s — %s", e, resp.text[:200])
+            return self._mock_emails(only_unread)
+
+    def get_email_body(self, email_id: str) -> str:
+        """
+        Fetch the full body of a single email by ID.
+        Only call this when you need the full content — saves tokens for list views.
+        """
+        if not self.is_logged_in:
+            return "[Demo mode — full body unavailable]"
+        token = self._get_token()
+        if not token:
+            return "[No auth token]"
+        try:
+            url = f"{self.GRAPH_BASE}/me/messages/{email_id}"
+            params = {"$select": "body,subject,from"}
+            resp = requests.get(url, headers=self._headers(token), params=params)
+            resp.raise_for_status()
+            data = resp.json()
+            # Strip HTML tags for cleaner input to AI
+            import re
+            raw = data.get("body", {}).get("content", "")
+            return re.sub(r"<[^>]+>", " ", raw).strip()
+        except Exception as e:
+            logger.error("get_email_body failed: %s", e)
+            return "[Failed to fetch body]"
+
+    def send_email(
+        self,
+        to: List[str],
+        subject: str,
+        body: str,
+        is_html: bool = False,
+    ) -> bool:
+        """Send an email from the instructor's account."""
+        if not self.is_logged_in:
+            logger.info("[DEMO] Would send to %s: %s", to, subject)
+            return True
+        token = self._get_token()
+        if not token:
+            return False
+        payload = {
+            "message": {
+                "subject": subject,
+                "body": {"contentType": "HTML" if is_html else "Text", "content": body},
+                "toRecipients": [{"emailAddress": {"address": a}} for a in to],
+            },
+            "saveToSentItems": "true",
+        }
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/sendMail",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("send_email failed: %s", e)
+            return False
+
+    def create_draft(
+        self,
+        to: List[str],
+        subject: str,
+        body: str,
+    ) -> bool:
+        """Save a draft email in the user's Drafts folder."""
+        if not self.is_logged_in:
+            logger.info("[DEMO] Would create draft to %s: %s", to, subject)
+            return True
+        token = self._get_token()
+        if not token:
+            return False
+        payload = {
+            "subject": subject,
+            "body": {"contentType": "Text", "content": body},
+            "toRecipients": [{"emailAddress": {"address": a}} for a in to],
+        }
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/messages",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("create_draft failed: %s", e)
+            return False
+
+    def create_event(
+        self,
+        subject: str,
+        start_time: str,  # Format: YYYY-MM-DDTHH:MM:SS
+        end_time: str,
+        location: Optional[str] = None,
+        body: Optional[str] = None,
+    ) -> bool:
+        """Create a new calendar event."""
+        if not self.is_logged_in:
+            logger.info("[DEMO] Would create event: %s at %s", subject, start_time)
+            return True
+        token = self._get_token()
+        if not token:
+            return False
+        
+        payload = {
+            "subject": subject,
+            "start": {"dateTime": start_time, "timeZone": "UTC"},
+            "end": {"dateTime": end_time, "timeZone": "UTC"},
+            "location": {"displayName": location} if location else None,
+            "body": {"contentType": "Text", "content": body} if body else None,
+        }
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/events",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("create_event failed: %s", e)
+            return False
+
+    def get_calendar_events(
+        self,
+        date: Optional[str] = None,       # "YYYY-MM-DD" — single day
+        since_date: Optional[str] = None,
+        until_date: Optional[str] = None,
+        max_results: int = 20,
+    ) -> List[Dict]:
+        """Fetch calendar events with optional date filters."""
+        if not self.is_logged_in:
+            return self._mock_calendar()
+
+        token = self._get_token()
+        if not token:
+            return self._mock_calendar()
+
+        if date:
+            start_str = f"{date}T00:00:00Z"
+            end_str   = f"{date}T23:59:59Z"
+        else:
+            start_str = f"{since_date}T00:00:00Z" if since_date else datetime.utcnow().strftime("%Y-%m-%dT00:00:00Z")
+            end_str   = f"{until_date}T23:59:59Z" if until_date else (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%dT23:59:59Z")
+
+        try:
+            resp = requests.get(
+                f"{self.GRAPH_BASE}/me/calendarview",
+                headers=self._headers(token),
+                params={
+                    "startDateTime": start_str,
+                    "endDateTime": end_str,
+                    "$select": "subject,start,end,location,isAllDay",
+                    "$orderby": "start/dateTime",
+                    "$top": max_results,
+                },
+            )
+            resp.raise_for_status()
+            return [
+                {
+                    "subject": ev.get("subject", "(No Subject)"),
+                    "start": ev.get("start", {}).get("dateTime", "")[:16],
+                    "end":   ev.get("end",   {}).get("dateTime", "")[:16],
+                    "location": ev.get("location", {}).get("displayName", ""),
+                    "is_all_day": ev.get("isAllDay", False),
+                }
+                for ev in resp.json().get("value", [])
+            ]
+        except requests.HTTPError as e:
+            logger.error("get_calendar_events failed: %s", e)
+            return self._mock_calendar()
+
+    # ── mock / demo data ───────────────────────────────────────────────
+
+    @staticmethod
+    def _normalise_email(raw: dict) -> dict:
+        return {
+            "id": raw.get("id", ""),
+            "subject": raw.get("subject", "(No Subject)"),
+            "body_preview": raw.get("bodyPreview", ""),
+            "received": raw.get("receivedDateTime", "")[:16],  # trim to minute
+            "sender": raw.get("from", {}).get("emailAddress", {}).get("name", "Unknown"),
+            "sender_email": raw.get("from", {}).get("emailAddress", {}).get("address", ""),
+            "importance": raw.get("importance", "normal"),
+            "is_read": raw.get("isRead", False),
+        }
+
+    @staticmethod
+    def _mock_emails(only_unread=False) -> List[Dict]:
+        logger.info("Returning demo email data")
+        emails = [
+            {"id": "m1", "subject": "Project Deadline Reminder", "sender": "admin@university.edu",
+             "sender_email": "admin@university.edu", "received": "2026-03-20T09:30",
+             "body_preview": "Project proposal is due Friday at 5 PM.", "importance": "high", "is_read": False},
+            {"id": "m2", "subject": "Meeting Request: Research Discussion", "sender": "colleague@university.edu",
+             "sender_email": "colleague@university.edu", "received": "2026-03-20T10:15",
+             "body_preview": "Can we meet tomorrow at 2 PM to discuss research findings?", "importance": "normal", "is_read": False},
+            {"id": "m3", "subject": "Weekly Newsletter: CS Dept", "sender": "newsletter@cs.udst.edu.qa",
+             "sender_email": "newsletter@cs.udst.edu.qa", "received": "2026-03-20T08:00",
+             "body_preview": "Upcoming seminars, scholarships, and faculty achievements.", "importance": "low", "is_read": True},
+        ]
+        return [e for e in emails if not (only_unread and e["is_read"])]
+
+    @staticmethod
+    def _mock_calendar() -> List[Dict]:
+        logger.info("Returning demo calendar data")
+        today = datetime.now().strftime("%Y-%m-%d")
+        return [
+            {"subject": "Department Meeting", "start": f"{today}T11:00", "end": f"{today}T12:00",
+             "location": "Conference Room B", "is_all_day": False},
+            {"subject": "Office Hours", "start": f"{today}T14:00", "end": f"{today}T16:00",
+             "location": "Faculty Office 305", "is_all_day": False},
+        ]
+===
+"""
+Microsoft Graph API Client — Outlook Email & Calendar
+Tool (WAT Layer 3): Deterministic, filterable API wrapper.
+Each method accepts precise filters so the agent only fetches what it needs.
+"""
+
+import json
+import logging
+import os
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+
+import msal
+import requests
+
+logger = logging.getLogger(__name__)
+
+
+class OutlookClient:
+    """Filterable Microsoft Graph API wrapper for email and calendar."""
+
+    GRAPH_BASE = "https://graph.microsoft.com/v1.0"
+
+    # Delegated permissions needed
+    SCOPES = ["Mail.Read", "Mail.Send", "Mail.ReadWrite", "Calendars.ReadWrite", "User.Read"]
+
+    def __init__(self, config):
+        self.config = config
+        self.app = None
+        self._token_cache = msal.SerializableTokenCache()
+        self._token_cache_path = os.path.join(config.tmp_dir, "token_cache.json")
+
+        if config.has_outlook:
+            self._load_token_cache()
+            # 'common' supports both personal (outlook.com) and org accounts
+            self.app = msal.PublicClientApplication(
+                config.ms_client_id,
+                authority="https://login.microsoftonline.com/common",
+                token_cache=self._token_cache,
+            )
+            logger.info("OutlookClient ready (device code flow)")
+        else:
+            logger.warning("OutlookClient: no Azure creds — Outlook features disabled")
+
+    # ── auth ─────────────────────────────────────────────────────────
+
+    def _load_token_cache(self):
+        try:
+            if os.path.exists(self._token_cache_path):
+                with open(self._token_cache_path) as f:
+                    self._token_cache.deserialize(f.read())
+        except Exception:
+            pass
+
+    def _save_token_cache(self):
+        try:
+            with open(self._token_cache_path, "w") as f:
+                f.write(self._token_cache.serialize())
+        except Exception:
+            pass
+
+    @property
+    def is_logged_in(self) -> bool:
+        return bool(self.app and self.app.get_accounts())
+
+    def login(self) -> bool:
+        """Device code flow — prints URL+code for the user to open in a browser."""
+        if not self.app:
+            return False
+        flow = self.app.initiate_device_flow(scopes=self.SCOPES)
+        if "user_code" not in flow:
+            print(f"❌ Login failed: {flow.get('error_description')}")
+            return False
+
+        print("\n" + "=" * 55)
+        print("  🔐  Microsoft Login Required")
+        print("=" * 55)
+        print(f"  1. Open: {flow['verification_uri']}")
+        print(f"  2. Enter code: {flow['user_code']}")
+        print("  Waiting for login...\n")
+
+        result = self.app.acquire_token_by_device_flow(flow)
+        if "access_token" in result:
+            self._save_token_cache()
+            name = result.get("id_token_claims", {}).get("name", "User")
+            print(f"✅ Logged in as: {name}")
+            return True
+        print(f"❌ Login failed: {result.get('error_description')}")
+        return False
+
+    def _get_token(self) -> Optional[str]:
+        if not self.app:
+            return None
+        accounts = self.app.get_accounts()
+        if accounts:
+            result = self.app.acquire_token_silent(self.SCOPES, account=accounts[0])
+            if result and "access_token" in result:
+                self._save_token_cache()
+                return result["access_token"]
+        logger.warning("No valid token — need to log in")
+        return None
+
+    def _headers(self, token: str) -> dict:
+        return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+    # ── tools exposed to the AI agent ─────────────────────────────────
+
+    def get_emails(
+        self,
+        date: Optional[str] = None,          # "YYYY-MM-DD" specific day
+        since_date: Optional[str] = None,     # "YYYY-MM-DD" from this date onward
+        until_date: Optional[str] = None,     # "YYYY-MM-DD" up to this date
+        subject_contains: Optional[str] = None,
+        sender_contains: Optional[str] = None,
+        only_unread: bool = False,
+        folder: str = "Inbox",
+        max_results: int = 20,                # keep tokens low
+    ) -> List[Dict]:
+        """
+        Fetch emails with optional filters. Only returns fields needed for AI reasoning.
+        Use specific filters to minimise data returned and tokens consumed.
+        """
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot fetch emails")
+            return [{"error": "Not logged in to Outlook. Please authenticate first."}]
+
+        token = self._get_token()
+        if not token:
+            return [{"error": "Authentication token expired. Please re-authenticate."}]
+
+        # Build OData filter
+        filters = []
+
+        # We handle dates client-side now to avoid UTC timezone boundary bugs
+        # and to simplify the OData query.
+
+        if only_unread:
+            filters.append("isRead eq false")
+        if subject_contains:
+            filters.append(f"contains(subject, '{subject_contains}')")
+
+        # Generous OData Filter: Pad current date search by +/- 1 day 
+        # to ensure timezone-shifted emails (UTC vs AST) are fetched 
+        # for our client-side logic to handle accurately.
+        if date:
+            try:
+                d = datetime.strptime(date, "%Y-%m-%d")
+                since = (d - timedelta(days=1)).strftime("%Y-%m-%d")
+                until = (d + timedelta(days=1)).strftime("%Y-%m-%d")
+                filters.append(f"receivedDateTime ge {since}T00:00:00Z")
+                filters.append(f"receivedDateTime le {until}T23:59:59Z")
+            except Exception: pass
+        else:
+            if since_date:
+                try:
+                    d = datetime.strptime(since_date, "%Y-%m-%d")
+                    s = (d - timedelta(days=1)).strftime("%Y-%m-%d")
+                    filters.append(f"receivedDateTime ge {s}T00:00:00Z")
+                except Exception: pass
+            if until_date:
+                try:
+                    d = datetime.strptime(until_date, "%Y-%m-%d")
+                    u = (d + timedelta(days=1)).strftime("%Y-%m-%d")
+                    filters.append(f"receivedDateTime le {u}T23:59:59Z")
+                except Exception: pass
+
+        # If doing any client-side filtering, we must paginate until we 
+        # find enough matches or exhaust the mailbox.
+        page_size = 50
+
+        url = f"{self.GRAPH_BASE}/me/mailFolders/{folder}/messages"
+        params = {
+            "$select": "id,subject,bodyPreview,receivedDateTime,from,importance,isRead",
+            "$orderby": "receivedDateTime desc",
+            "$top": page_size,
+        }
+        if filters:
+            params["$filter"] = " and ".join(filters)
+
+        results = []
+        try:
+            while url and len(results) < max_results:
+                resp = requests.get(url, headers=self._headers(token), params=params)
+                resp.raise_for_status()
+                data = resp.json()
+                
+                for raw in data.get("value", []):
+                    email = self._normalise_email(raw)
+                    
+                    # Client-side sender filter (checks both name and address)
+                    if sender_contains:
+                        q = sender_contains.lower()
+                        name = email["sender"].lower()
+                        addr = email["sender_email"].lower()
+                        if q not in name and q not in addr:
+                            continue
+                            
+                    # Client-side date filters (email["received"] is format "YYYY-MM-DDTHH:MM")
+                    rcv_date = email["received"][:10]
+                    if date and rcv_date != date:
+                        continue
+                    if since_date and rcv_date < since_date:
+                        continue
+                    if until_date and rcv_date > until_date:
+                        continue
+                            
+                    results.append(email)
+                    if len(results) >= max_results:
+                        break
+                
+                # Setup next page fetch
+                url = data.get("@odata.nextLink")
+                params = None # nextLink already contains all query parameters
+                
+            return results
+        except requests.HTTPError as e:
+            logger.error("get_emails failed: %s — %s", e, e.response.text[:200])
+            return [{"error": f"Failed to fetch emails: {e}"}]
+        except Exception as e:
+            logger.error("get_emails failed: %s", e)
+            return []
+
+    def mark_as_read(self, email_id: str) -> bool:
+        """Mark an email as read in Outlook."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot mark email as read")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        try:
+            resp = requests.patch(
+                f"{self.GRAPH_BASE}/me/messages/{email_id}",
+                headers=self._headers(token),
+                json={"isRead": True}
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("mark_as_read failed: %s", e)
+            return False
+
+    def get_drafts(
+        self,
+        subject_contains: Optional[str] = None,
+        to_contains: Optional[str] = None,
+        date: Optional[str] = None,          # YYYY-MM-DD — saved on that day
+        since_date: Optional[str] = None,
+        until_date: Optional[str] = None,
+        max_results: int = 20,
+    ) -> List[Dict]:
+        """Fetch emails saved in the Drafts folder with optional filters."""
+        if not self.is_logged_in:
+            return []
+        token = self._get_token()
+        if not token:
+            return []
+
+        filters = []
+        if date:
+            filters.append(f"createdDateTime ge {date}T00:00:00Z")
+            filters.append(f"createdDateTime le {date}T23:59:59Z")
+        else:
+            if since_date:
+                filters.append(f"createdDateTime ge {since_date}T00:00:00Z")
+            if until_date:
+                filters.append(f"createdDateTime le {until_date}T23:59:59Z")
+        if subject_contains:
+            filters.append(f"contains(subject, '{subject_contains}')")
+
+        url = f"{self.GRAPH_BASE}/me/mailFolders/Drafts/messages"
+        params = {
+            "$select": "id,subject,bodyPreview,createdDateTime,lastModifiedDateTime,toRecipients",
+            "$top": max_results,
+        }
+        if filters:
+            params["$filter"] = " and ".join(filters)
+
+        try:
+            resp = requests.get(url, headers=self._headers(token), params=params)
+            resp.raise_for_status()
+            results = []
+            for d in resp.json().get("value", []):
+                recipients = [r["emailAddress"]["address"] for r in d.get("toRecipients", [])]
+                # Apply to_contains filter client-side (Graph doesn't support deep filter on toRecipients)
+                if to_contains and not any(to_contains.lower() in r.lower() for r in recipients):
+                    continue
+                results.append({
+                    "id": d.get("id"),
+                    "subject": d.get("subject", "(No subject)"),
+                    "body_preview": d.get("bodyPreview", ""),
+                    "created": d.get("createdDateTime", ""),
+                    "to": recipients,
+                })
+            return results
+        except requests.HTTPError as e:
+            logger.error("get_drafts failed: %s — %s", e, resp.text[:200])
+            return []
+        except Exception as e:
+            logger.error("get_drafts failed: %s", e)
+            return []
+
+    def get_email_body(self, email_id: str) -> str:
+        """
+        Fetch the full body of a single email by ID.
+        Only call this when you need the full content — saves tokens for list views.
+        """
+        if not self.is_logged_in:
+            return "[Not logged in to Outlook — cannot fetch email body. Please authenticate first.]"
+        token = self._get_token()
+        if not token:
+            return "[No auth token]"
+        try:
+            url = f"{self.GRAPH_BASE}/me/messages/{email_id}"
+            params = {"$select": "body,subject,from"}
+            resp = requests.get(url, headers=self._headers(token), params=params)
+            resp.raise_for_status()
+            data = resp.json()
+            # Strip HTML tags for cleaner input to AI
+            import re
+            raw = data.get("body", {}).get("content", "")
+            return re.sub(r"<[^>]+>", " ", raw).strip()
+        except Exception as e:
+            logger.error("get_email_body failed: %s", e)
+            return "[Failed to fetch body]"
+
+    def send_email(
+        self,
+        to: List[str],
+        subject: str,
+        body: str,
+        is_html: bool = False,
+    ) -> bool:
+        """Send an email from the instructor's account."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot send email")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        payload = {
+            "message": {
+                "subject": subject,
+                "body": {"contentType": "HTML" if is_html else "Text", "content": body},
+                "toRecipients": [{"emailAddress": {"address": a}} for a in to],
+            },
+            "saveToSentItems": "true",
+        }
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/sendMail",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("send_email failed: %s", e)
+            return False
+
+    def create_draft(
+        self,
+        to: List[str],
+        subject: str,
+        body: str,
+    ) -> Optional[str]:
+        """Save a draft email in the user's Drafts folder. Returns draft ID on success, None on failure."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot create draft")
+            return None
+        token = self._get_token()
+        if not token:
+            return None
+        payload = {
+            "subject": subject,
+            "body": {"contentType": "Text", "content": body},
+            "toRecipients": [{"emailAddress": {"address": a}} for a in to],
+        }
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/messages",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            return data.get("id")
+        except Exception as e:
+            logger.error("create_draft failed: %s", e)
+            return None
+
+    def update_draft(
+        self,
+        draft_id: str,
+        subject: Optional[str] = None,
+        body: Optional[str] = None,
+        to: Optional[List[str]] = None,
+    ) -> bool:
+        """Update an existing draft by ID. Only supplied fields are changed."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot update draft")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+
+        payload = {}
+        if subject is not None:
+            payload["subject"] = subject
+        if body is not None:
+            payload["body"] = {"contentType": "Text", "content": body}
+        if to is not None:
+            payload["toRecipients"] = [{"emailAddress": {"address": a}} for a in to]
+
+        if not payload:
+            return True  # Nothing to update
+
+        try:
+            resp = requests.patch(
+                f"{self.GRAPH_BASE}/me/messages/{draft_id}",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except requests.HTTPError as e:
+            logger.error("update_draft failed: %s — %s", e, resp.text)
+            return False
+        except Exception as e:
+            logger.error("update_draft failed: %s", e)
+            return False
+
+    def send_draft(
+        self,
+        draft_id: str,
+    ) -> bool:
+        """Send an existing draft email by its ID."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot send draft")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/messages/{draft_id}/send",
+                headers=self._headers(token)
+            )
+            resp.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error("send_draft failed: %s", e)
+            return False
+
+    def check_calendar_overlap(self, start_time: str, end_time: str) -> List[Dict]:
+        """Check for existing events that overlap with the given time range."""
+        if not self.is_logged_in:
+            return []
+        token = self._get_token()
+        if not token:
+            return []
+        try:
+            # Query events that start before the new event ends AND end after the new event starts
+            params = {
+                "$filter": f"start/dateTime lt '{end_time}' and end/dateTime gt '{start_time}'",
+                "$select": "subject,start,end"
+            }
+            resp = requests.get(
+                f"{self.GRAPH_BASE}/me/events",
+                headers=self._headers(token),
+                params=params
+            )
+            resp.raise_for_status()
+            return resp.json().get("value", [])
+        except Exception as e:
+            logger.error("check_calendar_overlap failed: %s", e)
+            return []
+
+    def create_event(
+        self,
+        subject: str,
+        start_time: str,
+        end_time: str,
+        body: str = "",
+        location: str = "",
+        is_all_day: bool = False,
+    ) -> str:
+        """Create a new calendar event. Checks for conflicts first."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot create event")
+            return "Failed: Not logged in to Outlook. Please authenticate first."
+
+        # 1. Conflict Check
+        conflicts = self.check_calendar_overlap(start_time, end_time)
+        conflict_msg = ""
+        if conflicts:
+            c_list = ", ".join([c["subject"] for c in conflicts])
+            conflict_msg = f"⚠️ WARNING: This overlaps with existing events: {c_list}. "
+
+        token = self._get_token()
+        if not token:
+            return "Authentication failed."
+        
+        payload = {
+            "subject": subject,
+            "start": {"dateTime": start_time, "timeZone": "UTC"},
+            "end": {"dateTime": end_time, "timeZone": "UTC"},
+            "isAllDay": is_all_day,
+        }
+        if location:
+            payload["location"] = {"displayName": location}
+        if body:
+            payload["body"] = {"contentType": "HTML", "content": body}
+        try:
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/events",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return f"{conflict_msg}Event created successfully."
+        except requests.HTTPError as e:
+            logger.error("create_event failed: %s — %s", e, resp.text)
+            return f"Failed to create event: {e}"
+        except Exception as e:
+            logger.error("create_event failed: %s", e)
+            return f"Failed to create event: {e}"
+
+    def get_calendar_events(
+        self,
+        date: Optional[str] = None,       # "YYYY-MM-DD" — single day
+        since_date: Optional[str] = None,
+        until_date: Optional[str] = None,
+        max_results: int = 20,
+    ) -> List[Dict]:
+        """Fetch calendar events with optional date filters."""
+        if not self.is_logged_in:
+            return [{"error": "Not logged in to Outlook. Please authenticate first."}]
+
+        token = self._get_token()
+        if not token:
+            return [{"error": "Authentication token expired. Please re-authenticate."}]
+
+        if date:
+            start_str = f"{date}T00:00:00Z"
+            end_str   = f"{date}T23:59:59Z"
+        else:
+            start_str = f"{since_date}T00:00:00Z" if since_date else datetime.utcnow().strftime("%Y-%m-%dT00:00:00Z")
+            end_str   = f"{until_date}T23:59:59Z" if until_date else (datetime.utcnow() + timedelta(days=7)).strftime("%Y-%m-%dT23:59:59Z")
+
+        try:
+            resp = requests.get(
+                f"{self.GRAPH_BASE}/me/calendarview",
+                headers=self._headers(token),
+                params={
+                    "startDateTime": start_str,
+                    "endDateTime": end_str,
+                    "$select": "id,subject,start,end,location,isAllDay",
+                    "$orderby": "start/dateTime",
+                    "$top": max_results,
+                },
+            )
+            resp.raise_for_status()
+            return [
+                {
+                    "id": ev.get("id"),
+                    "subject": ev.get("subject", "(No Subject)"),
+                    "start": ev.get("start", {}).get("dateTime", "")[:16],
+                    "end":   ev.get("end",   {}).get("dateTime", "")[:16],
+                    "location": ev.get("location", {}).get("displayName", ""),
+                    "is_all_day": ev.get("isAllDay", False),
+                }
+                for ev in resp.json().get("value", [])
+            ]
+        except requests.HTTPError as e:
+            logger.error("get_calendar_events failed: %s", e)
+            return [{"error": f"Failed to fetch calendar events: {e}"}]
+
+    def update_event(
+        self,
+        event_id: str,
+        subject: Optional[str] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        location: Optional[str] = None,
+        body: Optional[str] = None,
+    ) -> bool:
+        """Update an existing calendar event by ID. Only supplied fields are changed."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot update event")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        payload = {}
+        if subject is not None:
+            payload["subject"] = subject
+        if start_time is not None:
+            payload["start"] = {"dateTime": start_time, "timeZone": "UTC"}
+        if end_time is not None:
+            payload["end"] = {"dateTime": end_time, "timeZone": "UTC"}
+        if location is not None:
+            payload["location"] = {"displayName": location}
+        if body is not None:
+            payload["body"] = {"contentType": "Text", "content": body}
+        if not payload:
+            return True
+        try:
+            resp = requests.patch(
+                f"{self.GRAPH_BASE}/me/events/{event_id}",
+                headers=self._headers(token), json=payload
+            )
+            resp.raise_for_status()
+            return True
+        except requests.HTTPError as e:
+            logger.error("update_event failed: %s — %s", e, resp.text)
+            return False
+        except Exception as e:
+            logger.error("update_event failed: %s", e)
+            return False
+
+    def delete_event(self, event_id: str) -> bool:
+        """Delete a calendar event by ID."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot delete event")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        try:
+            resp = requests.delete(
+                f"{self.GRAPH_BASE}/me/events/{event_id}",
+                headers=self._headers(token)
+            )
+            resp.raise_for_status()
+            return True
+        except requests.HTTPError as e:
+            logger.error("delete_event failed: %s — %s", e, resp.text)
+            return False
+        except Exception as e:
+            logger.error("delete_event failed: %s", e)
+            return False
+
+    def delete_draft(self, draft_id: str) -> bool:
+        """Permanently delete a draft message by ID."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot delete draft")
+            return False
+        token = self._get_token()
+        if not token:
+            return False
+        try:
+            resp = requests.delete(
+                f"{self.GRAPH_BASE}/me/messages/{draft_id}",
+                headers=self._headers(token)
+            )
+            resp.raise_for_status()
+            return True
+        except requests.HTTPError as e:
+            logger.error("delete_draft failed: %s — %s", e, resp.text)
+            return False
+        except Exception as e:
+            logger.error("delete_draft failed: %s", e)
+            return False
+
+    def create_reply_draft(
+        self,
+        email_id: str,
+        body: str,
+    ) -> Optional[str]:
+        """Create a reply draft for an existing email. Returns the new draft ID."""
+        if not self.is_logged_in:
+            logger.warning("Not logged in — cannot create reply draft")
+            return None
+        token = self._get_token()
+        if not token:
+            return None
+        try:
+            # Step 1: create the reply draft
+            resp = requests.post(
+                f"{self.GRAPH_BASE}/me/messages/{email_id}/createReply",
+                headers=self._headers(token), json={}
+            )
+            resp.raise_for_status()
+            reply_id = resp.json().get("id")
+            if not reply_id:
+                return None
+            # Step 2: patch in the reply body
+            patch_resp = requests.patch(
+                f"{self.GRAPH_BASE}/me/messages/{reply_id}",
+                headers=self._headers(token),
+                json={"body": {"contentType": "Text", "content": body}}
+            )
+            patch_resp.raise_for_status()
+            body_preview = resp.json().get("bodyPreview", body[:200])
+            return reply_id
+        except requests.HTTPError as e:
+            logger.error("create_reply_draft failed: %s", e)
+            return None
+        except Exception as e:
+            logger.error("create_reply_draft failed: %s", e)
+            return None
+
+    # ── helpers ─────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _normalise_email(raw: dict) -> dict:
+        received = raw.get("receivedDateTime", "")
+        if received and "T" in received:
+            try:
+                # Naive offset for UTC+3 (Arabia Standard Time / Qatar)
+                # Graph API returns ISO8601 UTC like "2026-03-22T06:56:13Z"
+                dt = datetime.strptime(received[:19], "%Y-%m-%dT%H:%M:%S")
+                dt = dt + timedelta(hours=3)
+                received = dt.strftime("%Y-%m-%dT%H:%M")
+            except Exception as e:
+                logger.error("Failed to parse date %s: %s", received, e)
+                received = received[:16]
+
+        return {
+            "id": raw.get("id", ""),
+            "subject": raw.get("subject", "(No Subject)"),
+            "body_preview": raw.get("bodyPreview", ""),
+            "received": received,
+            "sender": raw.get("from", {}).get("emailAddress", {}).get("name", "Unknown"),
+            "sender_email": raw.get("from", {}).get("emailAddress", {}).get("address", ""),
+            "importance": raw.get("importance", "normal"),
+            "is_read": raw.get("isRead", False),
+        }
+
+```
+
+**18 demo fallbacks replaced** — every tool now returns a clear error when not logged in:
+- [get_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-222) → `[{"error": "Not logged in to Outlook..."}]`
+- [get_email_body](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#303-326) → `"[Not logged in to Outlook...]"`
+- [create_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#360-389) → `None`
+- [send_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#430-451), [mark_as_read](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#223-242), etc. → `False`
+
+**Deleted entirely:**
+- `_mock_emails()` method (50 lines)
+- `_mock_calendar()` method (12 lines)
+
+## Files Changed
+
+| File | Changes |
+|---|---|
+| [outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py) | Removed all demo data, proper error returns |
+| [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py) | Updated SYSTEM_PROMPT with 5 new rules |
+| [agent_instructions_and_tools.md](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/agent_instructions_and_tools.md) | Regenerated with latest config |

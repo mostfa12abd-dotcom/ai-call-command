@@ -1,0 +1,167 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+التخطي إلى المحتوى الرئيسي
+إيقاف "التمرير اللا نهائي"
+مساعدة بشأن إمكانية الوصول
+تعليقات إمكانية الوصول
+[0] (930,80)<a class='FgNLaf' href='https://www.google.com/webhp?hl=ar&ictx=0&sa=X&ved=0ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQpYkNCAw' />
+[1] (761,80)<textarea aria-label='بحث' class='gLFyf' id='APjFqb' role='combobox' />
+[2] (589,80)<div  />
+	[3] (592,80)<div aria-label='محو' class='vOY7J M2vV3' role='button' />
+		[4] (592,80)<span  />
+	[5] (559,80)<span  />
+[6] (525,80)<div aria-label='أدوات الإدخال' class='Umvnrc' role='button' />
+	[7] (525,80)<span  />
+[8] (470,80)<div aria-label='البحث الصوتي' class='XDyW0e' role='button' />
+[9] (415,80)<div aria-label='بحث بالصور' class='nDcEnd' role='button' />
+[10] (352,80)<button aria-label='بحث' class='HZVG1b Tg7LZd' />
+	[11] (361,80)<div  />
+		[12] (361,80)<span  />
+[13] (244,80)<div aria-label='الإعدادات' class='fLciMb' id='og-te' role='button' />
+	[14] (244,83)<div  />
+		[15] (244,80)<span  />
+[16] (180,80)<a aria-label='تطبيقات Google' class='gb_B' href='https://www.google.com.qa/intl/ar/about/products?tab=wh' role='button' />
+[17] (87,80)<a aria-label='تسجيل الدخول' class='gb_A' href='https://accounts.google.com/ServiceLogin?hl=ar&passive=true&continue=https://www.google.com/search%3Fq%3DQatar%2Bfurnished%2Bapartment%2B%2522pink%2Bwalls%2522%2Bdark%2Bwood%26udm%3D2&ec=futura_srp_og_si_72236_p'>تسجيل الدخول />
+	تسجيل الدخول
+[18] (933,173)<a class='XVMlrc C6AK7c' href='/search?q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&sca_esv=f6dab0cbe71090ff&udm=50&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&aep=1&ntc=1&sa=X&ved=2ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQ2J8OegQICRAD' />
+	[19] (933,173)<div  />
+		[20] (933,186)<div  />
+			[21] (933,177)<span >وضع AI />
+[22] (859,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&sa=X&ved=2ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQ0pQJegQIChAB' />
+	[23] (859,173)<div  />
+		[24] (859,186)<span >الكل />
+[25] (797,173)<a class='C6AK7c' role='link' />
+	صور
+[26] (695,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=39&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&sa=X&ved=2ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQs6gLegQIDhAB' />
+	[27] (695,173)<div  />
+		[28] (695,186)<span >فيديوهات قصيرة />
+[29] (566,173)<a class='C6AK7c' href='/travel/flights?sca_esv=f6dab0cbe71090ff&output=search&q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&ved=1t:200715&ictx=111' />
+	[30] (566,173)<div  />
+		[31] (566,186)<span >رحلات طيران />
+[32] (471,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=web&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&sa=X&ved=2ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQs6gLegQICxAB' />
+	[33] (471,173)<div  />
+		[34] (471,186)<span >الويب />
+[35] (386,173)<a class='C6AK7c' href='/finance?sca_esv=f6dab0cbe71090ff&output=search&q=Qatar+furnished+apartment+%22pink+walls%22+dark+wood&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0SuBfBG1h1MOILu7IIiRu37_OdDr0w_RPy2fMFWtkgBAsoBjS47adZeIzUa8hLBfBrvUsb2-NWOY8cZR5PCh1Fy-nB4kLSj8wm41-svBCOpsXhpBY8HQ65batM5lg7OgeiwCukHVQ0goRTUt0FOTmdU_PIFSEQHGz0OxFZh3Y4n0mnZAKcq50N0B9QeV_X74TWST8J4I_mxavkcHJBiZnxazCLKTSA&sa=X&ved=2ahUKEwjm0-XjxOOTAxV6XvEDHZekArMQ0pQJegQIDRAB' />
+	[36] (386,173)<div  />
+		[37] (386,186)<span >شؤون مالية />
+[38] (287,173)<div class='mTpL7c' role='button' />
+	[39] (287,173)<div  />
+		[40] (287,186)<div  />
+			[41] (300,177)<span >المزيد />
+			[42] (269,177)<span  />
+نتائج البحث
+[43] (806,414)<div  />
+	[44] (806,377)<div  />
+		[45] (806,377)<h3  />
+			[46] (806,377)<a  />
+				[47] (806,377)<div class='F0uyec' id='e-0by0SwpeHjVwnM' role='button' />
+					[48] (806,377)<div  />
+						[49] (806,377)<div  />
+							[50] (806,377)<img  />
+	[51] (806,552)<div  />
+		[52] (806,552)<a class='EZAeBe' href='https://www.propertyfinder.qa/en/plp/rent/apartment-for-rent-doha-the-pearl-island-porto-arabia-east-porto-drive-53285020.html' />
+			[53] (806,540)<div  />
+				[54] (959,539)<div  />
+					[55] (959,539)<div  />
+						[56] (959,539)<img  />
+				[57] (862,540)<div  />
+					[58] (862,540)<div  />
+						[59] (862,540)<span >Property Finder Qatar />
+			[60] (806,569)<div  />
+				[61] (806,569)<div >Rent in East Porto Drive: BILLS INCLUDED | SPACIOUS 1 BEDROOM WITH BALCONY  | Property Finder />
+[62] (413,414)<div  />
+	[63] (413,377)<div  />
+		[64] (413,377)<h3  />
+			[65] (413,377)<a  />
+				[66] (413,377)<div class='F0uyec' id='e-zeUpD574XCInMM' role='button' />
+					[67] (413,377)<div  />
+						[68] (413,377)<div  />
+							[69] (413,377)<img  />
+	[70] (413,552)<div  />
+		[71] (413,552)<a class='EZAeBe' href='https://angiehomes.co/blogs/press/pink-bedroom-walls-combination-beautiful-and-stylish-bedroom-design?srsltid=AfmBOorp4PdnOpdcbuzzX6AT40_5UkxJd8GONEQsCpGlsiAGqhpXvoeE' />
+			[72] (413,540)<div  />
+				[73] (598,539)<div  />
+					[74] (598,539)<div  />
+						[75] (598,539)<img  />
+				[76] (533,540)<div  />
+					[77] (533,540)<div  />
+						[78] (533,540)<span >Angie Homes />
+			[79] (413,569)<div  />
+				[80] (413,569)<div >Pink Bedroom Walls Combination – Beautiful and Stylish Bedroom Design –  ANGIE HOMES />
+[81] (-1,414)<div  />
+	[82] (-1,377)<div  />
+		[83] (-1,377)<h3  />
+			[84] (-1,377)<a  />
+				[85] (-1,377)<div class='F0uyec' id='e-c4PESD3wkW8aVM' role='button' />
+					[86] (-1,377)<div  />
+						[87] (-1,377)<div  />
+							[88] (-1,377)<img  />
+	[89] (-1,552)<div  />
+		[90] (-1,552)<a class='EZAeBe' href='https://www.dreamstime.com/photos-images/room-pink-walls.html' />
+			[91] (-1,540)<div  />
+				[92] (174,539)<div  />
+					[93] (174,539)<div  />
+						[94] (174,539)<img  />
+				[95] (96,540)<div  />
+					[96] (96,540)<div  />
+						[97] (96,540)<span >Dreamstime.com />
+			[98] (-1,569)<div  />
+				[99] (-1,569)<div >3,088 Room Pink Walls Stock Photos - Free & Royalty-Free Stock Photos from  Dreamstime />
+[100] (755,796)<div  />
+	[101] (755,759)<div  />
+		[102] (755,759)<h3  />
+			[103] (755,759)<a  />
+				[104] (755,759)<div class='F0uyec' id='e-MZ-OFaxE2M7KAM' role='button' />
+					[105] (755,759)<div  />
+						[106] (755,759)<div  />
+							[107] (755,759)<img  />
+	[108] (755,935)<div  />
+		[109] (755,935)<a class='EZAeBe' href='https://angiehomes.co/blogs/press/pink-bedroom-walls-combination-beautiful-and-stylish-bedroom-design?srsltid=AfmBOors4_vyXC9gg5Rl517jL2E5DWRjptiL3FeQwE3DS5AKZF-_JxGJ' />
+			[110] (755,923)<div  />
+				[111] (959,922)<div  />
+					[112] (959,922)<div  />
+						[113] (959,922)<img  />
+				[114] (894,923)<div  />
+					[115] (894,923)<div  />
+						[116] (894,923)<span >Angie Homes />
+			[117] (755,952)<div  />
+				[118] (755,952)<div >Pink Bedroom Walls Combination – Beautiful and Stylish Bedroom Design –  ANGIE HOMES />
+[119] (402,796)<div  />
+	[120] (402,759)<div  />
+		[121] (402,759)<h3  />
+			[122] (402,759)<a  />
+				[123] (402,759)<div class='F0uyec' id='e-6y6Mf0N7E_Q23M' role='button' />
+					[124] (402,759)<div  />
+						[125] (402,759)<div  />
+							[126] (402,759)<img  />
+	[127] (402,923)<div  />
+		[128] (496,922)<div  />
+			[129] (496,922)<div  />
+				[130] (496,922)<img  />
+		[131] (445,923)<div  />
+			[132] (445,923)<div  />
+				[133] (445,923)<span >Facebook />
+	HOME CENTER U SHAPE SOFA FOR SALE. WhatsApp :51138957 | Used - like new |  QAR11.00 | Zar` Al `Atiyah, Al Rayyan
+[134] (77,796)<div  />
+	[135] (77,759)<div  />
+		[136] (77,759)<h3  />
+			[137] (77,759)<a  />
+				[138] (77,759)<div class='F0uyec' id='e-JFLLu1yuKrmY_M' role='button' />
+					[139] (77,759)<div  />
+						[140] (77,759)<div  />
+							[141] (77,759)<img  />
+	[142] (77,935)<div  />
+		[143] (77,935)<a class='EZAeBe' href='https://www.dreamstime.com/photos-images/room-pink-walls.html' />
+			[144] (77,923)<div  />
+				[145] (253,922)<div  />
+					[146] (253,922)<div  />
+						[147] (253,922)<img  />
+				[148] (175,923)<div  />
+					[149] (175,923)<div  />
+						[150] (175,923)<span >Dreamstime.com />
+			[151] (77,952)<div  />
+				[152] (77,952)<div >3,088 Room Pink Walls Stock Photos - Free & Royalty-Free Stock Photos from  Dreamstime />
+
+</current_dom>

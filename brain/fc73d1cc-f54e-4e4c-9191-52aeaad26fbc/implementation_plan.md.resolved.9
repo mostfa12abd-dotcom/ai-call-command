@@ -1,0 +1,46 @@
+# Fix: 5 Agent Test Failures
+
+Based on the user's test case log, I traced every failure to its root cause in the code.
+
+## Root Cause Analysis
+
+| # | User Symptom | Root Cause in Code |
+|---|---|---|
+| 1 | "Couldn't retrieve email content" | [get_email_body()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#303-326) returns `"[Demo mode — full body unavailable]"` when not logged in |
+| 2 | "No important emails today" | [_mock_emails()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#727-777) returns RAW API format but [get_emails()](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-222) runs [_normalise_email()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#702-726) only on LIVE data. Mock emails have `receivedDateTime` but client-side filter checks `email["received"]` which doesn't exist → crash → empty list |
+| 3 | "Couldn't find the draft" / duplicate drafts | [get_drafts()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#243-302) returns `[]` in demo mode. [create_draft()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#360-389) returns `None` in demo mode. So the AI creates a draft, gets no ID back, and can never find it again |
+| 4 | Two identical "Security Access" drafts | Every call to `reply_to_email` creates a brand new draft. If the user retries or the AI loops, duplicates appear |
+| 5 | "Could you specify a time range for today?" | `SYSTEM_PROMPT` says "if the user didn't give a time period just ask for it" — too strict for obvious queries like "today" |
+
+## Proposed Changes
+
+### [OutlookClient](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py)
+
+#### [MODIFY] [outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py)
+
+**Fix 1 — [get_email_body](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#303-326) (line 308):** Return the mock email's `bodyPreview` content instead of a useless placeholder. Look up the email by `email_id` in [_mock_emails()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#727-777) and return its body text.
+
+**Fix 2 — [_mock_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#727-777) (line 727):** Run [_normalise_email()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#702-726) on each mock email so they have the same `sender`, `received`, `sender_email`, `is_read` keys that the client-side filtering expects. This prevents the `KeyError` that silently returns `[]`.
+
+**Fix 3 — [get_drafts](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#243-302) / [create_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#360-389) (lines 253, 361):** 
+- Make [create_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#360-389) return a fake `"demo_draft_001"` ID in demo mode (currently returns `None`).
+- Make [get_drafts](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#243-302) return a mock draft list in demo mode (currently returns `[]`).
+- Store created demo drafts in a `self._demo_drafts` list so draft→find→send flows work end-to-end.
+
+---
+
+### [Orchestrator](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+#### [MODIFY] [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+**Fix 5 — `SYSTEM_PROMPT` (line 384):** Change the email search rule to: "If the user mentions a relative time like 'today', 'this week', 'yesterday', calculate the date yourself. Only ask if the query is truly ambiguous."
+
+## Verification Plan
+
+### Automated Tests
+- Restart [main.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/main.py) and re-run the exact same test sequence from the user's test case log via Telegram
+- Confirm: "Any important emails today?" → returns the high-importance Security Access email
+- Confirm: "Read the Lab 4 email" → returns the full body preview text  
+- Confirm: "Draft a reply" → returns a usable draft ID
+- Confirm: "Send it" → successfully sends via the stored draft ID
+- Confirm: No duplicate drafts appear

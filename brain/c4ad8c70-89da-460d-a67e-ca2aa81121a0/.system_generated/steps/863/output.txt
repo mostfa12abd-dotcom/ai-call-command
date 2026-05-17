@@ -1,0 +1,208 @@
+## "webhook"
+Found 5 nodes:
+
+- n8n-nodes-base.webhook [TRIGGER]
+  Display Name: Webhook
+  Version: 2.1
+  Description: Starts the workflow when a webhook is called
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.respondToWebhook [TRIGGER]
+  Display Name: Respond to Webhook
+  Version: 1.5
+  Description: Returns data for Webhook
+  @builderHint Only works with webhook node (n8n-nodes-base.webhook) with responseMode set to "responseNode"
+  @relatedNodes
+    - n8n-nodes-base.webhook: "Required trigger - set responseMode to "responseNode""
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.flowTrigger [TRIGGER]
+  Display Name: Flow Trigger
+  Version: 1
+  Description: Handle Flow events via webhooks
+  Discriminators:
+    resource:
+      - list:
+          operations:
+      - task:
+          operations:
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.flowTrigger", resource: "list", operation: "get" }] })
+
+- n8n-nodes-base.taigaTrigger [TRIGGER]
+  Display Name: Taiga Trigger
+  Version: 1
+  Description: Handle Taiga events via webhook
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.wiseTrigger [TRIGGER]
+  Display Name: Wise Trigger
+  Version: 1
+  Description: Handle Wise events via webhooks
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "http request"
+Found 3 nodes:
+
+- n8n-nodes-base.httpRequest
+  Display Name: HTTP Request
+  Version: 4.4
+  Description: Makes an HTTP request and returns the response data
+  @builderHint Prefer dedicated integration nodes over HTTP Request — n8n has 400+ dedicated nodes (e.g. Gmail, Slack, Google Sheets, Notion, OpenAI, HubSpot, Jira, etc.) with built-in authentication, pre-configured parameters, better error handling, and easier maintenance. Only use HTTP Request when no dedicated node exists for the service, the user explicitly requests it, accessing a custom/internal API, or the dedicated node does not support the specific operation needed.
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- @n8n/n8n-nodes-langchain.toolHttpRequest
+  Display Name: HTTP Request Tool
+  Version: 1.1
+  Description: Makes an HTTP request and returns the response data
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.httpRequestTool
+  Display Name: HTTP Request Tool
+  Version: 4.4
+  Description: Makes an HTTP request and returns the response data
+  @builderHint Prefer dedicated integration nodes over HTTP Request — n8n has 400+ dedicated nodes (e.g. Gmail, Slack, Google Sheets, Notion, OpenAI, HubSpot, Jira, etc.) with built-in authentication, pre-configured parameters, better error handling, and easier maintenance. Only use HTTP Request when no dedicated node exists for the service, the user explicitly requests it, accessing a custom/internal API, or the dedicated node does not support the specific operation needed.
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "set"
+Found 5 nodes:
+
+- n8n-nodes-base.set
+  Display Name: Edit Fields (Set)
+  Version: 3.4
+  Description: Modify, add, or remove item fields
+  Discriminators:
+    mode:
+      - manual: "Manual Mapping"
+        Edit item fields one by one
+      - raw: "JSON"
+        Customize item output with JSON
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.set", mode: "manual" }] })
+
+- n8n-nodes-base.seaTable
+  Display Name: SeaTable
+  Version: 2
+  Description: Consume the SeaTable API
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - remove
+              Delete a row
+            - get
+              Get the content of a row
+            - list
+              Get many rows from a table or a table view
+            - lock
+              Lock a row to prevent further changes
+            - search
+              Search one or multiple rows
+            - unlock
+              Remove the lock from a row
+            - update
+              Update the content of a row
+      - base:
+          operations:
+            - snapshot
+              Create a snapshot of the base
+            - metadata
+              Get the complete metadata of the base
+            - collaborator
+              Get the username from the email or name of a collaborator
+      - link:
+          operations:
+            - add
+              Create a link between two rows in a link column
+            - list
+              List all links of a specific row
+            - remove
+              Remove a link between two rows from a link column
+      - asset:
+          operations:
+            - getPublicURL
+              Get the public URL from asset path
+            - upload
+              Add a file/image to an existing row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.seaTable", resource: "row", operation: "create" }] })
+
+- n8n-nodes-base.sendyTool
+  Display Name: Sendy Tool
+  Version: 1
+  Description: Consume Sendy API
+  Discriminators:
+    resource:
+      - campaign:
+          operations:
+            - create
+              Create a campaign
+      - subscriber:
+          operations:
+            - add
+              Add a subscriber to a list
+            - count
+              Count subscribers
+            - delete
+              Delete a subscriber from a list
+            - remove
+              Unsubscribe user from a list
+            - status
+              Get the status of subscriber
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.sendyTool", resource: "campaign", operation: "create" }] })
+
+- n8n-nodes-base.sms77Tool
+  Display Name: seven Tool
+  Version: 1
+  Description: Send SMS and make text-to-speech calls
+  Discriminators:
+    resource:
+      - sms:
+          operations:
+            - send
+              Send SMS
+      - voice:
+          operations:
+            - send
+              Converts text to voice and calls a given number
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.sms77Tool", resource: "sms", operation: "send" }] })
+
+- n8n-nodes-base.segmentTool
+  Display Name: Segment Tool
+  Version: 1
+  Description: Consume Segment API
+  Discriminators:
+    resource:
+      - group:
+          Group lets you associate an identified user with a group
+          operations:
+            - add
+              Add a user to a group
+      - identify:
+          Identify lets you tie a user to their actions
+          operations:
+            - create
+              Create an identity
+      - track:
+          Track lets you record events
+          operations:
+            - event
+              Record the actions your users perform. Every action triggers an event, which can also have associated properties.
+            - page
+              Record page views on your website, along with optional extra information about the page being viewed
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.segmentTool", resource: "group", operation: "add" }] })

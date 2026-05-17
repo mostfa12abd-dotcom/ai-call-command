@@ -1,0 +1,9 @@
+# Task Checklist
+
+- [ ] Navigate to https://ai-call-command.vercel.app/
+- [ ] Verify Login page: "Voxa" and logo removed, tagline generic/removed.
+- [ ] Log in (ask for credentials if needed).
+- [ ] Verify Sidebar: No "Voxa" branding.
+- [ ] Verify Dashboard: "Export" button removed.
+- [ ] Verify Filter button: Cycles through statuses (All -> Pickup -> Missed).
+- [ ] Verify Tagline: Generic/removed.

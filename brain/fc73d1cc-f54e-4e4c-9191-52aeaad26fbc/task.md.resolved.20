@@ -1,0 +1,57 @@
+# AI Secretary — Function Calling Agent Rewrite
+
+- [x] Delete old Python files
+- [x] Create [config.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/config.py)
+- [x] Create [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py) (rewrite)
+- [x] Create [tools/ai_engine.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/ai_engine.py) (rewrite)
+- [x] Create [tools/pdf_generator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/pdf_generator.py) (rewrite)
+- [x] Create [tools/scheduler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/scheduler.py) (rewrite)
+- [x] Create [bot/telegram_handler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/bot/telegram_handler.py)
+- [x] Create [main.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/main.py) (entry point)
+- [x] Update [requirements.txt](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/requirements.txt)
+- [x] Rewrite [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py) — add filterable get_emails/calendar
+- [x] Rewrite [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py) — OpenAI function calling loop
+- [x] Update [bot/telegram_handler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/bot/telegram_handler.py) — simplify (orchestrator does all routing), add /trace
+- [x] Verify end-to-end
+
+## Vivid Observability Update
+- [x] Add `colorama` to [requirements.txt](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/requirements.txt)
+- [x] Implement vivid console logging in [telegram_handler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/bot/telegram_handler.py)
+- [x] Implement thinking/tool-call logging in [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+- [x] Verify colorful terminal "shouting"
+
+## Live Telegram Network Test
+- [x] Install `telethon`
+- [x] Write [userbot_test.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/.tmp/userbot_test.py) using provided API credentials
+- [x] Run bot and userbot concurrently
+- [x] Complete 2FA login flow
+- [x] Send test message and capture response
+
+## Chat Memory Update
+- [x] Initialize `memory` dict in [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Implement rolling window logic in [_agent_loop](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#403-482)
+- [x] Verify contextual follow-up questions
+
+## Outlook Drafts & Events
+- [x] Add [create_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#287-316) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Add [create_event](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#379-417) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] User runs [refresh_permissions.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/refresh_permissions.py) — Done
+- [x] Verify draft appears in Outlook Drafts folder
+- [x] Verify event appears in Outlook Calendar
+
+## Send Drafts & Direct Testing
+- [x] Modify [create_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#287-316) to return draft ID
+- [x] Add [send_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#357-378) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Create [test_tools_direct.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/.tmp/test_tools_direct.py) to verify tools without Telegram
+- [x] Add [get_drafts](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#170-229) with filtering by date/subject/recipient
+- [x] Add [update_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#317-356) to edit existing drafts
+
+## Feature Batch 2
+- [x] Email approval flow: always create_draft first, show content, wait for confirmation
+- [x] Add `folder` param to [get_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-169) tool definition
+- [x] Add `reply_to_email` to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Add [update_event](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#468-510) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Add [delete_event](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#511-532) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Add [delete_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#533-554) to [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-634) and [Orchestrator](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#367-686)
+- [x] Run direct tests for all new tools
+

@@ -1,0 +1,30 @@
+# AI Secretary — Chat Memory & Context Update
+
+The goal is to give the AI the ability to remember previous messages in a conversation. This is essential for natural follow-up questions like "Summarize it" or "Tell me more about that email".
+
+## Proposed Changes
+
+### [Outlook Integration Layer]
+
+#### [MODIFY] [outlook_client.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py)
+*   Add `create_draft(to, subject, body)`: Uses Graph API `POST /me/messages` to save a persistent draft.
+*   Add `create_event(subject, start_time, end_time, location)`: Uses Graph API `POST /me/events`.
+
+#### [MODIFY] [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+*   Add `create_draft` and `create_event` to `TOOL_DEFINITIONS`.
+*   Implement execution logic in [_execute_tool](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#311-398).
+
+### [Memory & Context]
+...
+
+## Vector Store Consideration
+For "Long-term" memory (remembering things from weeks ago), we could add a **Vector Database** (e.g., ChromaDB). This would allow the AI to search through an infinite library of past interactions.
+> [!NOTE]
+> I will start with **Short-term Memory** (last 10 messages) first, as it's the most impactful for day-to-day chatting.
+
+## Verification Plan
+
+### Manual Verification
+*   Send a message to the bot: "What was the last email about?"
+*   Follow up with: "Summarize it in 2 bullet points." 
+*   If the AI knows what "it" refers to, the memory is working.

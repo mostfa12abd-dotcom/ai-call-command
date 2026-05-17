@@ -1,0 +1,28 @@
+[0] (500,517)<div  />
+	Voxa AI
+	Welcome back
+	Sign in to your AI Call Center dashboard
+	[1] (85,345)<label class='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>Email />
+	[2] (250,409)<input class='flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-11' id='email' placeholder='you@company.com' />
+	[3] (97,486)<label class='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>Password />
+	[4] (388,486)<button class='text-xs font-medium text-primary hover:underline'>Forgot password? />
+	[5] (250,545)<input class='flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm h-11 pr-10' id='password' placeholder='••••••••' />
+	[6] (413,545)<button aria-label='Show password' class='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground' />
+	[7] (77,625)<button class='peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50' id='remember' role='checkbox' />
+	[8] (160,625)<label class='peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm font-normal text-muted-foreground'>Remember me for 30 days />
+	[9] (250,705)<button class='inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 h-11 w-full'>Sign in />
+	OR
+	[10] (250,858)<button class='inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground px-4 py-2 h-11 w-full'>Continue with Google />
+	Don't have an account?
+	[11] (314,957)<button class='font-medium text-primary hover:underline'>Create one />
+	Live · 1,284 calls handled today
+	Every call,
+understood.
+	Voxa transforms voice conversations into actionable insights — pickups, missed opportunities, satisfaction, and follow-ups, all in one place.
+	98%
+	Pickup rate
+	2.4m
+	Avg duration
+	4.8★
+	Satisfaction
+	© 2026 Voxa AI · All rights reserved

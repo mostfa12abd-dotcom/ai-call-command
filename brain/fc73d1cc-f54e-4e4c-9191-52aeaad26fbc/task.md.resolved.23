@@ -1,0 +1,24 @@
+# Project Task List
+
+## [Bug Fixes] Agent Test Failures
+- [ ] Fix [get_email_body](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#303-326) demo mode to return mock content
+- [ ] Fix [_mock_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#727-777) to return normalised format
+- [ ] Fix [create_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#360-389) / [get_drafts](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#243-302) demo mode to track drafts
+- [ ] Fix SYSTEM_PROMPT time-period rule (too strict)
+- [ ] Restart + re-test the full test case sequence
+
+## [Completed]
+- [x] Fix OData Date Filter Bypass in [get_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-222)
+- [x] Implement Event Conflict Validation in [create_event](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#476-524)
+- [x] Add [mark_as_read](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#223-242) tool
+- [x] Add `[DEMO]` prefix to mock data
+- [x] Fix [get_emails](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-222) filtering (Sender, Date/Timezone, Pagination)
+- [x] Integrate strict agent rules into [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+- [x] Create Telegram Tester script
+- [x] Remove '🤔 Working on it...' placeholder message
+- [x] Fix duplicate scheduled tasks (deterministic job IDs)
+- [x] Fix zombie job deletion crash
+- [x] Add `delete_scheduled_task` tool
+- [x] Relax email search rules (too strict)
+- [x] Dynamic mock dates
+- [x] Apply user feedback from annotated instructions file

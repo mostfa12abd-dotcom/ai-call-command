@@ -1,0 +1,10 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+___
+Ooops! You weren't supposed to see this
+Sorry, the page you are looking for does not exist.
+[0] (500,779)<a class='link-module_link__TaDrq link-module_link-theme__XX29w link-module_link-theme--primary__GVN1P link-module_link-size--default__9o0tQ link-module_link-theme--primary--with-padding__T1LNn link-module_link--reduce-padding-prefix__3cSUg' href='/'>Back to homepage />
+
+</current_dom>

@@ -1,0 +1,8 @@
+# Tasks
+- [ ] Navigate to Dashboard and take screenshot
+- [ ] Navigate to Customers and take screenshot
+- [ ] Navigate to Customer Detail and take screenshot
+
+# Notes
+- Local server: http://localhost:5173
+- Target pages: /dashboard, /customers, /customers/:id

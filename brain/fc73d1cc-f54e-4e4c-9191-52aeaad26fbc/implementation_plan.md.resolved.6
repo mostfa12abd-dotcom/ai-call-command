@@ -1,0 +1,91 @@
+# AI Secretary — Feature Batch 2
+
+This plan covers six high-impact changes requested by the user.
+
+## Proposed Changes
+
+---
+
+### 1. Email Approval Flow (Behavioral Change)
+
+**Current behavior:** When the user says "send an email", [send_email](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#254-286) fires immediately.
+
+**New behavior:**
+- AI *always* calls [create_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#287-316) first — saves the email to Outlook Drafts.
+- AI shows the draft content (subject + full body) to the instructor.
+- Instructor approves (any positive response) — AI calls [send_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#357-378).
+- Instructor says "change X" — AI calls [update_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#317-356), shows updated content, waits again.
+
+> [!IMPORTANT]
+> The [send_email](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#254-286) tool will be **removed** to force this single path. The AI will always go through [create_draft](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#287-316) → show → [send_draft](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#357-378).
+
+**Files:** [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py) (SYSTEM_PROMPT + remove [send_email](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#254-286) from TOOL_DEFINITIONS + [_execute_tool](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py#428-546))
+
+---
+
+### 2. Folder Selection in [get_emails](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-169)
+
+Expose the `folder` parameter to the AI via TOOL_DEFINITIONS so it can search any Outlook folder.
+
+Folders the AI will know about: `Inbox`, `SentItems`, `Drafts`, `DeletedItems`, `Junk`.
+
+**Files:** [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py) (add `folder` param to [get_emails](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#108-169) tool definition)
+
+---
+
+### 3. `reply_to_email` Tool
+
+New method in [OutlookClient](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#19-508): `POST /me/messages/{id}/createReply` then PATCH to set body, then `POST /me/messages/{replyId}/send`.
+
+Also follows the approval flow: `reply_to_email` will itself use the draft flow (create reply draft → show → confirm → send).
+
+**Files:** [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py), [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+---
+
+### 4. `update_event` Tool
+
+New method: `PATCH /me/events/{event_id}` with fields: `subject`, [start](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/agent_tracer.py#236-238), [end](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#254-286), `location`, [body](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#230-253).
+
+The AI needs the `event_id` from a prior [get_calendar_events](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#418-466) call.
+
+**Files:** [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py), [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+---
+
+### 5. `delete_event` Tool
+
+New method: `DELETE /me/events/{event_id}`.
+
+**Files:** [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py), [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+---
+
+### 6. `delete_draft` Tool
+
+New method: `DELETE /me/messages/{draft_id}`.
+
+**Files:** [tools/outlook_client.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py), [orchestrator.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+
+---
+
+## Remaining Tools NOT Yet Built (for reference after this batch)
+
+| Tool | Description |
+|---|---|
+| `forward_email` | Forward an email to another recipient |
+| `mark_as_read` | Mark emails as read/unread |
+| `find_free_slots` | "When am I free this week?" |
+| `accept_invite` | Accept/decline calendar invites |
+| `list_attachments` | List files attached to an email |
+| `create_task` | Create a Microsoft To-Do task |
+| `get_tasks` | List To-Do tasks |
+| `search_contacts` | Look up contacts by name |
+
+## Verification Plan
+
+### Automated Tests
+* Run [test_tools_direct.py](file:///C:/Users/aabda/OneDrive/Desktop/DA%20Project/.tmp/test_tools_direct.py) extended with the new methods.
+* Confirm update_event changes the time in Outlook Calendar.
+* Confirm delete_event removes the event.
+* Confirm reply draft appears in Drafts folder before sending.

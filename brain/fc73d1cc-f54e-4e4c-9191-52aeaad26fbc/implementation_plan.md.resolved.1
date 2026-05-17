@@ -1,0 +1,126 @@
+# AI Secretary — Clean Architecture Rewrite
+
+## Why Rewrite?
+
+The existing code is 100% demo/mock scaffolding. Every tool has hardcoded mock data tangled with real logic, the AI engine crashes on import without an API key, and there's no orchestrator connecting anything. **Patching 5+ files would take longer than a clean rewrite.**
+
+**What we keep**: WAT framework philosophy, workflow [.md](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/CLAUDE.md) files, [.env.template](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/.env.template), [CLAUDE.md](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/CLAUDE.md)
+**What we delete**: All [.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/web_auth.py) files (they'll be rewritten from scratch)
+
+---
+
+## New Architecture
+
+```
+DA Project/
+├── main.py                    # Entry point — starts bot + scheduler
+├── config.py                  # Centralized config from .env
+├── orchestrator.py            # Intent router — the brain
+├── tools/
+│   ├── outlook_client.py      # Microsoft Graph API (email + calendar)
+│   ├── ai_engine.py           # LLM integration (model-agnostic)
+│   ├── pdf_generator.py       # HTML → PDF slides
+│   └── scheduler.py           # APScheduler with real callbacks
+├── bot/
+│   └── telegram_handler.py    # Telegram bot with routing + file sending
+├── workflows/                 # Kept as-is (markdown SOPs)
+├── .env / .env.template
+├── CLAUDE.md
+└── requirements.txt
+```
+
+---
+
+## Proposed Changes
+
+### Core Files
+
+#### [NEW] [config.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/config.py)
+- Loads all [.env](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/.env) variables in one place
+- Validates which services are available (has Azure creds? has OpenAI key? has Telegram token?)
+- Provides a single `Config` object used by all components
+
+#### [NEW] [orchestrator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/orchestrator.py)
+- Receives natural language from Telegram → classifies intent via AI engine → dispatches to correct tool
+- Handles multi-step flows (draft email → show preview → approve/reject → send)
+- Returns results as text or files (PDFs) back to Telegram
+
+#### [NEW] [main.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/main.py)
+- Initializes `Config`, all tools, orchestrator, and Telegram bot
+- Starts scheduler in background thread
+- Runs Telegram polling loop
+- Handles graceful shutdown (Ctrl+C)
+
+---
+
+### Tools (Rewritten)
+
+#### [NEW] [tools/outlook_client.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py)
+- Clean Microsoft Graph API wrapper
+- [get_emails()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#86-166), [send_email()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#224-281), [get_calendar_events()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/outlook_client.py#282-347)
+- Demo mode with mock data **only if** Azure creds are missing (clean separation)
+- No module-level side effects
+
+#### [NEW] [tools/ai_engine.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/ai_engine.py)
+- Lazy initialization (won't crash if no API key)
+- [classify_intent()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/ai_reasoning_engine.py#23-81), [summarize_emails()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/ai_reasoning_engine.py#82-144), `draft_reply()`, `generate_slides_html()`
+- Smart email triage: categorize by 🔴 Urgent / 🟡 Important / 🟢 FYI
+- Fallback responses when API is unavailable
+
+#### [NEW] [tools/pdf_generator.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/pdf_generator.py)
+- HTML → PDF with professional slide templates (better CSS)
+- Built-in slide themes (academic, minimal, modern)
+- Returns file path for Telegram to send as document
+
+#### [NEW] [tools/scheduler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/scheduler.py)
+- Accepts **real callback functions** (not just logging)
+- Stores instructor's Telegram `chat_id` per job
+- `add_job()` / [remove_job()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/task_scheduler.py#249-271) / [list_jobs()](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/task_scheduler.py#272-291) with persistent JSON storage
+- Scheduled jobs actually call the orchestrator and send results via Telegram
+
+---
+
+### Bot
+
+#### [NEW] [bot/telegram_handler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/bot/telegram_handler.py)
+- Real message routing through orchestrator
+- **File sending**: sends generated PDFs as Telegram documents
+- **Inline keyboards**: approve/reject buttons for email drafts
+- **Conversation tracking**: multi-step flows work across messages
+- Commands: `/start`, `/help`, `/summary`, `/schedule`, `/jobs`, `/cancel`
+
+---
+
+### Cleanup
+
+#### [DELETE] [demo_assistant.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/demo_assistant.py), [enhanced_demo.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/enhanced_demo.py), [test_components.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/test_components.py), [web_auth.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/web_auth.py)
+Old demo files replaced by the new architecture.
+
+#### [DELETE] [tools/ai_reasoning_engine.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/ai_reasoning_engine.py), [tools/telegram_bot.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/telegram_bot.py), [tools/task_scheduler.py](file:///c:/Users/aabda/OneDrive/Desktop/DA%20Project/tools/task_scheduler.py)
+Replaced by new versions with different names to match their roles.
+
+---
+
+## 5 New Feature Upgrades
+
+| # | Feature | Description |
+|---|---|---|
+| 1 | **Smart Email Triage** | Emails categorized by urgency (🔴🟡🟢) instead of flat list |
+| 2 | **Calendar-Aware Context** | Cross-references emails with calendar ("Prof. Smith emailed about your 2 PM meeting") |
+| 3 | **Approval Flow** | Draft email → inline keyboard → approve/edit/reject → send |
+| 4 | **Multi-theme PDF** | Professional slide templates (academic, minimal, modern) |
+| 5 | **Audit Log** | Every AI action logged with timestamp, viewable via `/history` |
+
+---
+
+## Verification Plan
+
+### Automated
+- `python -c "from config import Config; print(Config())"` — config loads
+- `python -c "from tools.ai_engine import AIEngine; print('ok')"` — no import crash
+- `python main.py` — starts without errors, enters Telegram polling
+
+### Manual
+- Send test messages via Telegram and verify real routing
+- Trigger PDF generation and verify file delivery
+- Set a scheduled task and verify it fires + delivers results

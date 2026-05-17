@@ -1,0 +1,177 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+التخطي إلى المحتوى الرئيسي
+إيقاف "التمرير اللا نهائي"
+مساعدة بشأن إمكانية الوصول
+تعليقات إمكانية الوصول
+[0] (930,80)<a class='FgNLaf' href='https://www.google.com/webhp?hl=ar&ictx=0&sa=X&ved=0ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQpYkNCAw' />
+[1] (761,80)<textarea aria-label='بحث' class='gLFyf' id='APjFqb' role='combobox' />
+[2] (589,80)<div  />
+	[3] (592,80)<div aria-label='محو' class='vOY7J M2vV3' role='button' />
+		[4] (592,80)<span  />
+	[5] (559,80)<span  />
+[6] (525,80)<div aria-label='أدوات الإدخال' class='Umvnrc' role='button' />
+	[7] (525,80)<span  />
+[8] (470,80)<div aria-label='البحث الصوتي' class='XDyW0e' role='button' />
+[9] (415,80)<div aria-label='بحث بالصور' class='nDcEnd' role='button' />
+[10] (352,80)<button aria-label='بحث' class='HZVG1b Tg7LZd' />
+	[11] (361,80)<div  />
+		[12] (361,80)<span  />
+[13] (244,80)<div aria-label='الإعدادات' class='fLciMb' id='og-te' role='button' />
+	[14] (244,83)<div  />
+		[15] (244,80)<span  />
+[16] (180,80)<a aria-label='تطبيقات Google' class='gb_B' href='https://www.google.com.qa/intl/ar/about/products?tab=wh' role='button' />
+[17] (87,80)<a aria-label='تسجيل الدخول' class='gb_A' href='https://accounts.google.com/ServiceLogin?hl=ar&passive=true&continue=https://www.google.com/search%3Fq%3Dfurnished%2Bapartment%2BQatar%2Bpink%2Bmauve%2Bwalls%2Bdark%2Bwood%2Bcabinets%26udm%3D2&ec=futura_srp_og_si_72236_p'>تسجيل الدخول />
+	تسجيل الدخول
+[18] (933,173)<a class='XVMlrc C6AK7c' href='/search?q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&sca_esv=f6dab0cbe71090ff&udm=50&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&aep=1&ntc=1&sa=X&ved=2ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQ2J8OegQICRAD' />
+	[19] (933,173)<div  />
+		[20] (933,186)<div  />
+			[21] (933,177)<span >وضع AI />
+[22] (859,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&sa=X&ved=2ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQ0pQJegQIDBAB' />
+	[23] (859,173)<div  />
+		[24] (859,186)<span >الكل />
+[25] (797,173)<a class='C6AK7c' role='link' />
+	صور
+[26] (695,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=39&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&sa=X&ved=2ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQs6gLegQIDxAB' />
+	[27] (695,173)<div  />
+		[28] (695,186)<span >فيديوهات قصيرة />
+[29] (566,173)<a class='C6AK7c' href='/travel/flights?sca_esv=f6dab0cbe71090ff&output=search&q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&ved=1t:200715&ictx=111' />
+	[30] (566,173)<div  />
+		[31] (566,186)<span >رحلات طيران />
+[32] (471,173)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=web&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&sa=X&ved=2ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQs6gLegQICxAB' />
+	[33] (471,173)<div  />
+		[34] (471,186)<span >الويب />
+[35] (386,173)<a class='C6AK7c' href='/finance?sca_esv=f6dab0cbe71090ff&output=search&q=furnished+apartment+Qatar+pink+mauve+walls+dark+wood+cabinets&source=lnms&fbs=ADc_l-Y4PEPvX-M1V47sU5Jlq60Tv422uIzRry9GTtfGYZ4nwlLR0GWwIKM3wV-OYyoz0Svq5Yi54ixrHxs1JGxuFdiBV6aSLbZaEbkc4gCjUHwM0ghJ3NlmVD_QzWt337G2rJOufUFqLawvWdHxnApGr_CkgQ8HGQrnmMUdovBlZMZR4lTuXT5WkxOEa_G0rMzDK4imZbrM5XiWw_Sj1L7QAedQuy7mdZwtWA1OtxI9VfUM8sYnaVp4GMPms2oFmCB5eitqQ66zpgGycSOeKGdItqgGDyasVA&sa=X&ved=2ahUKEwiZgNHZxOOTAxX4SvEDHQqwBkkQ0pQJegQIDhAB' />
+	[36] (386,173)<div  />
+		[37] (386,186)<span >شؤون مالية />
+[38] (287,173)<div class='mTpL7c' role='button' />
+	[39] (287,173)<div  />
+		[40] (287,186)<div  />
+			[41] (300,177)<span >المزيد />
+			[42] (269,177)<span  />
+نتائج البحث
+[43] (818,414)<div  />
+	[44] (818,377)<div  />
+		[45] (818,377)<h3  />
+			[46] (818,377)<a  />
+				[47] (818,377)<div class='F0uyec' id='e-0B_xM8sieb6SsM' role='button' />
+					[48] (818,377)<div  />
+						[49] (818,377)<div  />
+							[50] (818,377)<img  />
+	[51] (818,552)<div  />
+		[52] (818,552)<a class='EZAeBe' href='https://cocolapinedesign.com/2025/03/18/how-to-style-pink-kitchen-walls-warm-look/' />
+			[53] (818,540)<div  />
+				[54] (959,539)<div  />
+					[55] (959,539)<div  />
+						[56] (959,539)<img  />
+				[57] (874,540)<div  />
+					[58] (874,540)<div  />
+						[59] (874,540)<span >coco lapine design />
+			[60] (818,569)<div  />
+				[61] (818,569)<div >18 Inspiring Ways to Style Pink Kitchen Walls for a Warm Look - COCO LAPINE  DESIGNCOCO LAPINE DESIGN />
+[62] (463,414)<div  />
+	[63] (463,377)<div  />
+		[64] (463,377)<h3  />
+			[65] (463,377)<a  />
+				[66] (463,377)<div class='F0uyec' id='e-RWLg7bB-svmmCM' role='button' />
+					[67] (463,377)<div  />
+						[68] (463,377)<div  />
+							[69] (463,377)<img  />
+	[70] (463,552)<div  />
+		[71] (463,552)<a class='EZAeBe' href='https://havenly.com/blog/mauve-paint-colors?srsltid=AfmBOorkE98NBtPtaFwGF4BVJ8SdqJLMUdkBVT1aHwnxAhA-C82TumxO' />
+			[72] (463,540)<div  />
+				[73] (623,539)<div  />
+					[74] (623,539)<div  />
+						[75] (623,539)<img  />
+				[76] (578,540)<div  />
+					[77] (578,540)<div  />
+						[78] (578,540)<span >Havenly />
+			[79] (463,569)<div  />
+				[80] (463,569)<div >15 Mauve Paint Colors Interior Designers Love | Havenly | Havenly Interior  Design Blog />
+[81] (163,414)<div  />
+	[82] (163,377)<div  />
+		[83] (163,377)<h3  />
+			[84] (163,377)<a  />
+				[85] (163,377)<div class='F0uyec' id='e-pe65b_xKuVFYmM' role='button' />
+					[86] (163,377)<div  />
+						[87] (163,377)<div  />
+							[88] (163,377)<img  />
+	[89] (163,552)<div  />
+		[90] (163,552)<a class='EZAeBe' href='https://cocolapinedesign.com/2025/03/18/how-to-style-pink-kitchen-walls-warm-look/' />
+			[91] (163,540)<div  />
+				[92] (249,539)<div  />
+					[93] (249,539)<div  />
+						[94] (249,539)<img  />
+				[95] (165,540)<div  />
+					[96] (165,540)<div  />
+						[97] (165,540)<span >coco lapine design />
+			[98] (163,569)<div  />
+				[99] (163,569)<div >18 Inspiring Ways to Style Pink Kitchen Walls for a Warm Look - COCO LAPINE  DESIGNCOCO LAPINE DESIGN />
+[100] (23,539)<div  />
+	[101] (23,539)<div  />
+		[102] (23,539)<img  />
+Architectural Digest
+This Tennessee Kitchen Got a Colorful Glow Up | Architectural Digest |  Architectural Digest
+[103] (867,796)<div  />
+	[104] (867,759)<div  />
+		[105] (867,759)<h3  />
+			[106] (867,759)<a  />
+				[107] (867,759)<div class='F0uyec' id='e-HliMGS6mlMEpJM' role='button' />
+					[108] (867,759)<div  />
+						[109] (867,759)<div  />
+							[110] (867,759)<img  />
+	[111] (867,935)<div  />
+		[112] (867,935)<a class='EZAeBe' href='https://www.thenordroom.com/a-living-room-with-light-purple-walls-in-a-swedish-apartment/' />
+			[113] (867,923)<div  />
+				[114] (959,922)<div  />
+					[115] (959,922)<div  />
+						[116] (959,922)<img  />
+				[117] (890,923)<div  />
+					[118] (890,923)<div  />
+						[119] (890,923)<span >The Nordroom />
+			[120] (867,952)<div  />
+				[121] (867,952)<div >A Living Room with Light Purple Walls in a Swedish Apartment - The Nordroom />
+[122] (602,796)<div  />
+	[123] (602,759)<div  />
+		[124] (602,759)<h3  />
+			[125] (602,759)<a  />
+				[126] (602,759)<div class='F0uyec' id='e-IZxYV_EaStHDAM' role='button' />
+					[127] (602,759)<div  />
+						[128] (602,759)<div  />
+							[129] (602,759)<img  />
+	[130] (602,923)<div  />
+		[131] (721,922)<div  />
+			[132] (721,922)<div  />
+				[133] (721,922)<img  />
+		[134] (667,923)<div  />
+			[135] (667,923)<div  />
+				[136] (667,923)<span >Decor Pad />
+	Kitchens Mauve Walls Design Ideas
+[137] (255,796)<div  />
+	[138] (255,759)<div  />
+		[139] (255,759)<h3  />
+			[140] (255,759)<a  />
+				[141] (255,759)<div class='F0uyec' id='e-SIVu89KNVmGjmM' role='button' />
+					[142] (255,759)<div  />
+						[143] (255,759)<div  />
+							[144] (255,759)<img  />
+	[145] (255,935)<div  />
+		[146] (255,935)<a class='EZAeBe' href='https://cocolapinedesign.com/2025/03/18/how-to-style-pink-kitchen-walls-warm-look/' />
+			[147] (255,923)<div  />
+				[148] (429,922)<div  />
+					[149] (429,922)<div  />
+						[150] (429,922)<img  />
+				[151] (344,923)<div  />
+					[152] (344,923)<div  />
+						[153] (344,923)<span >coco lapine design />
+			[154] (255,952)<div  />
+				[155] (255,952)<div >18 Inspiring Ways to Style Pink Kitchen Walls for a Warm Look - COCO LAPINE  DESIGNCOCO LAPINE DESIGN />
+[156] (27,922)<div  />
+	[157] (27,922)<div  />
+		[158] (27,922)<img  />
+Material Depot
+Modern kitchen with mauve solid color laminate cabinets, black quartz  countertop, and natural oak open shelves - Inspiration Gallery | Material  Depot
+
+</current_dom>

@@ -1,0 +1,862 @@
+## "n8n-nodes-base.webhook"
+Found 2 nodes:
+
+- n8n-nodes-base.webhook [TRIGGER]
+  Display Name: Webhook
+  Version: 2.1
+  Description: Starts the workflow when a webhook is called
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.respondToWebhook [TRIGGER]
+  Display Name: Respond to Webhook
+  Version: 1.5
+  Description: Returns data for Webhook
+  @builderHint Only works with webhook node (n8n-nodes-base.webhook) with responseMode set to "responseNode"
+  @relatedNodes
+    - n8n-nodes-base.webhook: "Required trigger - set responseMode to "responseNode""
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "n8n-nodes-base.set"
+Found 5 nodes:
+
+- n8n-nodes-base.set
+  Display Name: Edit Fields (Set)
+  Version: 3.4
+  Description: Modify, add, or remove item fields
+  Discriminators:
+    mode:
+      - manual: "Manual Mapping"
+        Edit item fields one by one
+      - raw: "JSON"
+        Customize item output with JSON
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.set", mode: "manual" }] })
+
+- n8n-nodes-base.seaTable
+  Display Name: SeaTable
+  Version: 2
+  Description: Consume the SeaTable API
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - remove
+              Delete a row
+            - get
+              Get the content of a row
+            - list
+              Get many rows from a table or a table view
+            - lock
+              Lock a row to prevent further changes
+            - search
+              Search one or multiple rows
+            - unlock
+              Remove the lock from a row
+            - update
+              Update the content of a row
+      - base:
+          operations:
+            - snapshot
+              Create a snapshot of the base
+            - metadata
+              Get the complete metadata of the base
+            - collaborator
+              Get the username from the email or name of a collaborator
+      - link:
+          operations:
+            - add
+              Create a link between two rows in a link column
+            - list
+              List all links of a specific row
+            - remove
+              Remove a link between two rows from a link column
+      - asset:
+          operations:
+            - getPublicURL
+              Get the public URL from asset path
+            - upload
+              Add a file/image to an existing row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.seaTable", resource: "row", operation: "create" }] })
+
+- n8n-nodes-base.sendyTool
+  Display Name: Sendy Tool
+  Version: 1
+  Description: Consume Sendy API
+  Discriminators:
+    resource:
+      - campaign:
+          operations:
+            - create
+              Create a campaign
+      - subscriber:
+          operations:
+            - add
+              Add a subscriber to a list
+            - count
+              Count subscribers
+            - delete
+              Delete a subscriber from a list
+            - remove
+              Unsubscribe user from a list
+            - status
+              Get the status of subscriber
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.sendyTool", resource: "campaign", operation: "create" }] })
+
+- n8n-nodes-base.sseTrigger [TRIGGER]
+  Display Name: SSE Trigger
+  Version: 1
+  Description: Triggers the workflow when Server-Sent Events occur
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.stripeTool
+  Display Name: Stripe Tool
+  Version: 1
+  Description: Consume the Stripe API
+  Discriminators:
+    resource:
+      - balance:
+          operations:
+            - get
+              Get a balance
+      - charge:
+          operations:
+            - create
+              Create a charge
+            - get
+              Get a charge
+            - getAll
+              Get many charges
+            - update
+              Update a charge
+      - coupon:
+          operations:
+            - create
+              Create a coupon
+            - getAll
+              Get many coupons
+      - customer:
+          operations:
+            - create
+              Create a customer
+            - delete
+              Delete a customer
+            - get
+              Get a customer
+            - getAll
+              Get many customers
+            - update
+              Update a customer
+      - customerCard:
+          operations:
+            - add
+              Add a customer card
+            - get
+              Get a customer card
+            - remove
+              Remove a customer card
+      - meterEvent:
+          operations:
+            - create
+              Create a meter event
+      - source:
+          operations:
+            - create
+              Create a source
+            - delete
+              Delete a source
+            - get
+              Get a source
+      - token:
+          operations:
+            - create
+              Create a token
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.stripeTool", resource: "balance", operation: "get" }] })
+
+---
+
+## "n8n-nodes-base.supabase"
+Found 2 nodes:
+
+- n8n-nodes-base.supabase
+  Display Name: Supabase
+  Version: 1
+  Description: Add, get, delete and update data in a table
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - delete
+              Delete a row
+            - get
+              Get a row
+            - getAll
+              Get many rows
+            - update
+              Update a row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.supabase", resource: "row", operation: "create" }] })
+
+- n8n-nodes-base.supabaseTool
+  Display Name: Supabase Tool
+  Version: 1
+  Description: Add, get, delete and update data in a table
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - delete
+              Delete a row
+            - get
+              Get a row
+            - getAll
+              Get many rows
+            - update
+              Update a row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.supabaseTool", resource: "row", operation: "create" }] })
+
+---
+
+## "n8n-nodes-base.if"
+Found 5 nodes:
+
+- n8n-nodes-base.if
+  Display Name: If
+  Version: 2.3
+  Description: Route items to different branches (true/false)
+  @builderHint parameters.conditions must always contain these three sibling keys:
+- "combinator": "and" or "or", default to "and"
+- "conditions": [ {a list of condition objects } ]
+- "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 1 }
+e.g.: { "conditions": { "combinator": "and", "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 }, "conditions": [{ "leftValue": "={{ $json.field }}", "rightValue": "value", "operator": { "type": "string", "operation": "equals" } }] } }
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.drift
+  Display Name: Drift
+  Version: 1
+  Description: Consume Drift API
+  Discriminators:
+    resource:
+      - contact:
+          operations:
+            - create
+              Create a contact
+            - getCustomAttributes
+              Get custom attributes
+            - delete
+              Delete a contact
+            - get
+              Get a contact
+            - update
+              Update a contact
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.drift", resource: "contact", operation: "create" }] })
+
+- n8n-nodes-base.gotify
+  Display Name: Gotify
+  Version: 1
+  Description: Consume Gotify API
+  Discriminators:
+    resource:
+      - message:
+          operations:
+            - create
+            - delete
+            - getAll
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.gotify", resource: "message", operation: "create" }] })
+
+- n8n-nodes-base.netlify
+  Display Name: Netlify
+  Version: 1
+  Description: Consume Netlify API
+  Discriminators:
+    resource:
+      - deploy:
+          operations:
+            - cancel
+              Cancel a deployment
+            - create
+              Create a new deployment
+            - get
+              Get a deployment
+            - getAll
+              Get many deployments
+      - site:
+          operations:
+            - delete
+              Delete a site
+            - get
+              Get a site
+            - getAll
+              Returns many sites
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.netlify", resource: "deploy", operation: "cancel" }] })
+
+- n8n-nodes-base.shopify
+  Display Name: Shopify
+  Version: 1
+  Description: Consume Shopify API
+  Discriminators:
+    resource:
+      - order:
+          operations:
+            - create
+              Create an order
+            - delete
+              Delete an order
+            - get
+              Get an order
+            - getAll
+              Get many orders
+            - update
+              Update an order
+      - product:
+          operations:
+            - create
+              Create a product
+            - delete
+              Delete a product
+            - get
+              Get a product
+            - getAll
+              Get many products
+            - update
+              Update a product
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.shopify", resource: "order", operation: "create" }] })
+
+---
+
+## "n8n-nodes-base.openAi"
+Found 1 nodes:
+
+- n8n-nodes-base.openAi
+  Display Name: OpenAI
+  Version: 1.1
+  Description: Consume Open AI
+  @relatedNodes
+    - @n8n/n8n-nodes-langchain.lmChatOpenAi: "For most LLM tasks, text generation, reasoning, use Agent with this model"
+    - @n8n/n8n-nodes-langchain.agent: "For most LLM tasks, text generation, reasoning, tool calls, etc."
+  Discriminators:
+    resource:
+      - chat:
+          operations:
+            - complete
+              Create one or more completions for a given text
+      - image:
+          operations:
+            - create
+              Create an image for a given text
+      - text:
+          operations:
+            - complete
+              Create one or more completions for a given text
+            - edit
+              Create an edited version for a given text
+            - moderate
+              Classify if a text violates OpenAI's content policy
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.openAi", resource: "chat", operation: "complete" }] })
+
+---
+
+## "n8n-nodes-base.microsoftOutlook"
+Found 4 nodes:
+
+- n8n-nodes-base.microsoftOutlook
+  Display Name: Microsoft Outlook
+  Version: 2
+  Description: Consume Microsoft Outlook API
+  Discriminators:
+    resource:
+      - calendar:
+          operations:
+            - create
+              Create a new calendar
+            - delete
+              Delete a calendar
+            - get
+              Retrieve a calendar
+            - getAll
+              List and search calendars
+            - update
+              Update a calendar
+      - contact:
+          operations:
+            - create
+              Create a new contact
+            - delete
+              Delete a contact
+            - get
+              Retrieve a contact
+            - getAll
+              List and search contacts
+            - update
+              Update a contact
+      - draft:
+          operations:
+            - create
+              Create a new email draft
+            - delete
+              Delete an email draft
+            - get
+              Retrieve an email draft
+            - send
+              Send an existing email draft
+            - update
+              Update an email draft
+      - event:
+          operations:
+            - create
+              Create a new event
+            - delete
+              Delete an event
+            - get
+              Retrieve an event
+            - getAll
+              List and search events
+            - update
+              Update an event
+      - folder:
+          operations:
+            - create
+              Create a mail folder in the root folder of the user's mailbox
+            - delete
+              Delete a folder
+            - get
+              Retrieve a folder
+            - getAll
+              Get many folders
+            - update
+              Update a folder
+      - folderMessage:
+          operations:
+            - getAll
+              Retrieves the messages in a folder
+      - message:
+          operations:
+            - delete
+              Delete a message
+            - get
+              Retrieve a single message
+            - getAll
+              List and search messages
+            - move
+              Move a message to a folder
+            - reply
+              Create a reply to a message
+            - send
+              Send a message
+            - sendAndWait
+              Send a message and wait for response
+            - update
+              Update a message
+      - messageAttachment:
+          operations:
+            - add
+              Add an attachment to a message
+            - download
+              Download an attachment from a message
+            - get
+              Retrieve information about an attachment of a message
+            - getAll
+              Retrieve information about the attachments of a message
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.microsoftOutlook", resource: "calendar", operation: "create" }] })
+
+- n8n-nodes-base.microsoftOutlookTool
+  Display Name: Microsoft Outlook Tool
+  Version: 2
+  Description: Consume Microsoft Outlook API
+  Discriminators:
+    resource:
+      - calendar:
+          operations:
+            - create
+              Create a new calendar
+            - delete
+              Delete a calendar
+            - get
+              Retrieve a calendar
+            - getAll
+              List and search calendars
+            - update
+              Update a calendar
+      - contact:
+          operations:
+            - create
+              Create a new contact
+            - delete
+              Delete a contact
+            - get
+              Retrieve a contact
+            - getAll
+              List and search contacts
+            - update
+              Update a contact
+      - draft:
+          operations:
+            - create
+              Create a new email draft
+            - delete
+              Delete an email draft
+            - get
+              Retrieve an email draft
+            - send
+              Send an existing email draft
+            - update
+              Update an email draft
+      - event:
+          operations:
+            - create
+              Create a new event
+            - delete
+              Delete an event
+            - get
+              Retrieve an event
+            - getAll
+              List and search events
+            - update
+              Update an event
+      - folder:
+          operations:
+            - create
+              Create a mail folder in the root folder of the user's mailbox
+            - delete
+              Delete a folder
+            - get
+              Retrieve a folder
+            - getAll
+              Get many folders
+            - update
+              Update a folder
+      - folderMessage:
+          operations:
+            - getAll
+              Retrieves the messages in a folder
+      - message:
+          operations:
+            - delete
+              Delete a message
+            - get
+              Retrieve a single message
+            - getAll
+              List and search messages
+            - move
+              Move a message to a folder
+            - reply
+              Create a reply to a message
+            - send
+              Send a message
+            - sendAndWait
+              Send a message and wait for response
+            - update
+              Update a message
+      - messageAttachment:
+          operations:
+            - add
+              Add an attachment to a message
+            - download
+              Download an attachment from a message
+            - get
+              Retrieve information about an attachment of a message
+            - getAll
+              Retrieve information about the attachments of a message
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.microsoftOutlookTool", resource: "calendar", operation: "create" }] })
+
+- n8n-nodes-base.microsoftOutlookTrigger [TRIGGER]
+  Display Name: Microsoft Outlook Trigger
+  Version: 1
+  Description: Fetches emails from Microsoft Outlook and starts the workflow on specified polling intervals.
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.microsoftOutlookHitlTool
+  Display Name: Microsoft Outlook
+  Version: 2
+  Description: Request human approval for tools
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "n8n-nodes-base.emailSend"
+Found 3 nodes:
+
+- n8n-nodes-base.emailSend
+  Display Name: Send Email
+  Version: 2.1
+  Description: Sends an email using SMTP protocol
+  Discriminators:
+    operation:
+      - send
+      - sendAndWait
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.emailSend", operation: "send" }] })
+
+- n8n-nodes-base.emailSendTool
+  Display Name: Send Email Tool
+  Version: 2.1
+  Description: Sends an email using SMTP protocol
+  Discriminators:
+    operation:
+      - send
+      - sendAndWait
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.emailSendTool", operation: "send" }] })
+
+- n8n-nodes-base.emailSendHitlTool
+  Display Name: Send Email
+  Version: 2.1
+  Description: Request human approval for tools
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "n8n-nodes-base.whatsApp"
+Found 4 nodes:
+
+- n8n-nodes-base.whatsApp
+  Display Name: WhatsApp Business Cloud
+  Version: 1.1
+  Description: Access WhatsApp API
+  Discriminators:
+    resource:
+      - message:
+          operations:
+            - send
+            - sendAndWait
+            - sendTemplate
+      - media:
+          operations:
+            - mediaUpload
+            - mediaUrlGet
+            - mediaDelete
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.whatsApp", resource: "message", operation: "send" }] })
+
+- n8n-nodes-base.whatsAppTool
+  Display Name: WhatsApp Business Cloud Tool
+  Version: 1.1
+  Description: Access WhatsApp API
+  Discriminators:
+    resource:
+      - message:
+          operations:
+            - send
+            - sendAndWait
+            - sendTemplate
+      - media:
+          operations:
+            - mediaUpload
+            - mediaUrlGet
+            - mediaDelete
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.whatsAppTool", resource: "message", operation: "send" }] })
+
+- n8n-nodes-base.whatsAppTrigger [TRIGGER]
+  Display Name: WhatsApp Trigger
+  Version: 1
+  Description: Handle WhatsApp events via webhooks
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.whatsAppHitlTool
+  Display Name: WhatsApp Business Cloud
+  Version: 1.1
+  Description: Request human approval for tools
+  Discriminators: none (use node directly without resource/operation/mode)
+
+---
+
+## "n8n-nodes-base.set"
+Found 5 nodes:
+
+- n8n-nodes-base.set
+  Display Name: Edit Fields (Set)
+  Version: 3.4
+  Description: Modify, add, or remove item fields
+  Discriminators:
+    mode:
+      - manual: "Manual Mapping"
+        Edit item fields one by one
+      - raw: "JSON"
+        Customize item output with JSON
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.set", mode: "manual" }] })
+
+- n8n-nodes-base.seaTable
+  Display Name: SeaTable
+  Version: 2
+  Description: Consume the SeaTable API
+  Discriminators:
+    resource:
+      - row:
+          operations:
+            - create
+              Create a new row
+            - remove
+              Delete a row
+            - get
+              Get the content of a row
+            - list
+              Get many rows from a table or a table view
+            - lock
+              Lock a row to prevent further changes
+            - search
+              Search one or multiple rows
+            - unlock
+              Remove the lock from a row
+            - update
+              Update the content of a row
+      - base:
+          operations:
+            - snapshot
+              Create a snapshot of the base
+            - metadata
+              Get the complete metadata of the base
+            - collaborator
+              Get the username from the email or name of a collaborator
+      - link:
+          operations:
+            - add
+              Create a link between two rows in a link column
+            - list
+              List all links of a specific row
+            - remove
+              Remove a link between two rows from a link column
+      - asset:
+          operations:
+            - getPublicURL
+              Get the public URL from asset path
+            - upload
+              Add a file/image to an existing row
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.seaTable", resource: "row", operation: "create" }] })
+
+- n8n-nodes-base.sendyTool
+  Display Name: Sendy Tool
+  Version: 1
+  Description: Consume Sendy API
+  Discriminators:
+    resource:
+      - campaign:
+          operations:
+            - create
+              Create a campaign
+      - subscriber:
+          operations:
+            - add
+              Add a subscriber to a list
+            - count
+              Count subscribers
+            - delete
+              Delete a subscriber from a list
+            - remove
+              Unsubscribe user from a list
+            - status
+              Get the status of subscriber
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.sendyTool", resource: "campaign", operation: "create" }] })
+
+- n8n-nodes-base.sseTrigger [TRIGGER]
+  Display Name: SSE Trigger
+  Version: 1
+  Description: Triggers the workflow when Server-Sent Events occur
+  Discriminators: none (use node directly without resource/operation/mode)
+
+- n8n-nodes-base.stripeTool
+  Display Name: Stripe Tool
+  Version: 1
+  Description: Consume the Stripe API
+  Discriminators:
+    resource:
+      - balance:
+          operations:
+            - get
+              Get a balance
+      - charge:
+          operations:
+            - create
+              Create a charge
+            - get
+              Get a charge
+            - getAll
+              Get many charges
+            - update
+              Update a charge
+      - coupon:
+          operations:
+            - create
+              Create a coupon
+            - getAll
+              Get many coupons
+      - customer:
+          operations:
+            - create
+              Create a customer
+            - delete
+              Delete a customer
+            - get
+              Get a customer
+            - getAll
+              Get many customers
+            - update
+              Update a customer
+      - customerCard:
+          operations:
+            - add
+              Add a customer card
+            - get
+              Get a customer card
+            - remove
+              Remove a customer card
+      - meterEvent:
+          operations:
+            - create
+              Create a meter event
+      - source:
+          operations:
+            - create
+              Create a source
+            - delete
+              Delete a source
+            - get
+              Get a source
+      - token:
+          operations:
+            - create
+              Create a token
+
+  Use get_node_types with discriminators:
+    get_node_types({ nodeIds: [{ nodeId: "n8n-nodes-base.stripeTool", resource: "balance", operation: "get" }] })

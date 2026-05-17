@@ -1,0 +1,57 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (115,48)<a class='link-module_link__TaDrq styles-desktop-module_header__logo__SCTGC' href='/' title='Property Finder's Logo - Qatar' />
+[1] (77,132)<a class='styles-module_nav__link__5ALjA' href='/en/buy/properties-for-sale.html' title='Buy'>Buy />
+[2] (149,132)<a class='styles-module_nav__link__5ALjA styles-module_nav__link--active__35JWY' href='/en/rent/properties-for-rent.html' title='Rent'>Rent />
+[3] (262,132)<a class='styles-module_nav__link__5ALjA' href='/en/new-projects' title='New projects'>New projects />
+[4] (407,132)<a class='styles-module_nav__link__5ALjA' href='/en/commercial-rent/properties-for-rent.html' title='Commercial'>Commercial />
+[5] (541,132)<a class='styles-module_nav__link__5ALjA' href='/en/find-agent' title='Find agent'>Find agent />
+[6] (666,132)<button class='button-module_button__06uQ8 styles-module_nav__link__5ALjA styles-module_nav__link--dropdown__189io'>Explore />
+[7] (910,48)<button aria-label='Login to Property Finder' class='button-module_button__06uQ8 styles-desktop-module_header__login-button__6w8vy button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh'>Log in />
+[8] (430,225)<div  />
+	[9] (430,225)<input class='styles-module_autocomplete__input__-Lxhc' placeholder='City, community or building' />
+[10] (77,309)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR styles-module_dropdown-trigger--selected__DGlGF' />
+	[11] (58,309)<span >Rent />
+[12] (241,309)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR styles-module_dropdown-trigger--selected__DGlGF' />
+	[13] (222,309)<span >Apartment />
+[14] (450,309)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR' />
+	[15] (430,309)<span >Beds & Baths />
+[16] (628,309)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR' />
+	[17] (609,309)<span >Price />
+[18] (800,309)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_filters-form__dropdown-trigger__M3wOR styles_filters-form__more-filters__fbCCo' />
+	[19] (780,309)<span >More Filters />
+[20] (922,225)<button class='button-module_button__06uQ8 styles_filters-form__cta__L_aTQ button-module_button-theme__Rziix button-module_button-theme--primary__upp6G button-module_button-size--default__fQcem button-module_button-theme--primary--with-padding__9KrCk'>Find />
+[21] (27,415)<a class='link-module_link__TaDrq styles-module_breadcrumbs__option__rr5QW undefined' href='/' />
+Apartments for rent in Qatar
+Apartments for rent in Qatar
+25,657 properties
+[22] (106,644)<button aria-label='Create Alert Button' class='button-module_button__06uQ8 styles-module_create-alert__oKmTT button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Create alert />
+[23] (762,644)<label class='styles_desktop_label__DjbVP'>Sort by
+: />
+[24] (898,644)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--small__rjrxf styles-module_dropdown-trigger--default__dmILt styles_desktop_dropdown__trigger__OdbBT styles-module_dropdown-trigger--selected__DGlGF' />
+	[25] (870,644)<span >Featured />
+[26] (95,749)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/doha/apartments-for-rent.html' />
+	[27] (57,749)<span >Doha />
+	[28] (122,749)<span >(19,064) />
+[29] (559,749)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/lusail/apartments-for-rent.html' />
+	[30] (526,749)<span >Lusail />
+	[31] (587,749)<span >(5,541) />
+[32] (97,805)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/al-wakra/apartments-for-rent.html' />
+	[33] (73,805)<span >Al Wakra />
+	[34] (140,805)<span >(865) />
+[35] (630,805)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/umm-salal-mohammed/apartments-for-rent.html' />
+	[36] (605,805)<span >Umm Salal Mohammed />
+	[37] (738,805)<span >(137) />
+[38] (85,860)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/al-khor/apartments-for-rent.html' />
+	[39] (65,860)<span >Al Khor />
+	[40] (120,860)<span >(32) />
+[41] (564,860)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/al-shamal/apartments-for-rent.html' />
+	[42] (544,860)<span >Al Shamal />
+	[43] (611,860)<span >(13) />
+[44] (92,916)<a class='link-module_link__TaDrq styles_desktop_aggregation-links__link__GpOP1' href='/en/rent/al-daayen/apartments-for-rent.html' />
+	[45] (78,916)<span >Al Daayen />
+	[46] (139,916)<span >(5) />
+
+</current_dom>

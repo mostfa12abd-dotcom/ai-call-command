@@ -1,0 +1,390 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vapi-call-end",
+        "options": {}
+      },
+      "id": "692475c9-fb68-4a81-8e5c-433a80e8a394",
+      "name": "VAPI Call-End Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -240,
+        280
+      ],
+      "webhookId": "4233b5ae-325d-4b83-af29-9e816993dd32"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": "gpt-4o",
+        "messages": {
+          "messageValues": [
+            {
+              "content": "أنت محلل جودة مكالمات لمركز اتصال ذكي (AI Call Center).\n\nالمطلوب منك تحليل نص المكالمة (Transcript) المرفق واستخراج البيانات التالية بدقة على شكل كائن JSON (JSON Object) فقط، بدون أي نصوص إضافية:\n\n1. `summary`: ملخص تفصيلي للمكالمة وما حدث فيها.\n2. `two_word_summary`: ملخص قصير جداً للمكالمة من كلمتين أو 3 كلمات بحد أقصى لتكون عنواناً للمكالمة.\n3. `ended_prematurely`: (true/false) هل قام العميل بإنهاء المكالمة قبل اكتمال المحادثة والوصول للهدف المرجو؟ (true يعني أنها انتهت قبل الأوان ولم يتم حجز الموعد أو إغلاق المكالمة بشكل طبيعي، false يعني أنها اكتملت بشكل طبيعي).\n4. `appointment_booked`: (true/false) هل قام العميل بحجز موعد بشكل فعلي ومؤكد؟\n5. `appointment_datetime`: في حال كان `appointment_booked` صحيحاً، استخرج تاريخ ووقت الموعد. إن لم يوجد، اجعله فارغاً (\"\").\n6. `customer_email`: البريد الإلكتروني للعميل إذا ذكره في المكالمة، إن لم يوجد اتركه فارغاً (\"\").\n7. `customer_name`: اسم العميل إذا ذكره في المكالمة، إن لم يوجد اتركه فارغاً (\"\").",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.body.message.transcript }}",
+              "role": "user"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "id": "ai-analysis-node",
+      "name": "AI Call Analysis (OpenAI)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.2,
+      "position": [
+        20,
+        280
+      ],
+      "notesInFlow": true,
+      "notes": "الذكاء الاصطناعي يحلل المكالمة"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "tenant_id",
+              "value": "={{ $('VAPI Call-End Webhook').item.json.body.message.call.assistantId }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "caller_name",
+              "value": "={{ JSON.parse($json.message.content).customer_name || $('VAPI Call-End Webhook').item.json.body.message.customer.name || $('VAPI Call-End Webhook').item.json.body.message.customer.number }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "call_duration",
+              "value": "={{ Math.round($('VAPI Call-End Webhook').item.json.body.message.durationSeconds || 0) }}",
+              "type": "number"
+            },
+            {
+              "id": "4",
+              "name": "total_conversation",
+              "value": "={{ $('VAPI Call-End Webhook').item.json.body.message.transcript }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "detailed_summary",
+              "value": "={{ JSON.parse($json.message.content).summary }}",
+              "type": "string"
+            },
+            {
+              "id": "12",
+              "name": "two_word_summary",
+              "value": "={{ JSON.parse($json.message.content).two_word_summary }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "ended_reason",
+              "value": "={{ JSON.parse($json.message.content).ended_prematurely ? 'customer-hung-up' : 'assistant-hung-up' }}",
+              "type": "string"
+            },
+            {
+              "id": "13",
+              "name": "status",
+              "value": "={{ JSON.parse($json.message.content).ended_prematurely ? 'missed' : 'completed' }}",
+              "type": "string"
+            },
+            {
+              "id": "7",
+              "name": "custom_data",
+              "value": "={{ $('VAPI Call-End Webhook').item.json.body.message }}",
+              "type": "object"
+            },
+            {
+              "id": "8",
+              "name": "recording_url",
+              "value": "={{ $('VAPI Call-End Webhook').item.json.body.message.recordingUrl || $('VAPI Call-End Webhook').item.json.body.message.call.recordingUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "appointment_booked",
+              "value": "={{ JSON.parse($json.message.content).appointment_booked }}",
+              "type": "boolean"
+            },
+            {
+              "id": "10",
+              "name": "appointment_datetime",
+              "value": "={{ JSON.parse($json.message.content).appointment_datetime }}",
+              "type": "string"
+            },
+            {
+              "id": "11",
+              "name": "customer_email",
+              "value": "={{ JSON.parse($json.message.content).customer_email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6a7eb36c-da82-4b89-8dfc-91af8940bf73",
+      "name": "Extract Call Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        280,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "calls",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "tenant_id",
+              "fieldValue": "={{ $json.tenant_id }}"
+            },
+            {
+              "fieldId": "caller_name",
+              "fieldValue": "={{ $json.caller_name }}"
+            },
+            {
+              "fieldId": "call_duration",
+              "fieldValue": "={{ $json.call_duration }}"
+            },
+            {
+              "fieldId": "total_conversation",
+              "fieldValue": "={{ $json.total_conversation }}"
+            },
+            {
+              "fieldId": "detailed_summary",
+              "fieldValue": "={{ $json.detailed_summary }}"
+            },
+            {
+              "fieldId": "two_word_summary",
+              "fieldValue": "={{ $json.two_word_summary }}"
+            },
+            {
+              "fieldId": "ended_reason",
+              "fieldValue": "={{ $json.ended_reason }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "recording_url",
+              "fieldValue": "={{ $json.recording_url }}"
+            },
+            {
+              "fieldId": "custom_data",
+              "fieldValue": "={{ JSON.stringify($json.custom_data) }}"
+            }
+          ]
+        }
+      },
+      "id": "da0eb480-f748-4169-9f99-e593d1867cbd",
+      "name": "Save Call to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        560,
+        140
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "k4E28ceMwHOx1n6J",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "db8fa439-d419-4b0d-b153-fb80df8da503",
+              "leftValue": "={{ $json.appointment_booked }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-appointment-booked",
+      "name": "If Appointment Booked?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 3,
+      "position": [
+        560,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "calendarEvent",
+        "operation": "create",
+        "calendarId": "default",
+        "start": "={{ $json.appointment_datetime }}",
+        "end": "={{ $json.appointment_datetime }}",
+        "subject": "={{ 'Appointment with ' + $json.caller_name }}",
+        "content": "={{ 'Booked via AI Assistant.\\n\\nSummary: ' + $json.detailed_summary }}",
+        "options": {}
+      },
+      "id": "outlook-calendar",
+      "name": "Outlook Calendar",
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        820,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.customer_email }}",
+        "subject": "تأكيد موعدك - Voxa AI",
+        "message": "={{ 'أهلاً بك ' + $json.caller_name + '،\\n\\nتم تأكيد موعدك بنجاح في التاريخ والوقت التالي: ' + $json.appointment_datetime + '.\\n\\nنتطلع لرؤيتك قريباً!\\n\\nمع تحيات،\\nفريق Voxa AI' }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1060,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendTemplate",
+        "phoneNumberId": "REPLACE_WITH_YOUR_PHONE_NUMBER_ID",
+        "recipientPhoneNumber": "={{ $json.custom_data.customer.number }}",
+        "template": "appointment_confirmation",
+        "components": {
+          "component": [
+            {
+              "type": "body",
+              "parameters": {
+                "parameter": [
+                  {
+                    "type": "text",
+                    "text": "={{ $json.caller_name }}"
+                  },
+                  {
+                    "type": "text",
+                    "text": "={{ $json.appointment_datetime }}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "whatsapp",
+      "name": "WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        340
+      ],
+      "notesInFlow": true,
+      "notes": "يحتاج إضافة Credentials قالب واتساب"
+    }
+  ],
+  "connections": {
+    "VAPI Call-End Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Call Analysis (OpenAI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Call Analysis (OpenAI)": {
+      "main": [
+        [
+          {
+            "node": "Extract Call Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Call Data": {
+      "main": [
+        [
+          {
+            "node": "Save Call to Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If Appointment Booked?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Appointment Booked?": {
+      "main": [
+        [
+          {
+            "node": "Outlook Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outlook Calendar": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+# Task: Investigate why the live site is "not working"
+
+## Plan
+- [ ] Open https://ai-call-command.vercel.app
+- [ ] Check for visible errors (blank page, error message, etc.)
+- [ ] Capture console logs
+- [ ] Identify if it's a login screen, error page, or something else
+- [ ] Report current page title and findings

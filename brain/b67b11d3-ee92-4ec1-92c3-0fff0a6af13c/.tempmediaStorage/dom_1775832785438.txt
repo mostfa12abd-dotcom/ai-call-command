@@ -1,0 +1,63 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+[0] (430,56)<div  />
+	[1] (430,56)<input class='styles-module_autocomplete__input__-Lxhc' placeholder='City, community or building' />
+[2] (77,139)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR styles-module_dropdown-trigger--selected__DGlGF' />
+	[3] (58,139)<span >Rent />
+[4] (241,139)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR styles-module_dropdown-trigger--selected__DGlGF' />
+	[5] (222,139)<span >Apartment />
+[6] (450,139)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR' />
+	[7] (430,139)<span >Beds & Baths />
+[8] (628,139)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_trigger-with-ellipsis__JuCLe styles_filters-form__dropdown-trigger__M3wOR' />
+	[9] (609,139)<span >Price />
+[10] (815,139)<button class='styles-module_dropdown-trigger__foy3p styles-module_dropdown-trigger--regular__cYrjs styles-module_dropdown-trigger--default__dmILt styles_filters-form__dropdown-trigger__M3wOR styles_filters-form__more-filters__fbCCo styles-module_dropdown-trigger--selected__DGlGF' />
+	[11] (796,139)<span >More Filters (1) />
+[12] (922,56)<button class='button-module_button__06uQ8 styles_filters-form__cta__L_aTQ button-module_button-theme__Rziix button-module_button-theme--primary__upp6G button-module_button-size--default__fQcem button-module_button-theme--primary--with-padding__9KrCk'>Find />
+[13] (500,208)<a class='styles-module_property-card__link__r--GK' href='https://www.propertyfinder.qa/en/plp/rent/apartment-for-rent-doha-the-pearl-island-floresta-gardens-floresta-gardens-53666804.html' title='Apartment - 2 Bedrooms - 4 Bathrooms for rent in Floresta Gardens - Floresta Gardens - The Pearl Island - Doha' />
+SuperAgent
+23
+Apartment
+9,640 QAR/month
+Furnished 2 Bdm Apt I Bills Incl I 2 Months Extra
+Premium
+Floresta Gardens, Floresta Gardens, The Pearl Island, Doha
+2
+4
+137 sqm
+Listed 1 day ago
+[14] (482,378)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Call />
+[15] (605,378)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Email />
+[16] (757,378)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm styles-module_footer__action--whatsapp-lead__MlNX- button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>WhatsApp />
+[17] (886,378)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm styles-module_footer__action--save__PUGTL button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu' title='Save this property to the list' />
+[18] (946,378)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu' title='Open actions menu' />
+[19] (500,669)<a class='styles-module_property-card__link__r--GK' href='https://www.propertyfinder.qa/en/plp/rent/apartment-for-rent-doha-the-pearl-island-porto-arabia-east-porto-drive-53619743.html' title='Apartment - 1 Bedroom - 2 Bathrooms for rent in East Porto Drive - Porto Arabia - The Pearl Island - Doha' />
+[20] (104,486)<button class='tag-module_tag__jFU3w tag-module_tag--default__WOSS2 tag-module_tag-size--medium__GmRoo tag-module_tag--with-type__RgA-n tag-module_tag--super-agent__zoolh tag-module_tag--reduce-padding-prefix__tJe6K styles-module_tag-container__tag__u9NOH' />
+	[21] (115,486)<span >SuperAgent />
+[22] (209,620)<a class='link-module_link__TaDrq styles_desktop_gallery-item-wrapper__OW7RH' href='https://www.propertyfinder.qa/en/plp/rent/apartment-for-rent-doha-the-pearl-island-porto-arabia-east-porto-drive-53619743.html' />
+	[23] (209,620)<div  />
+		[24] (209,620)<img  />
+19
+Apartment
+8,500 QAR/month
+One Bdm Apt Plus Office I Marina View I Bills Incl
+Premium
+East Porto Drive, Porto Arabia, The Pearl Island, Doha
+1
+2
+142 sqm
+Listed 2 days ago
+[25] (482,840)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Call />
+[26] (605,840)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Email />
+[27] (757,840)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm styles-module_footer__action--whatsapp-lead__MlNX- button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>WhatsApp />
+[28] (886,840)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm styles-module_footer__action--save__PUGTL button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu' title='Save this property to the list' />
+[29] (946,840)<button class='button-module_button__06uQ8 styles-module_footer__action__27hKm button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--small__Lg4tu' title='Open actions menu' />
+[30] (104,948)<button class='tag-module_tag__jFU3w tag-module_tag--default__WOSS2 tag-module_tag-size--medium__GmRoo tag-module_tag--with-type__RgA-n tag-module_tag--super-agent__zoolh tag-module_tag--reduce-padding-prefix__tJe6K styles-module_tag-container__tag__u9NOH' />
+	[31] (115,948)<span >SuperAgent />
+Apartment
+10,000 QAR/month
+Premium
+[32] (500,917)<button aria-label='Create Alert Button' class='button-module_button__06uQ8 styles-module_create-alert__oKmTT styles_desktop_float_buttons__item__Oy2Jc button-module_button-theme__Rziix button-module_button-theme--secondary__-6EDU button-module_button-size--default__fQcem button-module_button-theme--secondary--with-padding__rXoQh button-module_button--reduce-padding-prefix__zAU6k'>Create alert />
+
+</current_dom>

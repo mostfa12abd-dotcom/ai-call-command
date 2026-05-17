@@ -1,0 +1,178 @@
+<current_dom_explanation>
+This is a temporary snapshot of the current page's DOM structure. The DOM will change if you navigate to or interact with another page. Use a tool like browser_get_dom to capture and preserve the DOM in your trajectory if needed for later reference.
+</current_dom_explanation>
+<current_dom>
+التخطي إلى المحتوى الرئيسي
+مساعدة بشأن إمكانية الوصول
+تعليقات إمكانية الوصول
+[0] (917,80)<a class='FgNLaf' href='https://www.google.com/webhp?hl=ar&ictx=0&sa=X&ved=0ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQpYkNCAs' id='_EQ7ZafD8Bsu5wPAPhbOL2Qo_1' />
+[1] (785,80)<textarea aria-label='بحث' class='gLFyf' id='APjFqb' role='combobox' />
+[2] (651,80)<div  />
+	[3] (654,80)<div aria-label='محو' class='vOY7J M2vV3' role='button' />
+		[4] (654,80)<span  />
+	[5] (621,80)<span  />
+[6] (587,80)<div aria-label='أدوات الإدخال' class='Umvnrc' role='button' />
+	[7] (587,80)<span  />
+[8] (533,80)<div aria-label='البحث الصوتي' class='XDyW0e' role='button' />
+[9] (478,80)<div aria-label='بحث بالصور' class='nDcEnd' role='button' />
+[10] (414,80)<button aria-label='بحث' class='HZVG1b Tg7LZd' />
+	[11] (423,80)<div  />
+		[12] (423,80)<span  />
+[13] (306,80)<div aria-label='الإعدادات' class='fLciMb' id='og-te' role='button' />
+	[14] (306,83)<div  />
+		[15] (306,80)<span  />
+[16] (238,80)<div aria-label='مشاركة' class='apFnFf' role='button' />
+	[17] (238,80)<div  />
+		[18] (238,80)<div  />
+[19] (177,80)<a aria-label='تطبيقات Google' class='gb_B' href='https://www.google.com.qa/intl/ar/about/products?tab=wh' role='button' />
+[20] (86,93)<a aria-label='تسجيل الدخول' class='gb_A' href='https://accounts.google.com/ServiceLogin?hl=ar&passive=true&continue=https://www.google.com/search%3Fq%3Dfurnished%2Bapartment%2Bfor%2Brent%2BQatar%2Bopen%2Bkitchen%2Bdark%2Bwood%2Bcabinets%2Bpink%2Bwalls&ec=futura_srp_og_si_72236_p'>تسجيل الدخول />
+	تسجيل الدخول
+[21] (919,176)<a class='XVMlrc C6AK7c' href='/search?q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&sca_esv=f6dab0cbe71090ff&udm=50&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&aep=1&ntc=1&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQ2J8OegQIDhAI' />
+	[22] (919,176)<div  />
+		[23] (919,189)<div  />
+			[24] (919,181)<span >وضع AI />
+[25] (845,176)<a class='C6AK7c' role='link' />
+	الكل
+[26] (783,176)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=2&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQtKgLegQIFBAB' />
+	[27] (783,176)<div  />
+		[28] (783,189)<span >صور />
+[29] (682,176)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=39&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQs6gLegQIExAB' />
+	[30] (682,176)<div  />
+		[31] (682,189)<span >فيديوهات قصيرة />
+[32] (569,176)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=7&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQtKgLegQIEhAB' />
+	[33] (569,176)<div  />
+		[34] (569,189)<span >فيديوهات />
+[35] (492,176)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&tbm=nws&source=lnms&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQ0pQJegQIERAB' />
+	[36] (492,176)<div  />
+		[37] (492,189)<span >أخبار />
+[38] (425,176)<a class='C6AK7c' href='/search?sca_esv=f6dab0cbe71090ff&udm=web&fbs=ADc_l-bbm1RMGiN4KYYQz0BaLGJbUMzIZ4cUx9J4Q53-6UWQeMkdjMQTpYgy1daDR6XzYBBkai6F3t1Yeg_z7uh-70yt0f1Q5GWzyt_W6vrZY61DyaiOrWHC_Fn1jr6M4_Ss6wXSxbqRZAfVZ4igsmJbMPXdmDiUVvXUPBEjhY3zUGY-ADMeAlIlwjQxjpiA1HIWOPLU6eTYVzUloPR_AYW8gQGRLNNAm3KqKMrrddERnVbDflA1M0bb0yM5MhPD1stAabUqsT_e_676XFVwz5vawWjlhdcKOA&q=furnished+apartment+for+rent+Qatar+open+kitchen+dark+wood+cabinets+pink+walls&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQs6gLegQIEBAB' />
+	[39] (425,176)<div  />
+		[40] (425,189)<span >الويب />
+[41] (345,176)<div class='mTpL7c' role='button' />
+	[42] (345,176)<div  />
+		[43] (345,189)<div  />
+			[44] (357,181)<span >المزيد />
+			[45] (327,181)<span  />
+[46] (245,176)<div class='mOKdDc' id='hdtb-tls' role='button' />
+	[47] (245,176)<div  />
+		[48] (245,189)<div  />
+			[49] (258,181)<span >الأدوات />
+			[50] (222,181)<span  />
+نتائج البحث
+Looking for results in English?
+[51] (381,317)<a href='#' />
+	[52] (381,314)<span  />
+[53] (137,353)<a href='/setprefs?sig=0_OaLONqqo8d51ipRZifOG1zNfj9w%3D&source=en_ignored_notification&prev=https://www.google.com/search?q%3Dfurnished%2Bapartment%2Bfor%2Brent%2BQatar%2Bopen%2Bkitchen%2Bdark%2Bwood%2Bcabinets%2Bpink%2Bwalls&hl=en&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQhoQCKAF6BAgJEAQ'>Change to English />
+[54] (146,389)<a href='#'>الاستمرار باللغة />
+	[55] (88,389)<span >العربية />
+[56] (110,441)<a class='fl' href='/preferences?lang=1&hl=ar-QA&sa=X&ved=2ahUKEwiwyZL3w-OTAxXLHBAIHYXZIqsQiIQCKAN6BAgJEAY#languages'>إعدادات اللغة />
+Web results
+[57] (570,313)<a class='zReHs' href='https://www.propertyfinder.qa/en/ltp/apartments-with-kitchen-for-rent-in-qatar' />
+	[58] (570,342)<h3  />
+		[59] (570,346)<span >Apartments with Kitchen for rent in Qatar | Property Finder QA />
+	[60] (719,289)<div  />
+		[61] (719,289)<div  />
+			[62] (929,289)<span  />
+				[63] (929,289)<div  />
+					[64] (929,289)<img  />
+			[65] (692,289)<div  />
+				[66] (692,275)<div  />
+					[67] (692,275)<span  />
+						[68] (788,274)<span >Property Finder Qatar />
+				[69] (692,304)<div  />
+					[70] (692,304)<cite class='qLRx3b tjvcx GvPZzd cHaqb' role='text' />
+						[71] (787,303)<span >https://www.propertyfinder.qa />
+						[72] (585,303)<span class='ylgVCe ob9lvb' role='text'>›
+› />
+							[73] (658,303)<span >ltp />
+							[74] (562,303)<span >apartments-with-k... />
+[75] (461,302)<div aria-label='معلومات حول هذه النتيجة' class='MJ8UF iTPLzd rNSxBe eY4mx lUn2nc' role='button' />
+	[76] (461,302)<span  />
+		[77] (461,304)<span  />
+Search Apartments with Kitchen for rent in Qatar
+with maps & photos on propertyfinder ✓ Verified Listings ✓ Multiple payment plans.
+من ‏٤٫٠٠ ر.ق.‏ إلى ‏٨٬٠٠٠٬٠٠٠٫٠٠ ر.ق.‏
+ناقصة:
+open
+‏
+dark
+‏
+wood
+‏
+cabinets
+‏
+pink
+[78] (674,606)<a class='zReHs' href='https://www.propertyfinder.qa/en/ltp/apartments-with-kitchenette-for-rent-in-qatar' />
+	[79] (674,635)<h3  />
+		[80] (674,639)<span >Apartments with kitchenette for Rent in Qatar />
+	[81] (719,582)<div  />
+		[82] (719,582)<div  />
+			[83] (929,582)<span  />
+				[84] (929,582)<div  />
+					[85] (929,582)<img  />
+			[86] (692,582)<div  />
+				[87] (692,568)<div  />
+					[88] (692,568)<span  />
+						[89] (788,567)<span >Property Finder Qatar />
+				[90] (692,597)<div  />
+					[91] (692,597)<cite class='qLRx3b tjvcx GvPZzd cHaqb' role='text' />
+						[92] (787,597)<span >https://www.propertyfinder.qa />
+						[93] (585,597)<span class='ylgVCe ob9lvb' role='text'>›
+› />
+							[94] (658,597)<span >ltp />
+							[95] (562,597)<span >apartments-with-k... />
+[96] (461,596)<div aria-label='معلومات حول هذه النتيجة' class='MJ8UF iTPLzd rNSxBe eY4mx lUn2nc' role='button' />
+	[97] (461,596)<span  />
+		[98] (461,597)<span  />
+Discover
+Apartments with kitchenette for Rent in Qatar
+with maps & photos. ✓ Verified Listings ✓ All Inclusive ✓ short & long terms.
+من ‏١٬٨٠٠٫٠٠ ر.ق.‏ إلى ‏٣٣٬٠٠٠٫٠٠ ر.ق.‏
+ناقصة:
+open
+‏
+dark
+‏
+wood
+‏
+cabinets
+‏
+pink
+[99] (672,899)<a class='zReHs' href='https://www.dubizzle.qa/en/properties/properties-for-rent/apartments-for-rent/q-kitchen-closet/' />
+	[100] (672,928)<h3  />
+		[101] (672,932)<span >Kitchen Closet - Apartments for Rent in Qatar />
+	[102] (765,875)<div  />
+		[103] (765,875)<div  />
+			[104] (929,875)<span  />
+				[105] (929,875)<div  />
+					[106] (929,875)<img  />
+			[107] (738,875)<div  />
+				[108] (738,861)<div  />
+					[109] (738,861)<span  />
+						[110] (841,861)<span >OLX Qatar />
+				[111] (738,890)<div  />
+					[112] (738,890)<cite class='qLRx3b tjvcx GvPZzd dTxz9 cHaqb' role='text' />
+						[113] (808,890)<span >https://www.dubizzle.qa />
+						[114] (678,890)<span class='ylgVCe ob9lvb' role='text'>› />
+							[115] (670,890)<span >properties />
+·
+[116] (566,890)<a class='dEEN8c' href='https://translate.google.com/translate?u=https://www.dubizzle.qa/en/properties/properties-for-rent/apartments-for-rent/q-kitchen-closet/&hl=ar&sl=en&tl=ar&client=search' />
+	[117] (566,890)<span >ترجم هذه الصفحة />
+[118] (489,889)<div aria-label='معلومات حول هذه النتيجة' class='MJ8UF iTPLzd rNSxBe eY4mx lUn2nc' role='button' />
+	[119] (489,889)<span  />
+		[120] (489,890)<span  />
+Brand New Fully
+Furnished
+1-Bedroom
+Apartment
+for
+Rent
+– Umsalaal Ali. QAR 3,750. Brand New Fully
+Furnished
+1-Bedroom
+Apartment
+for
+Rent
+– Umsalaal ...
+
+</current_dom>

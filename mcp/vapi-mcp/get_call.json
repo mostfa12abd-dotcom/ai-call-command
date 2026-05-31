@@ -1,0 +1,1 @@
+{"name":"get_call","description":"Gets details of a specific call","parameters":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{"callId":{"description":"ID of the call to get","type":"string"}},"required":["callId"],"type":"object"}}

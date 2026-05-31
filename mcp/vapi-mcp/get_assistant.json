@@ -1,0 +1,1 @@
+{"name":"get_assistant","description":"Gets a Vapi assistant by ID","parameters":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{"assistantId":{"description":"ID of the assistant to get","type":"string"}},"required":["assistantId"],"type":"object"}}

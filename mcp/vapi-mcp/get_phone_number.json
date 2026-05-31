@@ -1,0 +1,1 @@
+{"name":"get_phone_number","description":"Gets details of a specific phone number","parameters":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{"phoneNumberId":{"description":"ID of the phone number to get","type":"string"}},"required":["phoneNumberId"],"type":"object"}}

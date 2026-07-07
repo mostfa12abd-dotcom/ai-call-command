@@ -1,6 +1,0 @@
-{
-  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary":  "Implementation plan for setting up Supabase backend (Tables, RLS) and frontend authentication (Supabase Auth).",
-  "updatedAt":  "2026-04-26T18:28:47.562827500Z",
-  "requestFeedback":  true
-}

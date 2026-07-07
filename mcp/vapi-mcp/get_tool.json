@@ -1,1 +1,0 @@
-{"name":"get_tool","description":"Gets details of a specific tool","parameters":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{"toolId":{"description":"ID of the tool to get","type":"string"}},"required":["toolId"],"type":"object"}}

@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_TASK",
-  "summary": "A comprehensive, ordered technical checklist for building an AI Call Center Agency B2B SaaS platform. Covers infrastructure setup (Supabase, VAPI, n8n), dashboard frontend, backend automation workflows, and go-to-market strategy. Includes a section explaining Supabase architecture and technology stack recommendations.",
-  "updatedAt": "2026-04-25T11:45:53.696270900Z"
-}

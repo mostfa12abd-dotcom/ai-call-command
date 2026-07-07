@@ -1,8 +1,0 @@
-- [x] Create Supabase Tables and Policies
-- [x] Install `@supabase/supabase-js` package
-- [x] Get Supabase URL and Anon Key and set in `.env`
-- [x] Create `src/lib/supabase.ts`
-- [x] Create `AuthContext`
-- [x] Update `App.tsx` with `AuthProvider` and protect routes
-- [x] Update `Login.tsx` to handle true authentication with Supabase
-- [ ] Verify functionality

@@ -1,1 +1,0 @@
-{"name":"list_phone_numbers","description":"Lists all Vapi phone numbers","parameters":{"$schema":"http://json-schema.org/draft-07/schema#","additionalProperties":false,"properties":{},"type":"object"}}

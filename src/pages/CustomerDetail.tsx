@@ -1,0 +1,414 @@
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Phone, Building2, Calendar, PhoneCall, PhoneMissed, Loader2, Mail } from "lucide-react";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
+
+const palette = [
+  "bg-[hsl(var(--primary-soft))] text-primary",
+  "bg-[hsl(var(--success-soft))] text-success",
+  "bg-[hsl(var(--warning-soft))] text-warning",
+  "bg-[hsl(var(--destructive-soft))] text-destructive",
+];
+
+const initialsOf = (name: string) =>
+  (name || "?").split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+
+const satisfactionMeta: Record<string, { emoji: string; tone: string }> = {
+  High: { emoji: "😊", tone: "text-success" },
+  Medium: { emoji: "😐", tone: "text-warning" },
+  Low: { emoji: "😠", tone: "text-destructive" },
+  None: { emoji: "—", tone: "text-muted-foreground" },
+};
+
+const CustomerDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { t, dir, language } = useLanguage();
+  const dateLocale = language === "ar" ? "ar-EG" : "en-GB";
+  const [customer, setCustomer] = useState<any>(null);
+  const [calls, setCalls] = useState<any[]>([]);
+  const [whatsappMessages, setWhatsappMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id || !user) return;
+
+    const fetchData = async () => {
+      setLoading(true);
+
+      // Fetch customer
+      const { data: cust } = await supabase
+        .from("customers")
+        .select("*")
+        .eq("id", id)
+        .eq("tenant_id", user.id)
+        .single();
+
+      setCustomer(cust);
+
+      // Fetch calls for this customer by name
+      if (cust?.name) {
+        const { data: callsData } = await supabase
+          .from("calls")
+          .select("*")
+          .eq("tenant_id", user.id)
+          .ilike("caller_name", cust.name)
+          .order("created_at", { ascending: false });
+
+        setCalls(callsData || []);
+      }
+
+      // Fetch WhatsApp messages
+      if (cust?.phone) {
+        // try finding exact match, or match without + sign, or if phone in db lacks +
+        const phoneWithPlus = cust.phone.startsWith("+") ? cust.phone : "+" + cust.phone;
+        const phoneWithoutPlus = cust.phone.startsWith("+") ? cust.phone.slice(1) : cust.phone;
+        
+        const { data: waData } = await supabase
+          .from("n8n_chat_histories")
+          .select("*")
+          .in("session_id", [phoneWithPlus, phoneWithoutPlus, cust.phone])
+          .order("id", { ascending: true });
+        // Note: tenant_id filtering is enforced by RLS — only rows where
+        // tenant_id = auth.uid() are ever returned.
+
+        setWhatsappMessages(waData || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [id, user]);
+
+  if (loading) {
+    return (
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("common.loading")]}
+      >
+        <div className="flex items-center justify-center py-32 text-muted-foreground">
+          <Loader2 className={cn("h-5 w-5 animate-spin", dir === "rtl" ? "ml-2" : "mr-2")} />
+          {t("customer.loading")}
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!customer) {
+    return (
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("customer.notFound")]}
+      >
+        <div className="py-16 text-center text-muted-foreground">{t("customer.notFound")}</div>
+      </DashboardLayout>
+    );
+  }
+
+  const totalCalls = calls.length;
+  const missedCalls = calls.filter((c) => c.status?.toLowerCase() === "missed").length;
+  const pickupCalls = totalCalls - missedCalls;
+
+  const parsedWhatsappMessages = useMemo(() => {
+    const parsedDisplayMessages: { id: string; isAI: boolean; text: string }[] = [];
+    for (let i = 0; i < whatsappMessages.length; i++) {
+      const msg = whatsappMessages[i];
+      const messageObj = msg.message;
+      const isAI = messageObj.type === "ai";
+      let text = messageObj.content || "";
+
+      if (isAI) {
+        let isStructured = false;
+        try {
+          const parsed = JSON.parse(text);
+          let customerMsg = parsed.customer_original_message || (parsed.output && parsed.output.customer_original_message);
+          let aiMsg = parsed.ai_sent_message || (parsed.output && parsed.output.ai_sent_message);
+
+          if (customerMsg && aiMsg) {
+            isStructured = true;
+            // Prevent duplicate human message
+            const lastMsg = parsedDisplayMessages[parsedDisplayMessages.length - 1];
+            if (lastMsg && !lastMsg.isAI) {
+              parsedDisplayMessages.pop();
+            }
+
+            if (customerMsg !== "NO_MESSAGE_INITIAL_CONTACT") {
+              parsedDisplayMessages.push({ id: `${msg.id}-cust`, isAI: false, text: customerMsg });
+            }
+            parsedDisplayMessages.push({ id: `${msg.id}-ai`, isAI: true, text: aiMsg });
+          }
+        } catch (e) {
+          // Not JSON, ignore
+        }
+
+        if (!isStructured) {
+          parsedDisplayMessages.push({ id: msg.id, isAI: true, text });
+        }
+      } else {
+        // Human message fallback / processing
+        if (text === "NO_MESSAGE_INITIAL_CONTACT" || text.includes("NO_MESSAGE_INITIAL_CONTACT")) {
+          // Ignore completely
+        } else {
+          // Clean up the webhook text
+          let cleanText = text.replace("Incoming Message:", "").trim();
+          const transcriptIndex = cleanText.indexOf("Previous Call Transcript:");
+          if (transcriptIndex !== -1) {
+            cleanText = cleanText.substring(0, transcriptIndex).trim();
+          }
+          if (cleanText) {
+            parsedDisplayMessages.push({ id: msg.id, isAI: false, text: cleanText });
+          }
+        }
+      }
+    }
+    return parsedDisplayMessages;
+  }, [whatsappMessages]);
+
+  return (
+    <DashboardLayout
+      title={customer.name}
+      breadcrumb={[t("nav.dashboard"), t("customers.title"), customer.name]}
+    >
+      {/* Back button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate("/customers")}
+        className="mb-4 gap-1.5 text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className={cn("h-4 w-4", dir === "rtl" ? "rotate-180" : "")} /> {t("customer.back")}
+      </Button>
+
+      {/* Profile Card */}
+      <div className="mb-6 flex flex-wrap items-center gap-5 rounded-2xl bg-card p-6 shadow-card">
+        <Avatar className="h-16 w-16">
+          <AvatarFallback className={cn("text-lg font-bold", palette[0])}>
+            {initialsOf(customer.name)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl font-bold text-foreground">{customer.name}</h2>
+          <div className="mt-1 flex flex-wrap gap-4 text-sm text-muted-foreground">
+            {customer.company && (
+              <span className="flex items-center gap-1.5">
+                <Building2 className="h-3.5 w-3.5" /> {customer.company}
+              </span>
+            )}
+            {customer.phone && (
+              <span className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5" /> {customer.phone}
+              </span>
+            )}
+            {customer.email && (
+              <span className="flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" /> {customer.email}
+              </span>
+            )}
+            <span className="flex items-center gap-1.5">
+              <Calendar className="h-3.5 w-3.5" />
+              {t("customer.since")} {new Date(customer.created_at).toLocaleDateString(dateLocale)}
+            </span>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-foreground">{totalCalls}</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.total")}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-success">{pickupCalls}</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.pickups")}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-destructive">{missedCalls}</div>
+            <div className="text-xs text-muted-foreground">{t("customer.stat.missed")}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status & Completion Badges */}
+      <div className="mb-6 flex flex-wrap gap-3">
+        {/* Status Badge */}
+        {(() => {
+          const s = (customer.followup_status || customer.status)?.toLowerCase();
+          const statusColors: Record<string, string> = {
+            "follow up":    "bg-[hsl(var(--warning-soft))] text-warning border-warning/20",
+            "booked online":"bg-[hsl(var(--primary-soft))] text-primary border-primary/20",
+            "booked ftf":   "bg-[hsl(var(--success-soft))] text-success border-success/20",
+          };
+          const statusKeys: Record<string, any> = {
+            "follow up":    "status.followUp",
+            "booked online":"status.bookedOnline",
+            "booked ftf":   "status.bookedFTF",
+          };
+          const colorClass = statusColors[s || ""] || statusColors["follow up"];
+          const transKey = statusKeys[s || ""] || "status.followUp";
+          return (
+            <Badge className={cn("rounded-full border px-3 py-1 text-xs font-semibold shadow-none", colorClass)}>
+              {t(transKey)}
+            </Badge>
+          );
+        })()}
+
+        {/* Call Completed Badge */}
+        {customer.call_completed !== undefined && (
+          <Badge
+            className={cn(
+              "rounded-full border px-3 py-1 text-xs font-semibold shadow-none",
+              customer.call_completed
+                ? "bg-[hsl(var(--success-soft))] text-success border-success/20"
+                : "bg-[hsl(var(--destructive-soft))] text-destructive border-destructive/20"
+            )}
+          >
+            {customer.call_completed
+              ? `✓ ${t("common.completed.yes" as any)}`
+              : `✗ ${t("common.completed.no" as any)}`}
+          </Badge>
+        )}
+      </div>
+
+      {/* Calls History */}
+      <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
+        {t("customer.callHistory.title")}
+      </h3>
+      <div className="space-y-6">
+        {calls.length === 0 ? (
+          <div className="rounded-2xl bg-card p-16 text-center text-sm text-muted-foreground shadow-card">
+            {t("customer.empty")}
+          </div>
+        ) : (
+          calls.map((call) => {
+            const isPickup = call.status?.toLowerCase() === "pickup" || call.status?.toLowerCase() === "completed";
+            const durationStr = call.call_duration
+              ? `${Math.floor(call.call_duration / 60).toString().padStart(2, "0")}:${(call.call_duration % 60).toString().padStart(2, "0")}`
+              : "00:00";
+            
+            const appointment = call.custom_data?.appointment || call.custom_data?.appointment_date || "—";
+
+            return (
+              <div key={call.id} className="overflow-hidden rounded-2xl bg-card shadow-card">
+                <div className="bg-muted/40 px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">{call.two_word_summary || "Call Summary"}</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(call.created_at).toLocaleString(dateLocale)} · {durationStr}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="bg-background/50 font-mono text-[11px]">
+                      {call.status}
+                    </Badge>
+                    {appointment !== "—" && (
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 text-[11px]">
+                        📅 {appointment}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-6 space-y-6">
+                  {/* Detailed Summary */}
+                  <div>
+                    <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                      📝 {t("dashboard.drawer.summary" as any) || "Summary"}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed bg-muted/20 p-4 rounded-xl">
+                      {call.detailed_summary || "No detailed summary available."}
+                    </p>
+                  </div>
+
+                  {/* Recording */}
+                  {call.recording_url && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                        🎙️ {t("dashboard.drawer.recording" as any) || "Recording"}
+                      </h4>
+                      <audio controls className="w-full h-10 rounded-lg">
+                        <source src={call.recording_url} type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  )}
+
+                  {/* Conversation */}
+                  {call.total_conversation && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                        💬 Transcript
+                      </h4>
+                      <div className="max-h-[300px] overflow-y-auto rounded-xl bg-muted/10 p-4">
+                        <div className="space-y-4">
+                          {call.total_conversation.split('\n').filter((line: string) => line.trim()).map((line: string, idx: number) => {
+                            const isAI = line.startsWith('AI:');
+                            return (
+                              <div key={idx} className={cn("flex flex-col", isAI ? "items-start" : "items-end")}>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
+                                  {isAI ? "AI Assistant" : "Customer"}
+                                </span>
+                                <div className={cn(
+                                  "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm",
+                                  isAI 
+                                    ? "bg-muted text-foreground rounded-tl-none"
+                                    : "bg-primary text-primary-foreground rounded-tr-none"
+                                )}>
+                                  {line.replace(/^(AI|User|Customer):/, '').trim()}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* WhatsApp History */}
+      {parsedWhatsappMessages.length > 0 && (
+        <div className="mt-8 space-y-4">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            💬 {t("customer.whatsapp")}
+          </h3>
+          <div className="rounded-2xl bg-card p-6 shadow-card">
+            <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+              {parsedWhatsappMessages.map((msg) => (
+                <div key={msg.id} className={cn("flex flex-col", msg.isAI ? "items-start" : "items-end")}>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1 px-1">
+                    {msg.isAI
+                      ? (language === "ar" ? "المساعد الذكي" : "AI Assistant")
+                      : (language === "ar" ? "العميل" : "Customer")}
+                  </span>
+                  <div
+                    className={cn(
+                      "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm whitespace-pre-wrap",
+                      msg.isAI
+                        ? "bg-muted text-foreground rounded-tl-none"
+                        : "bg-emerald-600 text-white rounded-tr-none"
+                    )}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </DashboardLayout>
+  );
+};
+
+export default CustomerDetail;

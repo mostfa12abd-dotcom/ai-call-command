@@ -1,38 +1,34 @@
-modules = ["nodejs-24"]
+modules = ["nodejs-20"]
+[nix]
+channel = "stable-25_05"
 
-[deployment]
-router = "application"
-deploymentTarget = "autoscale"
-
-[deployment.postBuild]
-args = ["pnpm", "store", "prune"]
-env = { "CI" = "true" }
+[agent]
+expertMode = true
 
 [workflows]
 runButton = "Project"
 
-[agent]
-stack = "PNPM_WORKSPACE"
-expertMode = true
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
 
-[postMerge]
-path = "scripts/post-merge.sh"
-timeoutMs = 20000
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=5000 pnpm run dev"
+waitForPort = 5000
 
 [[ports]]
-localPort = 8080
-externalPort = 8080
-
-[[ports]]
-localPort = 8081
+localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 21419
-externalPort = 3000
-
-[userenv]
-
-[userenv.shared]
-VITE_SUPABASE_URL = "https://woqufuhlntwfohbpjnru.supabase.co"
-VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvcXVmdWhsbnR3Zm9oYnBqbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMTkzNTMsImV4cCI6MjA5Mjc5NTM1M30.lkCaCXCsYlImK8uIqabM56IKX6AAYWaDz4kgUI8nGdI"

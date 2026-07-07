@@ -1,33 +1,71 @@
-# Workspace
+# Voxa — AI Call Center Dashboard
 
-## Overview
-
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+A React + Vite + Supabase frontend dashboard for an AI-powered call center. Features a login page, dashboard with call metrics, customer management, and settings.
 
 ## Stack
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- **Frontend:** React 19, TypeScript, Vite 8
+- **Styling:** Tailwind CSS v3, shadcn/ui (Radix UI primitives)
+- **Auth & DB:** Supabase (`@supabase/supabase-js`)
+- **Routing:** React Router DOM v7 + Wouter
+- **Charts:** Recharts
+- **State:** TanStack Query
+- **Animations:** Framer Motion
+- **i18n:** Custom translations in `src/i18n/translations.ts`
 
-## Key Commands
+## Running the app
 
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
+```bash
+PORT=5000 pnpm run dev
+```
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+The workflow "Start application" runs this automatically.
 
-## Artifacts
+## Environment
 
-- `artifacts/voxa` — Voxa AI call center dashboard (React + Vite + Tailwind v3 + shadcn). Ported from a Lovable.dev project. **Auth and data are wired to the real Supabase project** via `@supabase/supabase-js` — see `artifacts/voxa/src/lib/supabase.ts`. Required env vars: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. The hooks (`useDashboardData`, `useCustomersData`) and `pages/CustomerDetail.tsx` query the `calls`, `customers`, `tenant_settings`, `tenant_columns`, and `tenant_custom_actions` tables filtered by `tenant_id = auth.uid()`. Built-in i18n layer (English/Arabic) lives in `src/i18n/translations.ts` with the `useLanguage()` hook providing `t()`. Routes: `/login`, `/dashboard`, `/customers`, `/customers/:id`, `/settings`. Mounted at `/`.
-- `artifacts/api-server` — shared Express API scaffold (currently only `/api/healthz`).
-- `artifacts/mockup-sandbox` — design/mockup sandbox.
+Secrets required (set as Replit Secrets):
+- `VITE_SUPABASE_URL` — your Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` — your Supabase anon/public key
+
+## Project structure
+
+```
+src/
+  components/   — UI components (shadcn/ui + custom)
+  contexts/     — AuthContext, LanguageContext
+  data/         — Mock data (mockData.ts)
+  hooks/        — Custom hooks (dashboard data, customers, etc.)
+  i18n/         — Translation strings
+  lib/          — supabase.ts client, utils
+  pages/        — Login, Dashboard, Customers, CustomerDetail, Settings
+```
+
+## Setting up your Supabase database
+
+Run `supabase/schema.sql` in your Supabase project → **SQL Editor → New query** to create all required tables:
+- `calls` — call records with tenant-scoped RLS
+- `customers` — customer records
+- `tenant_settings` — per-user config (vapi_assistant_id, feature_flags)
+- `tenant_columns` — custom dashboard columns
+- `tenant_custom_actions` — webhook action buttons
+- `n8n_chat_histories` — WhatsApp/n8n message history (tenant-scoped)
+
+Until real data exists the dashboard shows generated mock data automatically.
+
+## Enabling Google sign-in
+
+1. In your Supabase project go to **Authentication → Providers → Google** and enable it
+2. Add your Google OAuth **Client ID** and **Client Secret** (from Google Cloud Console)
+3. Add your Replit app URL to the allowed redirect URLs in both Supabase and Google Cloud:
+   `https://<your-repl-domain>/dashboard`
+4. That's it — the "Continue with Google" button is fully wired
+
+## Notes
+
+- Imported from a monorepo zip; workspace and catalog references were resolved for standalone Replit use.
+- `src/lib/supabase.ts` auto-prefixes `https://` if the URL secret is missing the protocol.
+- Google OAuth: `signInWithOAuth` redirects to `window.location.origin/dashboard`; Supabase `detectSessionInUrl: true` handles the callback automatically.
+
+## User preferences
+
+- Prefers keeping the existing project structure and stack.

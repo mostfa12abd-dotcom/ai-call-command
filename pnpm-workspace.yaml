@@ -1,3 +1,6 @@
+packages:
+  - '.'
+
 catalog:
   "@replit/vite-plugin-runtime-error-modal": "^0.0.6"
   react: "^19.2.7"

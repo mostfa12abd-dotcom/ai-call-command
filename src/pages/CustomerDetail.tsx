@@ -52,6 +52,15 @@ const CustomerDetail = () => {
         .eq("tenant_id", user.id)
         .single();
 
+      if (cust) {
+        if (!cust.phone && cust.contact && !cust.contact.includes("@")) {
+          cust.phone = cust.contact;
+        }
+        if (!cust.email && cust.contact && cust.contact.includes("@")) {
+          cust.email = cust.contact;
+        }
+      }
+
       setCustomer(cust);
 
       // Fetch calls for this customer by name

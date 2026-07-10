@@ -47,14 +47,14 @@ export function useCustomersData() {
 
       let { data: callsData, error: callsErr } = await supabase
         .from("calls")
-        .select("id, caller_name, created_at, company, custom_data, customer_number")
+        .select("id, caller_name, created_at, company, custom_data, contact")
         .eq("tenant_id", user.id)
         .order("created_at", { ascending: false });
 
       if ((!callsData || callsData.length === 0) && settingsData?.vapi_assistant_id) {
         const fallback = await supabase
           .from("calls")
-          .select("id, caller_name, created_at, company, custom_data, customer_number")
+          .select("id, caller_name, created_at, company, custom_data, contact")
           .eq("tenant_id", settingsData.vapi_assistant_id)
           .order("created_at", { ascending: false });
         callsData = fallback.data;
@@ -72,10 +72,14 @@ export function useCustomersData() {
 
       // Seed from the customers table first (has email/status data)
       (custData || []).forEach(c => {
-        const key = normalizePhone(c.phone) || (c.name || c.id).toLowerCase();
+        const phone = c.phone || (c.contact && !c.contact.includes("@") ? c.contact : "");
+        const email = c.email || (c.contact && c.contact.includes("@") ? c.contact : "");
+        const key = normalizePhone(phone) || (c.name || c.id).toLowerCase();
         customerMap.set(key, {
           ...c,
-          call_count: 0,
+          phone: phone || "—",
+          email: email || undefined,
+          call_count: c.call_count || 0,
           last_call: "—",
           total_credits: 0,
         });
@@ -91,10 +95,11 @@ export function useCustomersData() {
           try { return JSON.parse(String(raw).trim()); } catch { return {}; }
         })();
 
-        const phone = normalizePhone(call.customer_number || cd?.customer?.number || cd?.phone);
+        const callContact = call.contact || cd?.customer?.number || cd?.phone;
+        const phone = normalizePhone(callContact && !callContact.includes("@") ? callContact : "");
         const name = call.caller_name || "Unknown";
         const cost = parseCost(cd?.cost);
-        const email = cd?.customer_email || cd?.email;
+        const email = callContact && callContact.includes("@") ? callContact : (cd?.customer_email || cd?.email);
         const followup_status = cd?.followup_status || call.status;
         const call_completed = cd?.call_completed;
 
@@ -105,7 +110,7 @@ export function useCustomersData() {
         if (existing) {
           existing.call_count = (existing.call_count || 0) + 1;
           existing.total_credits = (existing.total_credits || 0) + cost;
-          if (!existing.phone && phone) existing.phone = phone;
+          if ((!existing.phone || existing.phone === "—") && phone) existing.phone = phone;
           if (!existing.email && email) existing.email = email;
           
           // Always take the most recent call's status and completion

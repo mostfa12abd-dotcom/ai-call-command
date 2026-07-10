@@ -98,35 +98,6 @@ const CustomerDetail = () => {
     fetchData();
   }, [id, user]);
 
-  if (loading) {
-    return (
-      <DashboardLayout
-        title={t("customer.title")}
-        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("common.loading")]}
-      >
-        <div className="flex items-center justify-center py-32 text-muted-foreground">
-          <Loader2 className={cn("h-5 w-5 animate-spin", dir === "rtl" ? "ml-2" : "mr-2")} />
-          {t("customer.loading")}
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  if (!customer) {
-    return (
-      <DashboardLayout
-        title={t("customer.title")}
-        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("customer.notFound")]}
-      >
-        <div className="py-16 text-center text-muted-foreground">{t("customer.notFound")}</div>
-      </DashboardLayout>
-    );
-  }
-
-  const totalCalls = calls.length;
-  const missedCalls = calls.filter((c) => c.status?.toLowerCase() === "missed").length;
-  const pickupCalls = totalCalls - missedCalls;
-
   const parsedWhatsappMessages = useMemo(() => {
     const parsedDisplayMessages: { id: string; isAI: boolean; text: string }[] = [];
     for (let i = 0; i < whatsappMessages.length; i++) {
@@ -181,6 +152,35 @@ const CustomerDetail = () => {
     }
     return parsedDisplayMessages;
   }, [whatsappMessages]);
+
+  if (loading) {
+    return (
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("common.loading")]}
+      >
+        <div className="flex items-center justify-center py-32 text-muted-foreground">
+          <Loader2 className={cn("h-5 w-5 animate-spin", dir === "rtl" ? "ml-2" : "mr-2")} />
+          {t("customer.loading")}
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!customer) {
+    return (
+      <DashboardLayout
+        title={t("customer.title")}
+        breadcrumb={[t("nav.dashboard"), t("customers.title"), t("customer.notFound")]}
+      >
+        <div className="py-16 text-center text-muted-foreground">{t("customer.notFound")}</div>
+      </DashboardLayout>
+    );
+  }
+
+  const totalCalls = calls.length;
+  const missedCalls = calls.filter((c) => c.status?.toLowerCase() === "missed").length;
+  const pickupCalls = totalCalls - missedCalls;
 
   return (
     <DashboardLayout

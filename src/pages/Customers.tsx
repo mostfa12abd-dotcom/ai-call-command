@@ -147,7 +147,7 @@ const Customers = () => {
                     </TableCell>
                     <TableCell>
                       {(() => {
-                        const s = (c.followup_status || c.status)?.toLowerCase();
+                        const s = (c.followup_status)?.toLowerCase();
                         let cls = "bg-[hsl(var(--warning-soft))] text-warning";
                         let label: string = t("status.followUp" as any);
                         if (s === "booked online") { cls = "bg-[hsl(var(--primary-soft))] text-primary"; label = t("status.bookedOnline" as any); }

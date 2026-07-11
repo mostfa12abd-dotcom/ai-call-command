@@ -44,15 +44,16 @@ const CustomerDetail = () => {
     const fetchData = async () => {
       setLoading(true);
 
-      // Fetch customer
+      // ── 1) Fetch customer record (now has dedicated phone + email columns) ──
       const { data: cust } = await supabase
         .from("customers")
-        .select("*")
+        .select("id, tenant_id, name, phone, email, contact, company, call_count, created_at")
         .eq("id", id)
         .eq("tenant_id", user.id)
         .single();
 
       if (cust) {
+        // Legacy fallback: if phone/email not yet in dedicated columns, derive from contact
         if (!cust.phone && cust.contact && !cust.contact.includes("@")) {
           cust.phone = cust.contact;
         }
@@ -63,33 +64,55 @@ const CustomerDetail = () => {
 
       setCustomer(cust);
 
-      // Fetch calls for this customer by name
-      if (cust?.name) {
-        const { data: callsData } = await supabase
-          .from("calls")
-          .select("*")
-          .eq("tenant_id", user.id)
-          .ilike("caller_name", cust.name)
-          .order("created_at", { ascending: false });
+      // ── 2) Fetch calls — match by phone (primary) OR by name (fallback) ──
+      if (cust) {
+        let callsData: any[] = [];
 
-        setCalls(callsData || []);
-      }
+        // Primary: match by contact/phone — most reliable since DB now stores phone
+        if (cust.phone) {
+          const phoneNorm = cust.phone.replace(/[\s\-().]/g, "");
+          const phoneWithPlus    = phoneNorm.startsWith("+") ? phoneNorm : "+" + phoneNorm;
+          const phoneWithoutPlus = phoneNorm.startsWith("+") ? phoneNorm.slice(1) : phoneNorm;
 
-      // Fetch WhatsApp messages
-      if (cust?.phone) {
-        // try finding exact match, or match without + sign, or if phone in db lacks +
-        const phoneWithPlus = cust.phone.startsWith("+") ? cust.phone : "+" + cust.phone;
-        const phoneWithoutPlus = cust.phone.startsWith("+") ? cust.phone.slice(1) : cust.phone;
-        
-        const { data: waData } = await supabase
-          .from("n8n_chat_histories")
-          .select("*")
-          .in("session_id", [phoneWithPlus, phoneWithoutPlus, cust.phone])
-          .order("id", { ascending: true });
-        // Note: tenant_id filtering is enforced by RLS — only rows where
-        // tenant_id = auth.uid() are ever returned.
+          const { data: byPhone } = await supabase
+            .from("calls")
+            .select("*")
+            .eq("tenant_id", user.id)
+            .in("contact", [phoneWithPlus, phoneWithoutPlus, phoneNorm])
+            .order("created_at", { ascending: false });
 
-        setWhatsappMessages(waData || []);
+          callsData = byPhone || [];
+        }
+
+        // Fallback: if no phone or no calls found by phone, search by name
+        if (callsData.length === 0 && cust.name) {
+          const { data: byName } = await supabase
+            .from("calls")
+            .select("*")
+            .eq("tenant_id", user.id)
+            .ilike("caller_name", cust.name)
+            .order("created_at", { ascending: false });
+
+          callsData = byName || [];
+        }
+
+        setCalls(callsData);
+
+        // ── 3) Fetch WhatsApp messages by phone ──
+        if (cust.phone) {
+          const phoneNorm        = cust.phone.replace(/[\s\-().]/g, "");
+          const phoneWithPlus    = phoneNorm.startsWith("+") ? phoneNorm : "+" + phoneNorm;
+          const phoneWithoutPlus = phoneNorm.startsWith("+") ? phoneNorm.slice(1) : phoneNorm;
+
+          const { data: waData } = await supabase
+            .from("n8n_chat_histories")
+            .select("*")
+            .in("session_id", [phoneWithPlus, phoneWithoutPlus, phoneNorm])
+            .order("id", { ascending: true });
+          // RLS ensures only this tenant's rows are returned
+
+          setWhatsappMessages(waData || []);
+        }
       }
 
       setLoading(false);

@@ -6,9 +6,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export interface CustomerRow {
   id: string;
   name: string;
-  phone: string;
+  phone: string;         // dedicated phone column (from DB)
+  email?: string;        // dedicated email column (from DB)
   company: string;
-  email?: string;
   followup_status?: string;
   call_completed?: boolean;
   created_at: string;
@@ -32,13 +32,19 @@ export function useCustomersData() {
       setLoading(true);
       setError(null);
 
-      // 1) Fetch known customers from customers table (has email, followup_status, call_completed)
-      const { data: custData } = await supabase
+      // 1) Fetch customers — now has dedicated phone + email columns
+      const { data: custData, error: custErr } = await supabase
         .from("customers")
-        .select("*")
+        .select("id, tenant_id, name, phone, email, contact, company, call_count")
         .eq("tenant_id", user.id);
 
-      // 2) Fetch all calls — try user.id, fallback to vapi_assistant_id
+      if (custErr) {
+        setError(custErr.message);
+        setLoading(false);
+        return;
+      }
+
+      // 2) Fetch calls — try user.id, fallback to vapi_assistant_id
       const { data: settingsData } = await supabase
         .from("tenant_settings")
         .select("vapi_assistant_id")
@@ -47,14 +53,14 @@ export function useCustomersData() {
 
       let { data: callsData, error: callsErr } = await supabase
         .from("calls")
-        .select("id, caller_name, created_at, company, custom_data, contact")
+        .select("id, caller_name, created_at, company, custom_data, contact, status")
         .eq("tenant_id", user.id)
         .order("created_at", { ascending: false });
 
       if ((!callsData || callsData.length === 0) && settingsData?.vapi_assistant_id) {
         const fallback = await supabase
           .from("calls")
-          .select("id, caller_name, created_at, company, custom_data, contact")
+          .select("id, caller_name, created_at, company, custom_data, contact, status")
           .eq("tenant_id", settingsData.vapi_assistant_id)
           .order("created_at", { ascending: false });
         callsData = fallback.data;
@@ -67,14 +73,19 @@ export function useCustomersData() {
         return;
       }
 
-      // Build customer map — key by phone number (primary) or name (fallback)
+      // ─── Build customer map ───
+      // Key priority: normalised phone (most reliable, unique per tenant in DB) → email → name
       const customerMap = new Map<string, CustomerRow>();
 
-      // Seed from the customers table first (has email/status data)
+      // Seed from the customers table (source of truth — DB enforces uniqueness)
       (custData || []).forEach(c => {
+        // phone and email are now dedicated columns; contact is kept for legacy fallback
         const phone = c.phone || (c.contact && !c.contact.includes("@") ? c.contact : "");
         const email = c.email || (c.contact && c.contact.includes("@") ? c.contact : "");
-        const key = normalizePhone(phone) || (c.name || c.id).toLowerCase();
+
+        // Use the DB-enforced unique key: phone (preferred) → email → name
+        const key = normalizePhone(phone) || (email || (c.name || c.id).toLowerCase());
+
         customerMap.set(key, {
           ...c,
           phone: phone || "—",
@@ -85,9 +96,9 @@ export function useCustomersData() {
         });
       });
 
-      // Enrich from calls — match by phone number first, then by name
+      // Enrich from calls — aggregate credits, last call date, status from latest call
       (callsData || []).forEach(call => {
-        // custom_data may come as a JSON string from Supabase — parse it first
+        // Parse custom_data (may arrive as JSON string or object)
         const cd: Record<string, any> = (() => {
           const raw = call.custom_data;
           if (!raw) return {};
@@ -96,37 +107,38 @@ export function useCustomersData() {
         })();
 
         const callContact = call.contact || cd?.customer?.number || cd?.phone;
-        const phone = normalizePhone(callContact && !callContact.includes("@") ? callContact : "");
-        const name = call.caller_name || "Unknown";
-        const cost = parseCost(cd?.cost);
-        const email = callContact && callContact.includes("@") ? callContact : (cd?.customer_email || cd?.email);
+        const callPhone  = normalizePhone(callContact && !callContact.includes("@") ? callContact : "");
+        const callEmail  = callContact && callContact.includes("@") ? callContact : (cd?.customer_email || cd?.email);
+        const name       = call.caller_name || "Unknown";
+        const cost       = parseCost(cd?.cost);
         const followup_status = cd?.followup_status || call.status;
-        const call_completed = cd?.call_completed;
+        const call_completed  = cd?.call_completed;
 
-        // Try phone key first, then name key
-        const key = phone || name.toLowerCase();
+        // Match using same priority as DB: phone → email → name
+        const key = callPhone || callEmail || name.toLowerCase();
         const existing = customerMap.get(key);
 
         if (existing) {
-          existing.call_count = (existing.call_count || 0) + 1;
+          // Aggregate numeric stats
           existing.total_credits = (existing.total_credits || 0) + cost;
-          if ((!existing.phone || existing.phone === "—") && phone) existing.phone = phone;
-          if (!existing.email && email) existing.email = email;
-          
-          // Always take the most recent call's status and completion
-          if (followup_status) existing.followup_status = followup_status;
-          if (call_completed !== undefined) existing.call_completed = call_completed;
-
-          if (existing.last_call === "—") {
+          // call_count is already correct from DB (synced by trigger)
+          // Fill missing contact info
+          if ((!existing.phone || existing.phone === "—") && callPhone) existing.phone = callPhone;
+          if (!existing.email && callEmail) existing.email = callEmail;
+          // Take most-recent call's status (calls are ordered desc)
+          if (followup_status && existing.last_call === "—") {
+            existing.followup_status = followup_status;
+            existing.call_completed  = call_completed;
             existing.last_call = new Date(call.created_at).toLocaleDateString(dateLocale);
           }
         } else {
+          // Customer from calls not yet in customers table (edge case before trigger fires)
           customerMap.set(key, {
             id: call.id,
             name,
-            phone: phone || "—",
+            phone: callPhone || "—",
+            email: callEmail || undefined,
             company: call.company || "—",
-            email: email || undefined,
             followup_status: followup_status || undefined,
             call_completed: call_completed,
             created_at: call.created_at,
@@ -147,11 +159,12 @@ export function useCustomersData() {
   return { customers, loading, error };
 }
 
-// Normalize phone: remove spaces, dashes, keep only digits and leading +
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+/** Strip spaces/dashes/parens so "+966 50-123 4567" and "+96650123456" match */
 function normalizePhone(phone?: string | null): string {
   if (!phone) return "";
-  const cleaned = phone.replace(/[\s\-().]/g, "");
-  return cleaned || "";
+  return phone.replace(/[\s\-().]/g, "");
 }
 
 function parseCost(cost: any): number {

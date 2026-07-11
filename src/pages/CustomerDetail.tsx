@@ -47,7 +47,7 @@ const CustomerDetail = () => {
       // ── 1) Fetch customer record (now has dedicated phone + email columns) ──
       const { data: cust } = await supabase
         .from("customers")
-        .select("id, tenant_id, name, phone, email, contact, company, call_count, created_at")
+        .select("id, tenant_id, name, phone, email, contact, company, call_count")
         .eq("id", id)
         .eq("tenant_id", user.id)
         .single();
@@ -247,7 +247,9 @@ const CustomerDetail = () => {
             )}
             <span className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
-              {t("customer.since")} {new Date(customer.created_at).toLocaleDateString(dateLocale)}
+              {t("customer.since")} {calls.length > 0 
+                ? new Date(calls[calls.length - 1].created_at).toLocaleDateString(dateLocale) 
+                : new Date().toLocaleDateString(dateLocale)}
             </span>
           </div>
         </div>
